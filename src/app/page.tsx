@@ -1,4 +1,5 @@
 import bgImgMain01 from '@/assets/images/main/main01.jpg';
+import { EdgeActionCard } from '@/components/features/EdgeActionCard';
 
 export default function Home() {
   return (
@@ -20,6 +21,9 @@ export default function Home() {
         </div>
       </div>
 
+      <div className={'p-10'}>
+        <EdgeActionCard />
+      </div>
       <p className="h-[10000px]">long scroll</p>
     </>
   );

@@ -4,7 +4,10 @@ import { SideMenu } from '@/components/layout/Header/SideMenu';
 
 export const Header = () => {
   return (
-    <header className="flex items-center justify-between bg-white px-4 py-3">
+    <header
+      style={{ backdropFilter: 'blur(4px)' }}
+      className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between bg-[rgba(0,0,0,0.4)] px-10 py-4 text-white"
+    >
       <HomeLogo />
 
       <div className="flex items-center gap-10">

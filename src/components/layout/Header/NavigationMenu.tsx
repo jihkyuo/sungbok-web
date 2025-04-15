@@ -1,4 +1,9 @@
 import Link from 'next/link';
+import type { PropsWithChildren } from 'react';
+
+interface MenuItemProps extends PropsWithChildren {
+  href: string;
+}
 
 const menuItems = [
   { href: '/about', children: '교회소개' },
@@ -9,9 +14,9 @@ const menuItems = [
   { href: '/map', children: '찾아오시는 길' },
 ] as const;
 
-const MenuItem = ({ href, children }: { href: string; children: React.ReactNode }) => {
+const MenuItem = ({ href, children }: MenuItemProps) => {
   return (
-    <Link href={href} className="text-xl font-bold hover:text-gray-600">
+    <Link href={href} className="text-xl font-bold">
       {children}
     </Link>
   );
@@ -19,7 +24,7 @@ const MenuItem = ({ href, children }: { href: string; children: React.ReactNode 
 
 export const NavigationMenu = () => {
   return (
-    <nav className="flex gap-4">
+    <nav className="flex gap-8">
       {menuItems.map(item => (
         <MenuItem key={item.href} href={item.href}>
           {item.children}

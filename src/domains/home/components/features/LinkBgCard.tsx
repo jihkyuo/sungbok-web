@@ -27,7 +27,7 @@ export const LinkBgCard = ({ imgSrc, title, subtitle }: Props) => {
 
       <div
         style={{ backgroundImage: `url(${imgSrc})` }}
-        className={'relative bg-cover bg-center px-15 py-30 text-white break-keep'}
+        className={'relative h-full bg-cover bg-center px-15 py-30 break-keep text-white'}
       >
         <DarkOverlay />
 

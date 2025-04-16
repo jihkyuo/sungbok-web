@@ -7,7 +7,7 @@ interface Props extends PropsWithChildren {
 
 export const Card = ({ className, children }: Props) => {
   return (
-    <div className={cn('w-full overflow-hidden rounded-[45px_0_45px_45px]', className)}>
+    <div className={cn('group w-full overflow-hidden rounded-[45px_0_45px_45px]', className)}>
       {children}
     </div>
   );

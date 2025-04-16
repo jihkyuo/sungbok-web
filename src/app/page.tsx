@@ -1,7 +1,9 @@
+import arrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
 import bgImgMain01 from '@/assets/images/main/main01.jpg';
 import { Card } from '@/components/features/Card';
 import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function Home() {
   return (
@@ -24,9 +26,11 @@ export default function Home() {
       </div>
 
       <div className={'p-10'}>
-        <Card>
+        <Card className={'cursor-pointer'}>
           <EdgeHoleArea>
-            <Button className={'h-17 w-17 rounded-full bg-blue-500'}>ss</Button>
+            <Button className={'h-17 w-17 rounded-full group-hover:bg-blue-500 hover:bg-blue-500'}>
+              <Image src={arrowUpRightIcon} alt="arrowUpRightIcon" />
+            </Button>
           </EdgeHoleArea>
 
           <div

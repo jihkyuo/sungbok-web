@@ -14,7 +14,7 @@ interface Props {
 
 export const LinkBgCard = ({ imgSrc, title, subtitle }: Props) => {
   return (
-    <Card className={'cursor-pointer'}>
+    <Card className={'min-h-[350px] cursor-pointer'}>
       <EdgeHoleArea>
         <Button
           className={
@@ -27,7 +27,9 @@ export const LinkBgCard = ({ imgSrc, title, subtitle }: Props) => {
 
       <div
         style={{ backgroundImage: `url(${imgSrc})` }}
-        className={'relative h-full bg-cover bg-center px-15 py-30 break-keep text-white'}
+        className={
+          'relative flex h-full flex-col justify-end bg-cover bg-center p-10 break-keep text-white'
+        }
       >
         <DarkOverlay />
 

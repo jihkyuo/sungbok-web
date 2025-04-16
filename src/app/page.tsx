@@ -1,5 +1,7 @@
 import bgImgMain01 from '@/assets/images/main/main01.jpg';
-import { EdgeActionCard } from '@/components/features/EdgeActionCard';
+import { Card } from '@/components/features/Card';
+import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
@@ -22,7 +24,18 @@ export default function Home() {
       </div>
 
       <div className={'p-10'}>
-        <EdgeActionCard />
+        <Card>
+          <EdgeHoleArea>
+            <Button className={'h-17 w-17 rounded-full bg-blue-500'}>ss</Button>
+          </EdgeHoleArea>
+
+          <div
+            style={{ backgroundImage: `url(${bgImgMain01.src})` }}
+            className={'bg-cover bg-center p-40 text-white'}
+          >
+            내용
+          </div>
+        </Card>
       </div>
       <p className="h-[10000px]">long scroll</p>
     </>

@@ -1,46 +1,12 @@
-import arrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
-import bgImgMain01 from '@/assets/images/main/main01.jpg';
-import { Card } from '@/components/features/Card';
-import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+import { DepartmentsSection } from '@/domains/home/components/widgets/DepartmentsSection';
+import { HomeBanner } from '@/domains/home/components/widgets/HomeBanner';
 
 export default function Home() {
   return (
     <>
-      <div
-        style={{ backgroundImage: `url(${bgImgMain01.src})` }}
-        className={'relative h-[calc(100vh-400px)] w-full bg-black bg-cover bg-center'}
-      >
-        <div className="absolute inset-0 bg-black opacity-40" />
+      <HomeBanner />
+      <DepartmentsSection />
 
-        <div className="flex h-full flex-col justify-center px-40 text-white">
-          <h1 className="text-5xl leading-tight font-bold tracking-tight drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)]">
-            삶에 기쁨과 <br />
-            소망을 주는 교회
-          </h1>
-          <p className="mt-4 text-2xl font-semibold drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)]">
-            성복교회는 대한예수교장로회 합동교단(총신대학교)에 소속되어 있습니다.
-          </p>
-        </div>
-      </div>
-
-      <div className={'p-10'}>
-        <Card className={'cursor-pointer'}>
-          <EdgeHoleArea>
-            <Button className={'h-17 w-17 rounded-full group-hover:bg-blue-500 hover:bg-blue-500'}>
-              <Image src={arrowUpRightIcon} alt="arrowUpRightIcon" />
-            </Button>
-          </EdgeHoleArea>
-
-          <div
-            style={{ backgroundImage: `url(${bgImgMain01.src})` }}
-            className={'bg-cover bg-center p-40 text-white'}
-          >
-            내용
-          </div>
-        </Card>
-      </div>
       <p className="h-[10000px]">long scroll</p>
     </>
   );

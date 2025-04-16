@@ -9,7 +9,7 @@ interface Props extends PropsWithChildren {
 
 export const EdgeHoleArea = ({ children, className }: Props) => {
   return (
-    <div className={'relative'}>
+    <div className={'relative z-10'}>
       <div className={cn('absolute top-0 right-0 h-22 w-22 rounded-bl-[30px] bg-white', className)}>
         <MaskImage side="top" />
         <MaskImage side="bottom" />

@@ -1,6 +1,5 @@
 import arrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
 import { Card } from '@/components/features/Card';
-import { DarkOverlay } from '@/components/features/DarkOverlay';
 import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -11,6 +10,15 @@ interface Props {
   title: ReactNode;
   subtitle: ReactNode;
 }
+
+const DarkGradientOverlay = () => {
+  return (
+    <>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-black/30 opacity-0 transition-all duration-300 group-hover:opacity-100" />
+    </>
+  );
+};
 
 export const LinkBgCard = ({ imgSrc, title, subtitle }: Props) => {
   return (
@@ -31,7 +39,7 @@ export const LinkBgCard = ({ imgSrc, title, subtitle }: Props) => {
           'relative flex h-full flex-col justify-end bg-cover bg-center p-10 break-keep text-white'
         }
       >
-        <DarkOverlay />
+        <DarkGradientOverlay />
 
         <div className="relative z-10">
           <Title>{title}</Title>

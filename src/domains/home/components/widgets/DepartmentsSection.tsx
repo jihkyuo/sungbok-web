@@ -15,7 +15,7 @@ import type { PropsWithChildren } from 'react';
 
 export const DepartmentsSection = () => {
   return (
-    <div className={'my-40 flex flex-col gap-20'}>
+    <div className={'mt-20 mb-40 flex flex-col gap-20'}>
       <SectionContainer>
         <Title>제1 교육 위원회</Title>
         <GridSection>
@@ -119,7 +119,7 @@ export const DepartmentsSection = () => {
 };
 
 const SectionContainer = ({ children }: PropsWithChildren) => {
-  return <div className={'mx-10'}>{children}</div>;
+  return <div className={'mx-10 flex flex-col gap-6'}>{children}</div>;
 };
 
 const Title = ({ children }: PropsWithChildren) => {

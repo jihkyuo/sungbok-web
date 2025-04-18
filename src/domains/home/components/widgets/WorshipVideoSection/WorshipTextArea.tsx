@@ -24,7 +24,7 @@ const Subtitle = () => {
       </span>
       <br />
       <p className="mx-2">
-        {`\n 예수께서 가라사대 \n 내가 곧 길이요 진리요 생명이니 \n나로 말미암지 않고는 아버지께로 올 자가
+        {`예수께서 가라사대 \n 내가 곧 길이요 진리요 생명이니 \n나로 말미암지 않고는 아버지께로 올 자가
         없느니라 \n`}
       </p>
       <p className="mt-2 text-right text-lg">(요한복음 14:6)</p>

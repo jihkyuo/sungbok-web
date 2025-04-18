@@ -1,9 +1,10 @@
+import { cn } from '@/lib/utils';
 import type { HTMLAttributes } from 'react';
 import './index.css';
 
-export const ScrollDownButton = (props: HTMLAttributes<HTMLDivElement>) => {
+export const ScrollDownButton = ({ className, ...props }: HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div id="mouse-scroll" {...props}>
+    <div id="mouse-scroll" className={cn('cursor-pointer', className)} {...props}>
       <div className="mouse">
         <div className="mouse-in"></div>
       </div>

@@ -1,5 +1,5 @@
 import bgImgMain01 from '@/assets/images/main/main01.jpg';
-import { ScrollDownButton } from '@/components/features/ScrollDownButton';
+import { ScrollDown } from '@/domains/home/components/widgets/HomeHero/ScrollDown';
 
 export const HomeHero = () => {
   return (
@@ -10,7 +10,7 @@ export const HomeHero = () => {
       <DarkMask />
       <Title />
       <Subtitle />
-      <ScrollDownButton className={'absolute bottom-20 left-1/2 -translate-x-1/2'} />
+      <ScrollDown />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import bgImgMain01 from '@/assets/images/main/main01.jpg';
 import { DarkOverlay } from '@/components/features/DarkOverlay';
 
-export const HomeBanner = () => {
+export const HomeHero = () => {
   return (
     <div
       style={{ backgroundImage: `url(${bgImgMain01.src})` }}

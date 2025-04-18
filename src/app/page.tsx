@@ -1,12 +1,12 @@
 import { DepartmentsSection } from '@/domains/home/components/widgets/DepartmentsSection';
-import { HomeBanner } from '@/domains/home/components/widgets/HomeBanner';
+import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
 import { VisionTitle } from '@/domains/home/components/widgets/VisionTitle';
 import { WorshipVideoSection } from '@/domains/home/components/widgets/WorshipVideoSection';
 
 export default function Home() {
   return (
     <>
-      <HomeBanner />
+      <HomeHero />
       <VisionTitle />
       <WorshipVideoSection />
       <DepartmentsSection />

@@ -5,12 +5,12 @@ import { VideoBgCard } from '@/domains/home/components/features/VideoBgCard';
 
 export const WorshipVideoSection = () => {
   return (
-    <div className={'px-60 py-20'}>
+    <div className={'py-20 xl:px-60 px-40'}>
       <Title />
-      <GridSection className={'lg:grid-cols-5'}>
+      <GridSection className={'xl:grid-cols-5'}>
         <Subtitle />
         <VideoBgCard
-          className={'col-span-4 mt-20'}
+          className={'col-span-4 xl:mt-20'}
           videoUrl={'https://www.youtube.com/embed/HYruCseVKZo'}
           onClick={() => window.open('https://www.youtube.com/@allliveworship', '_blank')}
         />

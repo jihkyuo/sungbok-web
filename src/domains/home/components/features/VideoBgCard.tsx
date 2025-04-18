@@ -1,14 +1,16 @@
 import AllLiveLogo from '@/assets/icons/allLive-team-logo.png';
 import { Card } from '@/components/features/Card';
 import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
 interface Props {
   videoUrl: string;
   onClick?: () => void;
+  className?: string;
 }
 
-export const VideoBgCard = ({ videoUrl, onClick }: Props) => {
+export const VideoBgCard = ({ videoUrl, onClick, className }: Props) => {
   // YouTube URL에서 비디오 ID 추출
   const getVideoId = (url: string) => {
     const regex =
@@ -20,7 +22,7 @@ export const VideoBgCard = ({ videoUrl, onClick }: Props) => {
   const videoId = getVideoId(videoUrl);
 
   return (
-    <Card className={'relative cursor-pointer'} onClick={onClick}>
+    <Card className={cn('relative cursor-pointer', className)} onClick={onClick}>
       <EdgeHoleArea>
         <Image src={AllLiveLogo} alt="AllLiveLogo" width={70} height={70} />
       </EdgeHoleArea>

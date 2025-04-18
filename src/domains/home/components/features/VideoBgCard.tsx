@@ -1,14 +1,18 @@
+import AllLiveLogo from '@/assets/icons/allLive-team-logo.png';
 import { Card } from '@/components/features/Card';
 import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
+import Image from 'next/image';
 
 interface Props {
   videoUrl: string;
+  onClick?: () => void;
 }
 
-export const VideoBgCard = ({ videoUrl }: Props) => {
+export const VideoBgCard = ({ videoUrl, onClick }: Props) => {
   // YouTube URL에서 비디오 ID 추출
   const getVideoId = (url: string) => {
-    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const regex =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     const match = url.match(regex);
     return match ? match[1] : '';
   };
@@ -16,8 +20,10 @@ export const VideoBgCard = ({ videoUrl }: Props) => {
   const videoId = getVideoId(videoUrl);
 
   return (
-    <Card className={'relative'}>
-      <EdgeHoleArea>유튭 아이콘</EdgeHoleArea>
+    <Card className={'relative cursor-pointer'} onClick={onClick}>
+      <EdgeHoleArea>
+        <Image src={AllLiveLogo} alt="AllLiveLogo" width={70} height={70} />
+      </EdgeHoleArea>
 
       <div className="relative h-[calc(100vh-500px)] w-full">
         <iframe
@@ -27,7 +33,7 @@ export const VideoBgCard = ({ videoUrl }: Props) => {
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          className="w-full h-full object-cover object-center"
+          className="h-full w-full object-cover object-center"
         />
       </div>
 

@@ -5,7 +5,7 @@ interface Props {
   scrollThreshold?: number; // 스크롤 임계점 === 스크롤 위치
 }
 
-export const useIsScrolled = ({ scrollThreshold = 200 }: Props) => {
+export const useIsScrolled = ({ scrollThreshold = 0 }: Props = {}) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {

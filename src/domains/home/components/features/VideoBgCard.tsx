@@ -27,7 +27,7 @@ export const VideoBgCard = ({ videoUrl, onClick, className }: Props) => {
         <Image src={AllLiveLogo} alt="AllLiveLogo" width={70} height={70} />
       </EdgeHoleArea>
 
-      <div className="relative h-[calc(100vh-500px)] w-full">
+      <div className="relative h-[300px] w-full md:h-[550px]">
         <iframe
           width="100%"
           height="100%"
@@ -35,7 +35,7 @@ export const VideoBgCard = ({ videoUrl, onClick, className }: Props) => {
           title="YouTube video player"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          className="h-full w-full object-cover object-center"
+          className="object-cover object-center w-full h-full"
         />
       </div>
 

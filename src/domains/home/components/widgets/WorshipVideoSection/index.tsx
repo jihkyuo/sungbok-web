@@ -5,7 +5,7 @@ import { VideoBgCard } from '@/domains/home/components/features/VideoBgCard';
 
 export const WorshipVideoSection = () => {
   return (
-    <div className={'py-20 xl:px-60 px-40'}>
+    <div className={'mx-auto max-w-[1400px] px-10 py-20 md:px-40'}>
       <Title />
       <GridSection className={'xl:grid-cols-5'}>
         <Subtitle />
@@ -30,7 +30,7 @@ const Title = () => {
 
 const Subtitle = () => {
   return (
-    <p className="mt-8 text-2xl leading-10 font-bold whitespace-pre-wrap">
+    <p className="mt-8 text-2xl font-bold leading-10 whitespace-pre-wrap">
       {`건강하게
 세워져가고
 있습니다.`}

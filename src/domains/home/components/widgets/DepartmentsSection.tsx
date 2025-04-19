@@ -10,7 +10,6 @@ import dep06Img from '@/assets/images/main/dep06.jpg';
 import dep07Img from '@/assets/images/main/dep07.jpg';
 import dep08Img from '@/assets/images/main/dep08.jpg';
 import dep09Img from '@/assets/images/main/dep09.jpg';
-import { GridSection } from '@/domains/home/components/features/GridSection';
 import type { PropsWithChildren } from 'react';
 
 export const DepartmentsSection = () => {
@@ -120,6 +119,12 @@ export const DepartmentsSection = () => {
 
 const SectionContainer = ({ children }: PropsWithChildren) => {
   return <div className={'mx-10 flex flex-col gap-6'}>{children}</div>;
+};
+
+const GridSection = ({ children }: PropsWithChildren) => {
+  return (
+    <div className={'grid grid-cols-[repeat(auto-fill,minmax(550px,1fr))] gap-10'}>{children}</div>
+  );
 };
 
 const Title = ({ children }: PropsWithChildren) => {

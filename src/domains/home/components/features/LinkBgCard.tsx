@@ -15,14 +15,18 @@ const DarkGradientOverlay = () => {
   return (
     <>
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-black/30 opacity-0 transition-all duration-300 group-hover:opacity-100" />
+      <div className="absolute inset-0 transition-all duration-300 opacity-0 bg-gradient-to-tr from-black/30 group-hover:opacity-100" />
     </>
   );
 };
 
 export const LinkBgCard = ({ imgSrc, title, subtitle }: Props) => {
   return (
-    <Card className={'min-h-[350px] cursor-pointer'}>
+    <Card
+      className={
+        'min-h-[350px] cursor-pointer transition-all duration-500 hover:translate-y-[-5px]'
+      }
+    >
       <EdgeHoleArea>
         <Button
           className={

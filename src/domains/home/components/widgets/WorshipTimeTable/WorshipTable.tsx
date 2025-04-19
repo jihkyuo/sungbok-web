@@ -23,6 +23,9 @@ export const WorshipTable = ({ title, items }: Props) => {
     {
       title: '장소',
       row: row => row.location,
+      rowOptions: {
+        className: 'text-gray-500',
+      },
     },
   ];
 
@@ -30,13 +33,13 @@ export const WorshipTable = ({ title, items }: Props) => {
     <div>
       <WorshipCategoryTitle title={title} />
       <Table
-        className={'mt-10'}
+        className={'mt-2'}
         dataSource={items}
         columns={columns}
         rowKey={row => row.name}
         columnsOptions={{
           className:
-            'pb-5 border-b-2 border-gray-400 text-lg text-center font-semibold text-gray-400',
+            'py-5 border-b-2 border-gray-400 text-lg text-center font-semibold text-gray-400',
         }}
         rowsOptions={{ className: 'py-5 font-semibold text-center whitespace-pre-wrap leading-8' }}
       />

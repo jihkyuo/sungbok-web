@@ -12,8 +12,6 @@ export default function Home() {
       <WorshipVideoSection />
       <WorshipTimeTable />
       <DepartmentsSection />
-
-      <p className="h-[10000px]">long scroll</p>
     </>
   );
 }

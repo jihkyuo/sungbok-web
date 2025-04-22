@@ -1,16 +1,26 @@
 import { LinkBgCard } from '@/domains/home/components/features/LinkBgCard';
+import type { PropsWithChildren } from 'react';
 
 // 부서 이미지
-import dep01Img from '@/assets/images/main/dep01.jpg';
-import dep02Img from '@/assets/images/main/dep02.jpg';
-import dep03Img from '@/assets/images/main/dep03.jpg';
-import dep04Img from '@/assets/images/main/dep04.jpg';
-import dep05Img from '@/assets/images/main/dep05.jpg';
-import dep06Img from '@/assets/images/main/dep06.jpg';
-import dep07Img from '@/assets/images/main/dep07.jpg';
-import dep08Img from '@/assets/images/main/dep08.jpg';
-import dep09Img from '@/assets/images/main/dep09.jpg';
-import type { PropsWithChildren } from 'react';
+import dep01Img from '@/assets/images/main/department/dep01.jpg';
+import dep02Img from '@/assets/images/main/department/dep02.jpg';
+import dep03Img from '@/assets/images/main/department/dep03.jpg';
+import dep04Img from '@/assets/images/main/department/dep04.jpg';
+import dep05Img from '@/assets/images/main/department/dep05.jpg';
+import dep06Img from '@/assets/images/main/department/dep06.jpg';
+import dep07Img from '@/assets/images/main/department/dep07.jpg';
+import dep08Img from '@/assets/images/main/department/dep08.jpg';
+import dep09Img from '@/assets/images/main/department/dep09.jpg';
+
+// 호버 시 표시할 부서 담당자 이미지
+import depManager01Img from '@/assets/images/main/department/dep_manager01.jpg';
+import depManager02Img from '@/assets/images/main/department/dep_manager02.jpg';
+import depManager03Img from '@/assets/images/main/department/dep_manager03.jpg';
+import depManager04Img from '@/assets/images/main/department/dep_manager04.jpg';
+import depManager05Img from '@/assets/images/main/department/dep_manager05.jpg';
+import depManager06Img from '@/assets/images/main/department/dep_manager06.jpeg';
+import depManager07Img from '@/assets/images/main/department/dep_manager07.jpg';
+import depManager08Img from '@/assets/images/main/department/dep_manager08.jpg';
 
 export const DepartmentsSection = () => {
   return (
@@ -20,6 +30,7 @@ export const DepartmentsSection = () => {
         <GridSection>
           <LinkBgCard
             imgSrc={dep01Img.src}
+            hoverImgSrc={depManager01Img.src}
             title="영아부"
             subtitle={
               <p>
@@ -30,6 +41,7 @@ export const DepartmentsSection = () => {
 
           <LinkBgCard
             imgSrc={dep02Img.src}
+            hoverImgSrc={depManager02Img.src}
             title="유치부"
             subtitle={
               <p>
@@ -41,6 +53,7 @@ export const DepartmentsSection = () => {
 
           <LinkBgCard
             imgSrc={dep03Img.src}
+            hoverImgSrc={depManager03Img.src}
             title="유년부"
             subtitle={
               <p>
@@ -51,6 +64,7 @@ export const DepartmentsSection = () => {
 
           <LinkBgCard
             imgSrc={dep04Img.src}
+            hoverImgSrc={depManager04Img.src}
             title="초등부"
             subtitle={
               <p>
@@ -61,12 +75,14 @@ export const DepartmentsSection = () => {
 
           <LinkBgCard
             imgSrc={dep05Img.src}
+            hoverImgSrc={depManager05Img.src}
             title="중등부"
             subtitle={<p>하나님의 은혜가 흐르는 공동체 입니다.</p>}
           />
 
           <LinkBgCard
             imgSrc={dep06Img.src}
+            hoverImgSrc={depManager06Img.src}
             title="고등부"
             subtitle={
               <p>
@@ -77,6 +93,7 @@ export const DepartmentsSection = () => {
 
           <LinkBgCard
             imgSrc={dep07Img.src}
+            hoverImgSrc={depManager06Img.src}
             title="영어 예배부"
             subtitle={
               <p>
@@ -92,6 +109,7 @@ export const DepartmentsSection = () => {
         <GridSection>
           <LinkBgCard
             imgSrc={dep08Img.src}
+            hoverImgSrc={depManager07Img.src}
             title="청년부"
             subtitle={
               <p>
@@ -103,6 +121,7 @@ export const DepartmentsSection = () => {
 
           <LinkBgCard
             imgSrc={dep09Img.src}
+            hoverImgSrc={depManager08Img.src}
             title="엘림가족부"
             subtitle={
               <p>

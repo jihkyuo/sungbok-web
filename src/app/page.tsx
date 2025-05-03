@@ -1,4 +1,3 @@
-import { DepartmentsSection } from '@/domains/home/components/widgets/DepartmentsSection';
 import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
 import { VisionTitle } from '@/domains/home/components/widgets/VisionTitle';
 import { WorshipTimeTable } from '@/domains/home/components/widgets/WorshipTimeTable';
@@ -11,7 +10,7 @@ export default function Home() {
       <VisionTitle />
       <WorshipVideoSection />
       <WorshipTimeTable />
-      <DepartmentsSection />
+      {/* <DepartmentsSection /> */}
 
       <div className="bg-green-200 py-30">
         <h3 className="text-2xl font-bold">메인홈 TODO</h3>

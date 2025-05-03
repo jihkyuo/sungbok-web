@@ -1,11 +1,16 @@
-import { StickyTitle } from '@/domains/home/components/widgets/WorshipTimeTable/StickyTitle';
-import { WorshipSection } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipSection';
+import { WorshipTimeTableMini } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTimeTableMini';
+import { WorshipTimeTableWide } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTimeTableWide';
 
 export const WorshipTimeTable = () => {
   return (
-    <div className="mx-20 my-40 flex rounded-[45px] border-1 bg-gray-50 px-20 py-30 shadow-lg">
-      <StickyTitle />
-      <WorshipSection />
-    </div>
+    <>
+      <div className={'hidden lg:block'}>
+        <WorshipTimeTableWide />
+      </div>
+
+      <div className={'block lg:hidden'}>
+        <WorshipTimeTableMini />
+      </div>
+    </>
   );
 };

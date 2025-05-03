@@ -1,5 +1,5 @@
 export interface WorshipTime {
   name: string;
-  time: string;
+  time: React.ReactNode;
   location: string;
 }

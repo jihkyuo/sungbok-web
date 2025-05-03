@@ -1,4 +1,4 @@
-import { WorshipTable } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTable';
+import { WorshipTable } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTimeTableWide/WorshipTable';
 import { WorshipTimeTableRecord } from '@/domains/home/components/widgets/WorshipTimeTable/model/data';
 
 export const WorshipSection = () => {

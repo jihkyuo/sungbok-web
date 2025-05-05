@@ -1,3 +1,4 @@
+import { DividerLine } from '@/components/features/DividerLine';
 import { WorshipTime } from '@/domains/home/components/widgets/WorshipTimeTable/types/WorshipTime';
 import { WorshipTimeCard } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTimeTableMini/WorshipTimeCard';
 interface Props {
@@ -9,7 +10,7 @@ export const WorshipTimeCardGroup = ({ title, items }: Props) => {
   return (
     <div>
       <h2 className={'text-2xl font-bold'}>{title}</h2>
-      <Divider />
+      <DividerLine className={'my-5'} />
 
       <div className={'flex flex-col gap-6'}>
         {items.map(item => (
@@ -18,8 +19,4 @@ export const WorshipTimeCardGroup = ({ title, items }: Props) => {
       </div>
     </div>
   );
-};
-
-const Divider = () => {
-  return <div className={'my-6 h-[1px] bg-gray-300'} />;
 };

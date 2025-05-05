@@ -21,6 +21,7 @@ import depManager05Img from '@/assets/images/main/department/dep_manager05.jpg';
 import depManager06Img from '@/assets/images/main/department/dep_manager06.jpeg';
 import depManager07Img from '@/assets/images/main/department/dep_manager07.jpg';
 import depManager08Img from '@/assets/images/main/department/dep_manager08.jpg';
+import { DividerLine } from '@/components/features/DividerLine';
 
 export const DepartmentsSection = () => {
   return (
@@ -155,8 +156,4 @@ const Title = ({ children }: PropsWithChildren) => {
       <DividerLine />
     </div>
   );
-};
-
-const DividerLine = () => {
-  return <div className={'mt-4 h-[2px] w-full bg-gradient-to-r from-gray-400 to-transparent'} />;
 };

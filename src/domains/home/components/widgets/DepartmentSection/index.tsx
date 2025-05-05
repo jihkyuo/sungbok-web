@@ -1,4 +1,4 @@
-import { LinkBgCard } from '@/domains/home/components/features/LinkBgCard';
+import { LinkBgCard } from '@/components/features/BgOverlayCard/LinkBgCard';
 import type { PropsWithChildren } from 'react';
 
 // 부서 이미지
@@ -143,7 +143,7 @@ const SectionContainer = ({ children }: PropsWithChildren) => {
 
 const GridSection = ({ children }: PropsWithChildren) => {
   return (
-    <div className={'grid grid-cols-1 gap-10 lg:grid-cols-[repeat(auto-fill,minmax(550px,1fr))]'}>
+    <div className={'grid grid-cols-1 gap-5 sm:gap-10 lg:grid-cols-[repeat(auto-fill,minmax(550px,1fr))]'}>
       {children}
     </div>
   );

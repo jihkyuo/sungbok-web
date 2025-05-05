@@ -1,5 +1,5 @@
 import arrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
-import { Card } from '@/components/features/Card';
+import { BaseCard } from '@/components/features/BgOverlayCard/BaseCard';
 import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -15,10 +15,10 @@ interface Props extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
 
 export const LinkBgCard = ({ imgSrc, hoverImgSrc, title, subtitle, className, ...rest }: Props) => {
   return (
-    <Card
+    <BaseCard
       {...rest}
       className={cn(
-        'min-h-[150px] cursor-pointer transition-all duration-500 hover:translate-y-[-5px] sm:min-h-[250px] md:min-h-[350px]',
+        '3xl:min-h-[350px] min-h-[150px] cursor-pointer rounded-[45px] transition-all duration-500 hover:translate-y-[-5px] sm:min-h-[250px] md:rounded-[45px_0_45px_45px]',
         className
       )}
     >
@@ -59,7 +59,7 @@ export const LinkBgCard = ({ imgSrc, hoverImgSrc, title, subtitle, className, ..
           </div>
         </div>
       </div>
-    </Card>
+    </BaseCard>
   );
 };
 

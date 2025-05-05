@@ -1,5 +1,5 @@
 import AllLiveLogo from '@/assets/icons/allLive-team-logo.png';
-import { Card } from '@/components/features/Card';
+import { BaseCard } from '@/components/features/BgOverlayCard/BaseCard';
 import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
@@ -22,7 +22,7 @@ export const VideoBgCard = ({ videoUrl, onClick, className }: Props) => {
   const videoId = getVideoId(videoUrl);
 
   return (
-    <Card className={cn('relative cursor-pointer', className)} onClick={onClick}>
+    <BaseCard className={cn('relative cursor-pointer', className)} onClick={onClick}>
       <EdgeHoleArea>
         <Image src={AllLiveLogo} alt="AllLiveLogo" width={70} height={70} />
       </EdgeHoleArea>
@@ -41,6 +41,6 @@ export const VideoBgCard = ({ videoUrl, onClick, className }: Props) => {
 
       {/* 비디오 조작 방지 마스크 */}
       <div className="absolute inset-0" />
-    </Card>
+    </BaseCard>
   );
 };

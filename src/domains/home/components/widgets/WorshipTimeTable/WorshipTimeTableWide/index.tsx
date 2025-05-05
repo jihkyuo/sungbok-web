@@ -3,7 +3,7 @@ import { WorshipSection } from '@/domains/home/components/widgets/WorshipTimeTab
 
 export const WorshipTimeTableWide = () => {
   return (
-    <div className="mx-20 my-40 rounded-[45px] border-1 bg-gray-50 px-20 py-30 shadow-lg sm:block lg:flex">
+    <div className="mx-20 my-40 max-w-[1400px] rounded-[45px] border-1 bg-gray-50 px-20 py-30 shadow-lg sm:block lg:flex 2xl:mx-auto">
       <StickyTitle />
       <WorshipSection />
     </div>

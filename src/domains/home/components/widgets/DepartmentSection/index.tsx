@@ -137,7 +137,7 @@ export const DepartmentsSection = () => {
 };
 
 const SectionContainer = ({ children }: PropsWithChildren) => {
-  return <div className={'mx-10 flex flex-col gap-6'}>{children}</div>;
+  return <div className={'mx-5 flex flex-col gap-6 md:mx-10'}>{children}</div>;
 };
 
 const GridSection = ({ children }: PropsWithChildren) => {

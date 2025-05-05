@@ -26,11 +26,11 @@ const info: Info = {
 
 export const Footer = () => {
   return (
-    <footer className="flex h-100 flex-col items-center justify-end gap-10 bg-black px-10 py-3 font-bold whitespace-nowrap text-white">
+    <footer className="flex h-110 flex-col items-center justify-end gap-20 bg-black px-10 py-10 font-bold whitespace-nowrap text-white">
       <div className={'flex flex-col items-center'}>
-        <h3 className={'mb-10 text-5xl'}>성복교회</h3>
+        <h3 className={'mb-10 text-3xl sm:text-5xl'}>성복교회</h3>
 
-        <ul className={'flex flex-wrap justify-center gap-x-10 gap-y-4'}>
+        <ul className={'flex flex-wrap justify-center gap-x-10 gap-y-2 sm:gap-y-4'}>
           {Object.entries(info).map(([key, row]) => (
             <li className={'flex gap-2 text-lg'} key={key}>
               <span>{row.label}</span>

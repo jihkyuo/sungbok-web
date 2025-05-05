@@ -18,7 +18,7 @@ export const LinkBgCard = ({ imgSrc, hoverImgSrc, title, subtitle, className, ..
     <Card
       {...rest}
       className={cn(
-        'min-h-[150px] cursor-pointer transition-all duration-500 hover:translate-y-[-5px] sm:min-h-[350px]',
+        'min-h-[150px] cursor-pointer transition-all duration-500 hover:translate-y-[-5px] sm:min-h-[250px] md:min-h-[350px]',
         className
       )}
     >
@@ -82,7 +82,7 @@ const Subtitle = ({ children }: PropsWithChildren) => {
 const DarkGradientOverlay = () => {
   return (
     <>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-tr from-black/30 opacity-0 transition-all duration-300 group-hover:opacity-100" />
     </>
   );

@@ -26,7 +26,7 @@ const info: Info = {
 
 export const Footer = () => {
   return (
-    <footer className="flex h-100 flex-col items-center justify-between bg-black px-10 pt-30 pb-4 font-bold whitespace-nowrap text-white gap-10">
+    <footer className="flex h-100 flex-col items-center justify-end gap-10 bg-black px-10 py-3 font-bold whitespace-nowrap text-white">
       <div className={'flex flex-col items-center'}>
         <h3 className={'mb-10 text-5xl'}>성복교회</h3>
 

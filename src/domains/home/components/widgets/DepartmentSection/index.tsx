@@ -142,7 +142,9 @@ const SectionContainer = ({ children }: PropsWithChildren) => {
 
 const GridSection = ({ children }: PropsWithChildren) => {
   return (
-    <div className={'grid grid-cols-[repeat(auto-fill,minmax(550px,1fr))] gap-10'}>{children}</div>
+    <div className={'grid grid-cols-1 gap-10 lg:grid-cols-[repeat(auto-fill,minmax(550px,1fr))]'}>
+      {children}
+    </div>
   );
 };
 

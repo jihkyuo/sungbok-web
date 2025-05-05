@@ -18,11 +18,11 @@ export const LinkBgCard = ({ imgSrc, hoverImgSrc, title, subtitle, className, ..
     <Card
       {...rest}
       className={cn(
-        'min-h-[350px] cursor-pointer transition-all duration-500 hover:translate-y-[-5px]',
+        'min-h-[150px] cursor-pointer transition-all duration-500 hover:translate-y-[-5px] sm:min-h-[350px]',
         className
       )}
     >
-      <EdgeHoleArea>
+      <EdgeHoleArea className={'hidden sm:block'}>
         <Button
           className={
             'h-17 w-17 rounded-full transition-all duration-400 group-hover:bg-blue-500 hover:bg-blue-500'
@@ -37,21 +37,21 @@ export const LinkBgCard = ({ imgSrc, hoverImgSrc, title, subtitle, className, ..
         {/* 기본 이미지 레이어 */}
         <div
           style={{ backgroundImage: `url(${imgSrc})` }}
-          className="absolute inset-0 transition-opacity duration-300 bg-center bg-cover group-hover:opacity-0"
+          className="absolute inset-0 bg-cover bg-center transition-opacity duration-300 group-hover:opacity-0"
         />
 
         {/* 호버 이미지 레이어 */}
         {hoverImgSrc && (
           <div
             style={{ backgroundImage: `url(${hoverImgSrc})` }}
-            className="absolute inset-0 z-10 transition-opacity duration-300 bg-center bg-cover opacity-0 group-hover:opacity-100"
+            className="absolute inset-0 z-10 bg-cover bg-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           >
             <DarkGradientOverlay />
           </div>
         )}
 
         {/* 콘텐츠 레이어 */}
-        <div className="relative flex flex-col justify-end h-full p-10 text-white break-keep">
+        <div className="relative flex h-full flex-col justify-end p-5 break-keep text-white sm:p-10">
           <DarkGradientOverlay />
           <div className="relative z-10">
             <Title>{title}</Title>
@@ -65,7 +65,7 @@ export const LinkBgCard = ({ imgSrc, hoverImgSrc, title, subtitle, className, ..
 
 const Title = ({ children }: PropsWithChildren) => {
   return (
-    <h1 className="text-4xl leading-tight font-bold tracking-tight drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)]">
+    <h1 className="text-3xl leading-tight font-bold tracking-tight drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)] sm:text-4xl">
       {children}
     </h1>
   );
@@ -73,7 +73,7 @@ const Title = ({ children }: PropsWithChildren) => {
 
 const Subtitle = ({ children }: PropsWithChildren) => {
   return (
-    <div className="mt-4 text-2xl font-semibold drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)]">
+    <div className="mt-4 text-sm font-semibold drop-shadow-[1px_1px_2px_rgba(0,0,0,0.9)] sm:text-2xl">
       {children}
     </div>
   );
@@ -83,7 +83,7 @@ const DarkGradientOverlay = () => {
   return (
     <>
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-      <div className="absolute inset-0 transition-all duration-300 opacity-0 bg-gradient-to-tr from-black/30 group-hover:opacity-100" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-black/30 opacity-0 transition-all duration-300 group-hover:opacity-100" />
     </>
   );
 };

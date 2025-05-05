@@ -152,7 +152,7 @@ const GridSection = ({ children }: PropsWithChildren) => {
 const Title = ({ children }: PropsWithChildren) => {
   return (
     <div>
-      <h3 className={'text-4xl font-bold'}>{children}</h3>
+      <h3 className={'text-2xl font-bold sm:text-4xl'}>{children}</h3>
       <DividerLine />
     </div>
   );

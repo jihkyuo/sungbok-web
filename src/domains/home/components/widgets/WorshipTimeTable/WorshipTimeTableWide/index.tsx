@@ -1,11 +1,24 @@
-import { StickyTitle } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTimeTableWide/StickyTitle';
+import { Section } from '@/domains/home/components/features/Section';
+import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
 import { WorshipSection } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTimeTableWide/WorshipSection';
+
+import type { PropsWithChildren } from 'react';
 
 export const WorshipTimeTableWide = () => {
   return (
-    <div className="mx-20 my-40 max-w-[1400px] rounded-[45px] border-1 bg-gray-50 px-20 py-30 shadow-lg sm:block lg:flex 2xl:mx-auto">
-      <StickyTitle />
-      <WorshipSection />
+    <Section className={'flex flex-col gap-10 py-20'}>
+      <SectionTitle title="예배시간 안내" subtitle="삶의 예배" />
+      <Card>
+        <WorshipSection />
+      </Card>
+    </Section>
+  );
+};
+
+const Card = ({ children }: PropsWithChildren) => {
+  return (
+    <div className="mx-10 flex-col rounded-[45px] border-1 bg-gray-50 px-20 py-30 shadow-lg">
+      {children}
     </div>
   );
 };

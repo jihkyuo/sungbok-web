@@ -18,7 +18,7 @@ export const LinkBgCard = ({ imgSrc, hoverImgSrc, title, subtitle, className, ..
     <BaseCard
       {...rest}
       className={cn(
-        '3xl:min-h-[350px] min-h-[150px] cursor-pointer rounded-[45px] transition-all duration-500 hover:translate-y-[-5px] sm:min-h-[250px] md:rounded-[45px_0_45px_45px]',
+        '3xl:min-h-[350px] min-h-[200px] cursor-pointer rounded-[45px] transition-all duration-500 hover:translate-y-[-5px] sm:min-h-[350px] md:rounded-[45px_0_45px_45px]',
         className
       )}
     >

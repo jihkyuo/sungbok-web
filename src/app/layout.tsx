@@ -1,8 +1,8 @@
+import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { Footer } from '@/components/layout/Footer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,6 +17,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: '성복교회',
   description: '성복교회 홈페이지',
+  icons: {
+    icon: '/icon.png', // 또는 '/favicon.ico'
+    apple: '/apple-icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <Header />
         {children}
         <Footer />

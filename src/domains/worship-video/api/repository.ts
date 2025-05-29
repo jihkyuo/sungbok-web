@@ -2,7 +2,7 @@ import { google } from 'googleapis';
 
 const youtube = google.youtube({
   version: 'v3',
-  auth: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
+  auth: process.env.YOUTUBE_API_KEY,
 });
 
 // 유튜브 채널 ID 조회 (최초 채널 ID 확인시에만 사용하면 됨)
@@ -18,7 +18,7 @@ export const getYoutubeChannelId = async (username: string) => {
 export const getYoutubePlaylists = async () => {
   const response = await youtube.playlists.list({
     part: ['snippet', 'contentDetails'],
-    channelId: process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID,
+    channelId: process.env.YOUTUBE_CHANNEL_ID,
     maxResults: 50,
   });
   return response.data;

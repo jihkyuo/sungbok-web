@@ -14,12 +14,17 @@ export const getYoutubeChannelId = async (username: string) => {
   ).data;
 };
 
+interface YoutubePlaylistProps {
+  playlistIds?: string[]; // 전체조회(undefined) 특정조회(string[])
+  maxResults?: number; // 최대 결과 수
+}
+
 // 재생목록 리스트
-export const getYoutubePlaylists = async () => {
+export const getYoutubePlaylists = async ({ playlistIds, ...args }: YoutubePlaylistProps = {}) => {
   const response = await youtube.playlists.list({
     part: ['snippet', 'contentDetails'],
-    channelId: process.env.YOUTUBE_CHANNEL_ID,
-    maxResults: 50,
+    ...(playlistIds ? { id: playlistIds } : { channelId: process.env.YOUTUBE_CHANNEL_ID }),
+    ...args,
   });
   return response.data;
 };

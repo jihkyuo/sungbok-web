@@ -7,7 +7,7 @@ interface MenuItemProps extends PropsWithChildren {
 
 const menuItems = [
   { href: '/about', children: '교회소개' },
-  { href: '/worship', children: '예배안내' },
+  { href: '/worship-video', children: '예배' },
   { href: '/next-generation', children: '다음세대' },
   { href: '/news', children: '교회소식' },
   { href: '/documents', children: '자료실' },

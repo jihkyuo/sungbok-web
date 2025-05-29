@@ -2,7 +2,7 @@ import arrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
 import { BaseCard } from '@/components/features/BgOverlayCard/BaseCard';
 import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 import type { HTMLAttributes, PropsWithChildren, ReactNode } from 'react';
 

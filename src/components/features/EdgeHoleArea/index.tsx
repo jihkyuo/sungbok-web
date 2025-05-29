@@ -1,5 +1,5 @@
 import maskSideImg02 from '@/assets/images/bgSide02.png';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 import type { PropsWithChildren } from 'react';
 

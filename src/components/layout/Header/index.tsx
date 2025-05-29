@@ -3,8 +3,8 @@
 import { HomeLogo } from '@/components/layout/Header/HomeLogo';
 import { NavigationMenu } from '@/components/layout/Header/NavigationMenu';
 import { SideMenu } from '@/components/layout/Header/SideMenu';
-import { useIsScrolled } from '@/hooks/useIsScrolled';
-import { cn } from '@/lib/utils';
+import { useIsScrolled } from '@/shared/lib/hooks/useIsScrolled';
+import { cn } from '@/shared/lib/utils';
 
 export const Header = () => {
   const { isScrolled } = useIsScrolled();

@@ -1,12 +1,12 @@
 import {
-  Table as OriginTable,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+    Table as OriginTable,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
+import { cn } from '@/shared/lib/utils';
 
 interface TableOptions {
   className?: string;

@@ -1,8 +1,8 @@
 'use client';
 
-import { HomeLogo } from '@/components/layout/Header/HomeLogo';
-import { NavigationMenu } from '@/components/layout/Header/NavigationMenu';
-import { SideMenu } from '@/components/layout/Header/SideMenu';
+import { HomeLogo } from '@/shared/components/layout/Header/HomeLogo';
+import { NavigationMenu } from '@/shared/components/layout/Header/NavigationMenu';
+import { SideMenu } from '@/shared/components/layout/Header/SideMenu';
 import { useIsScrolled } from '@/shared/lib/hooks/useIsScrolled';
 import { cn } from '@/shared/lib/utils';
 

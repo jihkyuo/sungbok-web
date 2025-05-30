@@ -1,5 +1,5 @@
-import { Footer } from '@/components/layout/Footer';
-import { Header } from '@/components/layout/Header';
+import { Footer } from '@/shared/components/layout/Footer';
+import { Header } from '@/shared/components/layout/Header';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';

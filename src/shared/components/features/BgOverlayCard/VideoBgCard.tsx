@@ -1,6 +1,6 @@
 import AllLiveLogo from '@/assets/icons/allLive-team-logo.png';
-import { BaseCard } from '@/components/features/BgOverlayCard/BaseCard';
-import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
+import { BaseCard } from '@/shared/components/features/BgOverlayCard/BaseCard';
+import { EdgeHoleArea } from '@/shared/components/features/EdgeHoleArea';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 

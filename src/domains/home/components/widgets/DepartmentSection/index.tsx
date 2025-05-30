@@ -1,4 +1,4 @@
-import { LinkBgCard } from '@/components/features/BgOverlayCard/LinkBgCard';
+import { LinkBgCard } from '@/shared/components/features/BgOverlayCard/LinkBgCard';
 import type { PropsWithChildren } from 'react';
 
 // 부서 이미지
@@ -21,9 +21,9 @@ import depManager05Img from '@/assets/images/main/department/dep_manager05.jpg';
 import depManager06Img from '@/assets/images/main/department/dep_manager06.jpeg';
 import depManager07Img from '@/assets/images/main/department/dep_manager07.jpg';
 import depManager08Img from '@/assets/images/main/department/dep_manager08.jpg';
-import { DividerLine } from '@/components/features/DividerLine';
 import { Section } from '@/domains/home/components/features/Section';
 import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
+import { DividerLine } from '@/shared/components/features/DividerLine';
 
 export const DepartmentsSection = () => {
   return (

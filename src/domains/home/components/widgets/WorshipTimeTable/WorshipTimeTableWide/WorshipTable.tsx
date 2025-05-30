@@ -1,6 +1,6 @@
-import type { TableColumn } from '@/components/features/Table';
-import { Table } from '@/components/features/Table';
 import type { WorshipTime } from '@/domains/home/components/widgets/WorshipTimeTable/types/WorshipTime';
+import type { TableColumn } from '@/shared/components/features/Table';
+import { Table } from '@/shared/components/features/Table';
 
 interface Props {
   title: string;

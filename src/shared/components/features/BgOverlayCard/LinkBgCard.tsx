@@ -1,7 +1,7 @@
 import arrowUpRightIcon from '@/assets/icons/arrow-up-right.svg';
-import { BaseCard } from '@/components/features/BgOverlayCard/BaseCard';
-import { EdgeHoleArea } from '@/components/features/EdgeHoleArea';
-import { Button } from '@/components/ui/button';
+import { BaseCard } from '@/shared/components/features/BgOverlayCard/BaseCard';
+import { EdgeHoleArea } from '@/shared/components/features/EdgeHoleArea';
+import { Button } from '@/shared/components/ui/button';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 import type { HTMLAttributes, PropsWithChildren, ReactNode } from 'react';

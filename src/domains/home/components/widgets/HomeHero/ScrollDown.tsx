@@ -1,6 +1,6 @@
 'use client';
 
-import { ScrollDownButton } from '@/components/features/ScrollDownButton';
+import { ScrollDownButton } from '@/shared/components/features/ScrollDownButton';
 
 export const ScrollDown = () => {
   const handleScrollDown = () => {

@@ -1,6 +1,6 @@
-import { DividerLine } from '@/components/features/DividerLine';
 import { WorshipTime } from '@/domains/home/components/widgets/WorshipTimeTable/types/WorshipTime';
 import { WorshipTimeCard } from '@/domains/home/components/widgets/WorshipTimeTable/WorshipTimeTableMini/WorshipTimeCard';
+import { DividerLine } from '@/shared/components/features/DividerLine';
 interface Props {
   title: string;
   items: WorshipTime[];

@@ -1,9 +1,9 @@
 'use client';
 
-import { VideoBgCard } from '@/components/features/BgOverlayCard/VideoBgCard';
 import { Section } from '@/domains/home/components/features/Section';
 import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
 import { GridSection } from '@/domains/home/components/widgets/WorshipVideoSection/GridSection';
+import { VideoBgCard } from '@/shared/components/features/BgOverlayCard/VideoBgCard';
 
 export const WorshipVideoSection = () => {
   return (

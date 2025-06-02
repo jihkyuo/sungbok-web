@@ -66,6 +66,15 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.7
+      '@types/gapi':
+        specifier: ^0.0.47
+        version: 0.0.47
+      '@types/gapi.client.youtube':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@types/gapi.client.youtube-v3':
+        specifier: ^0.0.4
+        version: 0.0.4
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -322,6 +331,12 @@ packages:
     peerDependencies:
       '@tanstack/query-core': '>= 4.0.0'
       '@tanstack/react-query': '>= 4.0.0'
+
+  '@maxim_mazurok/gapi.client.discovery-v1@0.1.20200806':
+    resolution: {integrity: sha512-Wl6UfmZVDdWbY3PUu8E2ULk9RPLjnMqp/iOA4tcK8Ne+U/GmlnWP/e34IaZNGArfl7iXJNOG+/3Rj9L9jQyF9Q==}
+
+  '@maxim_mazurok/gapi.client.youtube-v3@0.0.20250527':
+    resolution: {integrity: sha512-rcl7J0l9Qn3gmDkVrAufXlqYml0tiYPH5hA/d/E2zLZ0rz+tRc97xUZmeAglbkbxdBtPmu+KfiL1RaoSxIMWfA==}
 
   '@napi-rs/wasm-runtime@0.2.10':
     resolution: {integrity: sha512-bCsCyeZEwVErsGmyPNSzwfwFn4OdxBj0mmv6hOFucB/k81Ojdu68RbZdxYsRQUPc9l6SU5F/cG+bXgWs3oUgsQ==}
@@ -715,6 +730,22 @@ packages:
 
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
+
+  '@types/gapi.client.discovery-v1@0.0.4':
+    resolution: {integrity: sha512-uevhRumNE65F5mf2gABLaReOmbFSXONuzFZjNR3dYv6BmkHg+wciubHrfBAsp3554zNo3Dcg6dUAlwMqQfpwjQ==}
+
+  '@types/gapi.client.youtube-v3@0.0.4':
+    resolution: {integrity: sha512-7dcXOiB3O//IzVXMmH0Avjczy0mbOpXfPo4mupXvL2spKXXpwjXiDwU/PEm8weExH3qzP3HxGbZTFKTWS4fo5w==}
+
+  '@types/gapi.client.youtube@3.0.4':
+    resolution: {integrity: sha512-g2beM/Zk63hlK+cMTUVniB6ZW4gquj72OvpPRAHyBHCKFxw8my+3g6PVnpnlFli/86W8ft1XAklF1srcI3yjjg==}
+    deprecated: use @types/gapi.client.youtube-v3 instead; see https://github.com/Maxim-Mazurok/google-api-typings-generator/issues/652 for details
+
+  '@types/gapi.client@1.0.8':
+    resolution: {integrity: sha512-qJQUmmumbYym3Amax0S8CVzuSngcXsC1fJdwRS2zeW5lM63zXkw4wJFP+bG0jzgi0R6EsJKoHnGNVTDbOyG1ng==}
+
+  '@types/gapi@0.0.47':
+    resolution: {integrity: sha512-/ZsLuq6BffMgbKMtZyDZ8vwQvTyKhKQ1G2K6VyWCgtHHhfSSXbk4+4JwImZiTjWNXfI2q1ZStAwFFHSkNoTkHA==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -2480,6 +2511,16 @@ snapshots:
       '@tanstack/query-core': 5.77.2
       '@tanstack/react-query': 5.77.2(react@19.1.0)
 
+  '@maxim_mazurok/gapi.client.discovery-v1@0.1.20200806':
+    dependencies:
+      '@types/gapi.client': 1.0.8
+      '@types/gapi.client.discovery-v1': 0.0.4
+
+  '@maxim_mazurok/gapi.client.youtube-v3@0.0.20250527':
+    dependencies:
+      '@types/gapi.client': 1.0.8
+      '@types/gapi.client.discovery-v1': 0.0.4
+
   '@napi-rs/wasm-runtime@0.2.10':
     dependencies:
       '@emnapi/core': 1.4.3
@@ -2808,6 +2849,22 @@ snapshots:
     optional: true
 
   '@types/estree@1.0.7': {}
+
+  '@types/gapi.client.discovery-v1@0.0.4':
+    dependencies:
+      '@maxim_mazurok/gapi.client.discovery-v1': 0.1.20200806
+
+  '@types/gapi.client.youtube-v3@0.0.4':
+    dependencies:
+      '@maxim_mazurok/gapi.client.youtube-v3': 0.0.20250527
+
+  '@types/gapi.client.youtube@3.0.4':
+    dependencies:
+      '@maxim_mazurok/gapi.client.youtube-v3': 0.0.20250527
+
+  '@types/gapi.client@1.0.8': {}
+
+  '@types/gapi@0.0.47': {}
 
   '@types/json-schema@7.0.15': {}
 

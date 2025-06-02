@@ -1,24 +1,16 @@
-import { getYoutubePlaylists } from '@/domains/worship-video/api/repository';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
+import { lazy, Suspense } from 'react';
 
-export default async function WorshipVideoPage() {
-  const recentPlaylists = await getYoutubePlaylists({
-    maxResults: 5,
-  });
-  console.log(recentPlaylists);
+const PlaylistPagination = lazy(
+  () => import('@/domains/worship-video/components/widgets/PlaylistPagination')
+);
+
+export default function WorshipVideoPage() {
   return (
     <div>
-      <Tabs>
-        <TabsList>
-          <TabsTrigger value="recent">최근 재생목록</TabsTrigger>
-          <TabsTrigger value="all">전체 재생목록</TabsTrigger>
-        </TabsList>
-        <TabsContent value="recent">
-          <div>
-            <h1>최근 재생목록</h1>
-          </div>
-        </TabsContent>
-      </Tabs>
+      <div className={'h-60'} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <PlaylistPagination />
+      </Suspense>
     </div>
   );
 }

@@ -1,8 +1,12 @@
+import type {
+  PlaylistItemsRequestDto,
+  PlaylistRequestDto,
+} from '@/domains/worship-video/api/dto/request.dto';
 import { google } from 'googleapis';
 
 const youtube = google.youtube({
   version: 'v3',
-  auth: process.env.YOUTUBE_API_KEY,
+  auth: process.env.NEXT_PUBLIC_YOUTUBE_API_KEY,
 });
 
 // 유튜브 채널 ID 조회 (최초 채널 ID 확인시에만 사용하면 됨)
@@ -14,28 +18,21 @@ export const getYoutubeChannelId = async (username: string) => {
   ).data;
 };
 
-interface YoutubePlaylistProps {
-  playlistIds?: string[]; // 전체조회(undefined) 특정조회(string[])
-  maxResults?: number; // 최대 결과 수
-}
-
 // 재생목록 리스트
-export const getYoutubePlaylists = async ({ playlistIds, ...args }: YoutubePlaylistProps = {}) => {
+export const getYoutubePlaylists = async ({ id, ...args }: PlaylistRequestDto = {}) => {
   const response = await youtube.playlists.list({
     part: ['snippet', 'contentDetails'],
-    ...(playlistIds ? { id: playlistIds } : { channelId: process.env.YOUTUBE_CHANNEL_ID }),
+    ...(id ? { id } : { channelId: process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID }),
     ...args,
   });
   return response.data;
 };
 
 // 재생목록의 영상 리스트
-export const getPlaylistItems = async (playlistId: string, pageToken?: string) => {
+export const getPlaylistItems = async (args: PlaylistItemsRequestDto) => {
   return await youtube.playlistItems.list({
     part: ['snippet', 'contentDetails'],
-    playlistId: playlistId,
-    maxResults: 50,
-    pageToken,
+    ...args,
   });
 };
 

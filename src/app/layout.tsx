@@ -1,3 +1,4 @@
+import { AppProvider } from '@/app/_provider';
 import { Footer } from '@/shared/components/layout/Footer';
 import { Header } from '@/shared/components/layout/Header';
 import type { Metadata } from 'next';
@@ -34,9 +35,11 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
-        {children}
-        <Footer />
+        <AppProvider>
+          <Header />
+          {children}
+          <Footer />
+        </AppProvider>
       </body>
     </html>
   );

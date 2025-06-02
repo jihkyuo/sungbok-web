@@ -32,6 +32,9 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/gapi": "^0.0.47",
+    "@types/gapi.client.youtube": "^3.0.4",
+    "@types/gapi.client.youtube-v3": "^0.0.4",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20",
     "@types/react": "^19",

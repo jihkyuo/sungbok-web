@@ -1,42 +1,22 @@
 'use client';
 
 import { worshipVideoQueryKeys } from '@/domains/worship-video/api/queryKeys';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/shared/components/ui/pagination';
+import { Pagination } from '@/shared/components/features/Pagination';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 interface Props {
   playlistId: string;
 }
 
 export const Playlist = ({ playlistId }: Props) => {
-  console.log(playlistId);
-  const { data } = useSuspenseQuery(worshipVideoQueryKeys.playlist.byId({ id: [playlistId] }));
+  const limit = 5;
+  const { data } = useSuspenseQuery(
+    worshipVideoQueryKeys.playlist.byId({ id: [playlistId], maxResults: limit })
+  );
   console.log(data);
 
-  return (
-    <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious href="#" />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
-  );
+  const [page, setPage] = useState(1);
+
+  return <Pagination total={100} currentPage={page} pageSize={limit} onChange={setPage} />;
 };

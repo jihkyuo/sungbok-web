@@ -6,5 +6,7 @@ export default async function PlaylistPagination() {
     maxResults: 5,
   });
 
+  console.log('@@@@ playlist', playlist);
+
   return <PlaylistTabs playlist={playlist} />;
 }

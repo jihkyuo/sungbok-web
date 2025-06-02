@@ -10,13 +10,19 @@ interface Props {
 }
 
 export const Playlist = ({ playlistId }: Props) => {
-  const limit = 5;
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
   const { data } = useSuspenseQuery(
-    worshipVideoQueryKeys.playlist.byId({ id: [playlistId], maxResults: limit })
+    worshipVideoQueryKeys.playlist.byId({ playlistId: playlistId, maxResults: pageSize })
   );
   console.log(data);
 
-  const [page, setPage] = useState(1);
-
-  return <Pagination total={100} currentPage={page} pageSize={limit} onChange={setPage} />;
+  return (
+    <Pagination
+      total={data.pageInfo?.totalResults ?? 0}
+      currentPage={page}
+      pageSize={pageSize}
+      onChange={setPage}
+    />
+  );
 };

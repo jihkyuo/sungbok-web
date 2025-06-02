@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 const DEFAULT_PAGE_SIZE = 5;
 
-interface Props {
+export interface PaginationProps {
   total: number;
   currentPage?: number;
   pageSize?: number;
@@ -18,7 +18,7 @@ export const Pagination = ({
   currentPage,
   pageSize = DEFAULT_PAGE_SIZE,
   onChange,
-}: Props) => {
+}: PaginationProps) => {
   const [page, setPage] = useState(currentPage ?? 1);
   const totalPageCount = Math.ceil(total / pageSize);
 

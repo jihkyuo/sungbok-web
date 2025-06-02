@@ -1,6 +1,7 @@
 'use client';
 
 import { worshipVideoQueryKeys } from '@/domains/worship-video/api/queryKeys';
+import { PlaylistGrid } from '@/domains/worship-video/components/feature/Playlist/PlaylistGrid';
 import { Pagination } from '@/shared/components/features/Pagination';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -15,14 +16,17 @@ export const Playlist = ({ playlistId }: Props) => {
   const { data } = useSuspenseQuery(
     worshipVideoQueryKeys.playlist.byId({ playlistId: playlistId, maxResults: pageSize })
   );
-  console.log(data);
+
 
   return (
-    <Pagination
-      total={data.pageInfo?.totalResults ?? 0}
-      currentPage={page}
-      pageSize={pageSize}
-      onChange={setPage}
-    />
+    <div>
+      <PlaylistGrid items={data.items} />
+      <Pagination
+        total={data.pageInfo?.totalResults ?? 0}
+        currentPage={page}
+        pageSize={pageSize}
+        onChange={setPage}
+      />
+    </div>
   );
 };

@@ -1,3 +1,4 @@
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { cn } from '@/shared/lib/utils';
 import type { ReactNode } from 'react';
 
@@ -17,11 +18,18 @@ export const PaginationGrid = ({ items = [], className }: PaginationGridProps) =
   return (
     <div className={cn('grid grid-cols-4 gap-4', className)}>
       {items.map(item => (
-        <div key={item.key}>
-          {item.thumbnail}
-          {item.title}
-          {item.description}
-        </div>
+        <Tooltip key={item.key}>
+          <TooltipTrigger asChild>
+            <div className="flex flex-col gap-2">
+              <div>{item.thumbnail}</div>
+              <div className="text-sm font-medium">{item.title}</div>
+              <div className="text-sm text-gray-500">{item.description}</div>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side={'bottom'} sideOffset={-35}>
+            {item.title}
+          </TooltipContent>
+        </Tooltip>
       ))}
     </div>
   );

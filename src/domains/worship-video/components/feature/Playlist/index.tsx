@@ -31,15 +31,15 @@ export const Playlist = ({ playlistId }: Props) => {
             key: item.id ?? idx,
             thumbnail: (
               <Image
+                className="rounded-lg object-cover"
                 src={item.snippet?.thumbnails?.high?.url ?? ''}
                 alt={item.snippet?.title ?? ''}
-                title={item.snippet?.title ?? ''}
                 width={320}
                 height={180}
                 style={{ width: '100%', height: 'auto' }}
               />
             ),
-            title: item.snippet?.title,
+            title: <div className="line-clamp-1 text-sm font-medium">{item.snippet?.title}</div>,
           })) ?? []
         }
         pagination={{

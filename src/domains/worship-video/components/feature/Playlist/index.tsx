@@ -1,8 +1,7 @@
 'use client';
 
-import { worshipVideoQueryKeys } from '@/domains/worship-video/api/queryKeys';
+import { useYoutubePagination } from '@/domains/worship-video/components/feature/hooks/useYoutubePagination';
 import { PaginationList } from '@/shared/components/features/Pagination/PaginationList';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -19,15 +18,14 @@ interface Props {
 export const Playlist = ({ playlistId }: Props) => {
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const { data } = useSuspenseQuery(
-    worshipVideoQueryKeys.playlist.byId({ playlistId: playlistId, maxResults: pageSize })
-  );
+
+  const { firstData, getPage } = useYoutubePagination({ playlistId, pageSize });
 
   return (
-    <div>
+    <div className={'p-10'}>
       <PaginationList
         items={
-          data.items?.map((item, idx) => ({
+          getPage(page).map((item, idx) => ({
             key: item.id ?? idx,
             thumbnail: (
               <Image
@@ -43,7 +41,7 @@ export const Playlist = ({ playlistId }: Props) => {
           })) ?? []
         }
         pagination={{
-          total: data.pageInfo?.totalResults ?? 0,
+          total: firstData.pageInfo?.totalResults ?? 0,
           currentPage: page,
           pageSize: pageSize,
           onChange: setPage,

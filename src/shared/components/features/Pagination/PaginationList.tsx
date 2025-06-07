@@ -13,8 +13,9 @@ interface PaginationListProps extends PaginationGridProps {
 
 export const PaginationList = ({ pagination, ...props }: PaginationListProps) => {
   return (
-    <div>
+    <div className={'flex flex-col gap-15'}>
       <PaginationGrid {...props} />
+
       <Pagination {...pagination} />
     </div>
   );

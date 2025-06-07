@@ -11,6 +11,7 @@ export interface PaginationProps {
   currentPage?: number;
   pageSize?: number;
   onChange?: (page: number) => void;
+  className?: string;
 }
 
 export const Pagination = ({
@@ -18,6 +19,7 @@ export const Pagination = ({
   currentPage,
   pageSize = DEFAULT_PAGE_SIZE,
   onChange,
+  className,
 }: PaginationProps) => {
   const [page, setPage] = useState(currentPage ?? 1);
   const totalPageCount = Math.ceil(total / pageSize);
@@ -36,7 +38,7 @@ export const Pagination = ({
   };
 
   return (
-    <OriginPagination.Pagination>
+    <OriginPagination.Pagination className={className}>
       <OriginPagination.PaginationContent>
         <OriginPagination.PaginationItem>
           <OriginPagination.PaginationPrevious

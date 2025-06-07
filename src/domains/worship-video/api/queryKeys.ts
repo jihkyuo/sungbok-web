@@ -13,7 +13,7 @@ export const worshipVideoQueryKeys = createQueryKeyStore({
       queryFn: () => getPlaylistApi(args),
     }),
     byId: (args: PlaylistItemsRequestDto) => ({
-      queryKey: [args.playlistId],
+      queryKey: [args.playlistId, args.maxResults, args.pageToken],
       queryFn: () => getPlaylistItemsApi(args),
     }),
   },

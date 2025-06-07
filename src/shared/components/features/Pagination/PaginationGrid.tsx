@@ -16,7 +16,7 @@ export interface PaginationGridProps {
 
 export const PaginationGrid = ({ items = [], className }: PaginationGridProps) => {
   return (
-    <div className={cn('grid grid-cols-4 gap-4', className)}>
+    <div className={cn('grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-4', className)}>
       {items.map(item => (
         <Tooltip key={item.key}>
           <TooltipTrigger asChild>

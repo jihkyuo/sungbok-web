@@ -3,14 +3,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args: 
+        - NEXT_PUBLIC_YOUTUBE_API_KEY=${NEXT_PUBLIC_YOUTUBE_API_KEY}
+        - NEXT_PUBLIC_YOUTUBE_CHANNEL_ID=${NEXT_PUBLIC_YOUTUBE_CHANNEL_ID}
+        - NEXT_PUBLIC_API_URL=${APINEXT_PUBLIC_API_URL_URL}
     container_name: nextjs-sungbok
     environment:
       - TZ=Asia/Seoul
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
-      - NEXT_PUBLIC_YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
-      - NEXT_PUBLIC_YOUTUBE_CHANNEL_ID=${YOUTUBE_CHANNEL_ID}
-      - NEXT_PUBLIC_API_URL=${API_URL}
+      - NEXT_PUBLIC_YOUTUBE_API_KEY=${NEXT_PUBLIC_YOUTUBE_API_KEY}
+      - NEXT_PUBLIC_YOUTUBE_CHANNEL_ID=${NEXT_PUBLIC_YOUTUBE_CHANNEL_ID}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     ports:
       - '3000:3000'
     networks:

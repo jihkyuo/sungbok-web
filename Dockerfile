@@ -1,29 +1,24 @@
-# 기본 이미지 설정
-FROM node:24-alpine as runner
-
-# 작업 디렉토리 설정
+# --- Builder Stage ---
+FROM node:24-alpine AS builder
 WORKDIR /app
-
-# 필요한 환경 변수 설정
-ENV NODE_ENV production
-ENV PNPM_HOME /pnpm
-ENV PATH $PNPM_HOME:$PATH
-
-# pnpm 설치
-RUN apk add --no-cache libc6-compat
 RUN corepack enable && corepack prepare pnpm@latest --activate
-# package.json과 pnpm-lock.yaml 파일 복사
-COPY package.json pnpm-lock.yaml ./
+COPY . .
+RUN pnpm install --frozen-lockfile
+RUN pnpm run build
 
-# 의존성 설치 (production only)
-RUN pnpm install --frozen-lockfile --prod
+# --- Runner Stage (Final Image) ---
+FROM node:24-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
 
-# 빌드된 파일들과 필요한 모든 파일 복사
-COPY public ./public
+# !!! 이 부분이 중요합니다 (standalone 방식) !!!
+# builder 스테이지에서 생성된 standalone 폴더와 public 폴더를 복사합니다.
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
-# 애플리케이션 포트 설정
-ENV HOST 0.0.0.0
+USER node
 EXPOSE 3000
 
-# 애플리케이션 실행
-CMD ["pnpm", "start"]
+# standalone 폴더 내의 server.js를 직접 실행합니다.
+CMD ["node", "server.js"]

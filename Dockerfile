@@ -11,7 +11,7 @@ ENV PATH $PNPM_HOME:$PATH
 
 # pnpm 설치
 RUN apk add --no-cache libc6-compat
-RUN RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@latest --activate
 # package.json과 pnpm-lock.yaml 파일 복사
 COPY package.json pnpm-lock.yaml ./
 

@@ -13,7 +13,7 @@ export const Header = () => {
     <header
       style={{ backdropFilter: isScrolled ? 'blur(4px)' : 'none' }}
       className={cn(
-        'fixed top-0 right-0 left-0 z-50 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent px-30 py-6 text-white transition-all duration-800',
+        'fixed top-0 right-0 left-0 z-50 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent px-4 py-4 md:px-8 md:py-5 lg:px-30 lg:py-6 text-white transition-all duration-800',
         {
           'bg-[rgba(0,0,0,0.4)]': isScrolled,
         }
@@ -21,7 +21,7 @@ export const Header = () => {
     >
       <HomeLogo />
 
-      <div className="flex items-center gap-10">
+      <div className="flex items-center gap-4 md:gap-6 lg:gap-10">
         <NavigationMenu />
         <SideMenu />
       </div>

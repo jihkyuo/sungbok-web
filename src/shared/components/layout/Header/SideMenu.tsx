@@ -5,11 +5,17 @@ import { menuItems } from '@/shared/components/layout/Header/NavigationMenu';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 export const SideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // 클라이언트에서만 마운트되었는지 확인
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 링크 클릭 시 메뉴 닫기
   const handleLinkClick = () => {
@@ -93,7 +99,7 @@ export const SideMenu = () => {
         <Image src={menuWhiteIcon} alt="menu" width={24} height={24} />
       </button>
 
-      {typeof window !== 'undefined' && createPortal(sideMenuContent, document.body)}
+      {mounted && createPortal(sideMenuContent, document.body)}
     </>
   );
 };

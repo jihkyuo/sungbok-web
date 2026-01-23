@@ -1,5 +1,9 @@
+'use client';
+
 import { LinkBgCard } from '@/shared/components/features/BgOverlayCard/LinkBgCard';
 import type { PropsWithChildren } from 'react';
+import { useScrollFadeIn } from '@/shared/lib/hooks/useScrollFadeIn';
+import { cn } from '@/shared/lib/utils';
 
 // 부서 이미지
 import dep01Img from '@/assets/images/main/department/dep01.jpg';
@@ -26,8 +30,16 @@ import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
 import { DividerLine } from '@/shared/components/features/DividerLine';
 
 export const DepartmentsSection = () => {
+  const { ref, isVisible } = useScrollFadeIn({ threshold: 0.1, rootMargin: '-50px' });
+
   return (
-    <Section className={'flex flex-col gap-15 py-30'}>
+    <Section
+      ref={ref}
+      className={cn(
+        'flex flex-col gap-15 py-30 transition-all duration-1000',
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+      )}
+    >
       <SectionTitle title="교육 위원회" subtitle="다음 세대" />
 
       <div className={'mb-20 flex flex-col gap-20'}>

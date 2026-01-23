@@ -1,13 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useScrollFadeIn } from '@/shared/lib/hooks/useScrollFadeIn';
+import { cn } from '@/shared/lib/utils';
 
 export const VisionTitle = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+  const { ref, isVisible } = useScrollFadeIn({ threshold: 0.1, rootMargin: '-50px' });
 
   const visions = [
     '삶에 기쁨과 소망을 주는 교회',
@@ -16,7 +13,10 @@ export const VisionTitle = () => {
   ];
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-[#f9fafb] via-white to-[#f9fafb] py-60 text-center">
+    <div
+      ref={ref}
+      className="relative overflow-hidden bg-gradient-to-b from-[#f9fafb] via-white to-[#f9fafb] py-60 text-center"
+    >
       {/* 배경 장식 요소 */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute left-1/4 top-1/4 h-64 w-64 rounded-full bg-blue-500 blur-3xl" />
@@ -27,11 +27,10 @@ export const VisionTitle = () => {
         {visions.map((vision, index) => (
           <h2
             key={index}
-            className={`mb-6 text-3xl leading-relaxed font-bold tracking-wide text-gray-800 transition-all duration-1000 sm:text-4xl md:text-5xl ${
-              isVisible
-                ? 'translate-y-0 opacity-100'
-                : 'translate-y-10 opacity-0'
-            }`}
+            className={cn(
+              'mb-6 text-3xl leading-relaxed font-bold tracking-wide text-gray-800 transition-all duration-1000 sm:text-4xl md:text-5xl',
+              isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
+            )}
             style={{
               transitionDelay: `${index * 200}ms`,
             }}

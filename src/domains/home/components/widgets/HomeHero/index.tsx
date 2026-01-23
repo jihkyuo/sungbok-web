@@ -17,7 +17,7 @@ export const HomeHero = () => {
       className="relative h-screen w-full bg-cover bg-fixed bg-center"
     >
       <DarkMask />
-      <div className="relative z-10 flex h-full flex-col items-center justify-center">
+      <div className="relative z-10 flex h-full flex-col items-center justify-center pointer-events-none">
         <Title isLoaded={isLoaded} />
         <Subtitle isLoaded={isLoaded} />
       </div>
@@ -32,7 +32,7 @@ interface TitleProps {
 
 const Title = ({ isLoaded }: TitleProps) => {
   return (
-    <div className="px-10 text-center">
+    <div className="px-10 text-center pointer-events-auto">
       <h1
         className={`text-5xl leading-tight font-bold tracking-tight text-white drop-shadow-[2px_2px_8px_rgba(0,0,0,0.8)] transition-all duration-1000 sm:text-6xl md:text-7xl lg:text-8xl ${
           isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
@@ -54,7 +54,7 @@ interface SubtitleProps {
 const Subtitle = ({ isLoaded }: SubtitleProps) => {
   return (
     <p
-      className={`absolute bottom-40 left-1/2 -translate-x-1/2 px-10 text-center text-lg font-medium text-gray-100 drop-shadow-[2px_2px_6px_rgba(0,0,0,0.9)] transition-all delay-300 duration-1000 sm:text-xl md:text-2xl ${
+      className={`absolute bottom-40 left-1/2 -translate-x-1/2 px-10 text-center text-lg font-medium text-gray-100 drop-shadow-[2px_2px_6px_rgba(0,0,0,0.9)] transition-all delay-300 duration-1000 sm:text-xl md:text-2xl pointer-events-auto ${
         isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
       }`}
     >

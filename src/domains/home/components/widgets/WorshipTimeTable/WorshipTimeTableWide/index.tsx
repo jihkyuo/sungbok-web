@@ -6,7 +6,7 @@ import type { PropsWithChildren } from 'react';
 
 export const WorshipTimeTableWide = () => {
   return (
-    <Section className={'flex flex-col gap-10 py-20'}>
+    <Section className={'flex flex-col gap-10'}>
       <SectionTitle title="예배시간 안내" subtitle="삶의 예배" />
       <Card>
         <WorshipSection />
@@ -17,7 +17,7 @@ export const WorshipTimeTableWide = () => {
 
 const Card = ({ children }: PropsWithChildren) => {
   return (
-    <div className="mx-10 flex-col rounded-[45px] border-1 bg-gray-50 px-20 py-30 shadow-lg">
+    <div className="mx-10 flex-col rounded-[45px] border border-gray-200 bg-gradient-to-br from-gray-50 to-white px-20 py-30 shadow-lg transition-shadow duration-300 hover:shadow-xl">
       {children}
     </div>
   );

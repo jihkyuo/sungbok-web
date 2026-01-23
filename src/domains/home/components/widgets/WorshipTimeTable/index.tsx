@@ -3,7 +3,7 @@ import { WorshipTimeTableWide } from '@/domains/home/components/widgets/WorshipT
 
 export const WorshipTimeTable = () => {
   return (
-    <>
+    <div className="py-30">
       <div className={'hidden lg:block'}>
         <WorshipTimeTableWide />
       </div>
@@ -11,6 +11,6 @@ export const WorshipTimeTable = () => {
       <div className={'block lg:hidden'}>
         <WorshipTimeTableMini />
       </div>
-    </>
+    </div>
   );
 };

@@ -27,10 +27,10 @@ import { DividerLine } from '@/shared/components/features/DividerLine';
 
 export const DepartmentsSection = () => {
   return (
-    <Section className={'flex flex-col gap-15 py-20'}>
+    <Section className={'flex flex-col gap-15 py-30'}>
       <SectionTitle title="교육 위원회" subtitle="다음 세대" />
 
-      <div className={'mb-40 flex flex-col gap-20'}>
+      <div className={'mb-20 flex flex-col gap-20'}>
         <SectionContainer>
           <Title>제1 교육 위원회</Title>
           <GridSection>

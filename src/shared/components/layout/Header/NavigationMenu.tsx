@@ -5,7 +5,7 @@ interface MenuItemProps extends PropsWithChildren {
   href: string;
 }
 
-const menuItems = [
+export const menuItems = [
   { href: '/about', children: '교회소개' },
   { href: '/worship-video', children: '예배' },
   { href: '/next-generation', children: '다음세대' },

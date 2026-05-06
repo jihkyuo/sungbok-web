@@ -1,29 +1,36 @@
-'use client';
-
 import { HomeLogo } from '@/shared/components/layout/Header/HomeLogo';
 import { NavigationMenu } from '@/shared/components/layout/Header/NavigationMenu';
 import { SideMenu } from '@/shared/components/layout/Header/SideMenu';
-import { useIsScrolled } from '@/shared/lib/hooks/useIsScrolled';
-import { cn } from '@/shared/lib/utils';
+import { ArrowRight, Search } from 'lucide-react';
+import Link from 'next/link';
 
 export const Header = () => {
-  const { isScrolled } = useIsScrolled();
-
   return (
-    <header
-      style={{ backdropFilter: isScrolled ? 'blur(4px)' : 'none' }}
-      className={cn(
-        'fixed top-0 right-0 left-0 z-50 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent px-4 py-4 md:px-8 md:py-5 lg:px-30 lg:py-6 text-white transition-all duration-800',
-        {
-          'bg-[rgba(0,0,0,0.4)]': isScrolled,
-        }
-      )}
-    >
-      <HomeLogo />
+    <header className="bg-b1-bg border-b-b1-border sticky top-0 right-0 left-0 z-50 border-b">
+      <div className="flex items-center justify-between gap-6 px-5 py-4 md:px-10 md:py-[18px]">
+        <HomeLogo />
 
-      <div className="flex items-center gap-4 md:gap-6 lg:gap-10">
         <NavigationMenu />
-        <SideMenu />
+
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            aria-label="검색"
+            className="text-b1-sub hover:bg-b1-text/[0.04] flex items-center justify-center rounded-md p-2 transition-colors"
+          >
+            <Search size={18} strokeWidth={1.6} />
+          </button>
+
+          <Link
+            href="/about"
+            className="bg-b1-accent text-b1-bg hidden items-center gap-2 rounded-full px-[18px] py-2.5 text-[13px] font-semibold transition-opacity hover:opacity-90 md:inline-flex"
+          >
+            처음 오셨나요?
+            <ArrowRight size={13} strokeWidth={2} />
+          </Link>
+
+          <SideMenu />
+        </div>
       </div>
     </header>
   );

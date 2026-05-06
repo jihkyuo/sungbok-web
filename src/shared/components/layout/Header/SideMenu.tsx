@@ -1,6 +1,6 @@
 'use client';
 
-import menuWhiteIcon from '@/assets/icons/menu-white.svg';
+import menuIcon from '@/assets/icons/menu-black.svg';
 import { menuItems } from '@/shared/components/layout/Header/NavigationMenu';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
@@ -96,7 +96,7 @@ export const SideMenu = () => {
         className="cursor-pointer md:hidden"
         aria-label="메뉴 열기"
       >
-        <Image src={menuWhiteIcon} alt="menu" width={24} height={24} />
+        <Image src={menuIcon} alt="menu" width={22} height={22} />
       </button>
 
       {mounted && createPortal(sideMenuContent, document.body)}

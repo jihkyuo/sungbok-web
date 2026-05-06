@@ -16,7 +16,10 @@ export const menuItems = [
 
 const MenuItem = ({ href, children }: MenuItemProps) => {
   return (
-    <Link href={href} className="text-base md:text-lg lg:text-xl font-bold">
+    <Link
+      href={href}
+      className="text-b1-text hover:bg-b1-text/[0.04] rounded-md px-3.5 py-2.5 text-[14px] font-medium transition-colors"
+    >
       {children}
     </Link>
   );
@@ -24,7 +27,7 @@ const MenuItem = ({ href, children }: MenuItemProps) => {
 
 export const NavigationMenu = () => {
   return (
-    <nav className="hidden md:flex gap-4 lg:gap-8">
+    <nav className="hidden gap-1 md:flex">
       {menuItems.map(item => (
         <MenuItem key={item.href} href={item.href}>
           {item.children}

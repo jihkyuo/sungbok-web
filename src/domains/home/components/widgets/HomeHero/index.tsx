@@ -1,73 +1,77 @@
-'use client';
-
 import bgImgMain01 from '@/assets/images/main/main01.jpg';
-import { ScrollDown } from '@/domains/home/components/widgets/HomeHero/ScrollDown';
-import { useEffect, useState } from 'react';
+import { Reveal } from '@/shared/components/features/Reveal';
+import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export const HomeHero = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
   return (
-    <div
-      style={{ backgroundImage: `url(${bgImgMain01.src})` }}
-      className="relative h-screen w-full bg-cover bg-fixed bg-center"
-    >
-      <DarkMask />
-      <div className="relative z-10 flex h-full flex-col items-center justify-center pointer-events-none">
-        <Title isLoaded={isLoaded} />
-        <Subtitle isLoaded={isLoaded} />
+    <section className="px-5 pt-8 pb-6 md:px-10 md:pt-[72px] md:pb-12">
+      <div className="grid grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-6">
+        <div className="md:col-span-6">
+          <Reveal>
+            <div className="b1-mono text-b1-muted mb-6 text-[11px] tracking-[0.05em]">
+              <span className="text-b1-accent">●</span>&nbsp;&nbsp;환영합니다 · 2026.05
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <h1 className="text-b1-text m-0 text-[44px] leading-[1.08] font-bold tracking-[-0.03em] text-balance md:text-[76px]">
+              처음 오셨나요?
+              <br />
+              <span className="text-b1-muted font-medium">편한 마음으로 오세요.</span>
+            </h1>
+          </Reveal>
+
+          <Reveal delay={160}>
+            <p className="text-b1-sub mt-7 max-w-[480px] text-[16px] leading-[1.75]">
+              성복교회는 한 사람 한 사람을 환대하는 공동체입니다. 어느 예배에든, 어느 자리에서든
+              함께 시작할 수 있습니다.
+            </p>
+          </Reveal>
+
+          <Reveal delay={220}>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/about"
+                className="bg-b1-accent text-b1-bg inline-flex items-center gap-2.5 rounded-full px-6 py-3.5 text-[14px] font-semibold transition-opacity hover:opacity-90"
+              >
+                처음 오신 분 안내
+                <ArrowRight size={14} strokeWidth={2} />
+              </Link>
+              <Link
+                href="/map"
+                className="bg-b1-surface text-b1-text border-b1-border rounded-full border px-6 py-3.5 text-[14px] font-semibold transition-colors hover:bg-b1-bg"
+              >
+                오시는 길
+              </Link>
+            </div>
+          </Reveal>
+        </div>
+
+        <div className="md:col-span-6">
+          <Reveal delay={120}>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl md:aspect-[5/6]">
+              <Image
+                src={bgImgMain01}
+                alt="성복교회 본당"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+              <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-b from-transparent to-black/45 px-[22px] py-5 text-white">
+                <div className="b1-mono text-[10px] tracking-[0.16em] opacity-85">
+                  SUNGBOK · 본당
+                </div>
+                <div className="mt-1 text-[17px] font-semibold tracking-[-0.01em]">
+                  아침 햇빛이 든 예배당
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
       </div>
-      <ScrollDown />
-    </div>
-  );
-};
-
-interface TitleProps {
-  isLoaded: boolean;
-}
-
-const Title = ({ isLoaded }: TitleProps) => {
-  return (
-    <div className="px-10 text-center pointer-events-auto">
-      <h1
-        className={`text-5xl leading-tight font-bold tracking-tight text-white drop-shadow-[2px_2px_8px_rgba(0,0,0,0.8)] transition-all duration-1000 sm:text-6xl md:text-7xl lg:text-8xl ${
-          isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
-        }`}
-      >
-        삶에 기쁨과 <br />
-        <span className="bg-gradient-to-r from-white via-blue-50 to-white bg-clip-text text-transparent">
-          소망을 주는 교회
-        </span>
-      </h1>
-    </div>
-  );
-};
-
-interface SubtitleProps {
-  isLoaded: boolean;
-}
-
-const Subtitle = ({ isLoaded }: SubtitleProps) => {
-  return (
-    <p
-      className={`absolute bottom-40 left-1/2 -translate-x-1/2 px-10 text-center text-lg font-medium text-gray-100 drop-shadow-[2px_2px_6px_rgba(0,0,0,0.9)] transition-all delay-300 duration-1000 sm:text-xl md:text-2xl pointer-events-auto ${
-        isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
-      }`}
-    >
-      성복교회는 대한예수교장로회 합동교단(총신대학교)에 소속되어 있습니다.
-    </p>
-  );
-};
-
-const DarkMask = () => {
-  return (
-    <>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
-    </>
+    </section>
   );
 };

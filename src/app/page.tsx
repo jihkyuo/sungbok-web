@@ -1,17 +1,17 @@
-import { DepartmentsSection } from '@/domains/home/components/widgets/DepartmentSection';
+import { CommunityGallery } from '@/domains/home/components/widgets/CommunityGallery';
 import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
-import { VisionTitle } from '@/domains/home/components/widgets/VisionTitle';
-import { WorshipTimeTable } from '@/domains/home/components/widgets/WorshipTimeTable';
-import { WorshipVideoSection } from '@/domains/home/components/widgets/WorshipVideoSection';
+import { RecentSermons } from '@/domains/home/components/widgets/RecentSermons';
+import { VisitorAndNews } from '@/domains/home/components/widgets/VisitorAndNews';
+import { WorshipTimes } from '@/domains/home/components/widgets/WorshipTimes';
 
 export default function Home() {
   return (
     <>
       <HomeHero />
-      <VisionTitle />
-      <WorshipVideoSection />
-      <WorshipTimeTable />
-      <DepartmentsSection />
+      <WorshipTimes />
+      <RecentSermons />
+      <CommunityGallery />
+      <VisitorAndNews />
     </>
   );
 }

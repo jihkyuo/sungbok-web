@@ -127,6 +127,12 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    /* offset for sticky header when jumping to anchors */
+    scroll-padding-top: 80px;
+  }
+
   * {
     @apply border-border outline-ring/50;
     word-break: keep-all;
@@ -134,6 +140,12 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 }
 
@@ -150,14 +162,15 @@
   letter-spacing: 0;
 }
 
+/* spring-eased card lift with tinted shadow (matches paper text tone) */
 .b1-card-hover {
   transition:
-    transform 0.25s,
-    box-shadow 0.25s;
+    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .b1-card-hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 18px 40px -12px rgba(21, 21, 26, 0.18);
 }
 
 .b1-link {

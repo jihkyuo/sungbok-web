@@ -45,7 +45,7 @@ export const Footer = () => {
             />
             <button
               type="submit"
-              className="border-b1-accent bg-b1-accent text-b1-bg rounded-r-lg border px-4 text-[13px] font-semibold transition-opacity hover:opacity-90"
+              className="border-b1-accent bg-b1-accent text-b1-bg rounded-r-lg border px-4 text-[13px] font-semibold transition-all duration-300 ease-out hover:opacity-90 active:scale-[0.97]"
             >
               구독
             </button>

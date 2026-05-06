@@ -1,6 +1,6 @@
 import bgImgMain01 from '@/assets/images/main/main01.jpg';
 import { Reveal } from '@/shared/components/features/Reveal';
-import { ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -34,17 +34,18 @@ export const HomeHero = () => {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/about"
-                className="bg-b1-accent text-b1-bg inline-flex items-center gap-2.5 rounded-full px-6 py-3.5 text-[14px] font-semibold transition-opacity hover:opacity-90"
+                className="bg-b1-accent text-b1-bg inline-flex items-center gap-2.5 rounded-full px-6 py-3.5 text-[14px] font-semibold transition-all duration-300 ease-out hover:opacity-90 active:scale-[0.97]"
               >
                 처음 오신 분 안내
                 <ArrowRight size={14} strokeWidth={2} />
               </Link>
-              <Link
-                href="/map"
-                className="bg-b1-surface text-b1-text border-b1-border rounded-full border px-6 py-3.5 text-[14px] font-semibold transition-colors hover:bg-b1-bg"
+              <a
+                href="#location"
+                className="bg-b1-surface text-b1-text border-b1-border hover:bg-b1-bg inline-flex items-center gap-2 rounded-full border px-6 py-3.5 text-[14px] font-semibold transition-all duration-300 ease-out active:scale-[0.97]"
               >
                 오시는 길
-              </Link>
+                <ArrowDown size={14} strokeWidth={2} />
+              </a>
             </div>
           </Reveal>
         </div>

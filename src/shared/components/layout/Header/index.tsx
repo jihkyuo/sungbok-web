@@ -23,7 +23,7 @@ export const Header = () => {
 
           <Link
             href="/about"
-            className="bg-b1-accent text-b1-bg hidden items-center gap-2 rounded-full px-[18px] py-2.5 text-[13px] font-semibold transition-opacity hover:opacity-90 md:inline-flex"
+            className="bg-b1-accent text-b1-bg hidden items-center gap-2 rounded-full px-[18px] py-2.5 text-[13px] font-semibold transition-all duration-300 ease-out hover:opacity-90 active:scale-[0.97] md:inline-flex"
           >
             처음 오셨나요?
             <ArrowRight size={13} strokeWidth={2} />

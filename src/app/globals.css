@@ -10,17 +10,18 @@
     'Pretendard Variable', Pretendard, var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
 
-  /* B1 Paper palette */
-  --color-b1-bg: #fafaf7;
+  /* B1 Sky palette — bright, modern, trustworthy */
+  --color-b1-bg: #fafbfd;
   --color-b1-surface: #ffffff;
-  --color-b1-text: #15151a;
-  --color-b1-sub: #42424a;
-  --color-b1-muted: #7a7a82;
-  --color-b1-border: #e7e6e0;
-  --color-b1-accent: #15151a;
-  --color-b1-accent2: #3d5a78;
-  --color-b1-placeholder: #eeeee8;
-  --color-b1-placeholder-tone: #d4d4ce;
+  --color-b1-text: #0f172a;
+  --color-b1-sub: #475569;
+  --color-b1-muted: #94a3b8;
+  --color-b1-border: #e2e8f0;
+  --color-b1-accent: #3b82f6;
+  --color-b1-accent2: #93c5fd;
+  --color-b1-accent-soft: #eff6ff;
+  --color-b1-placeholder: #f1f5f9;
+  --color-b1-placeholder-tone: #cbd5e1;
 
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -170,7 +171,7 @@
 }
 .b1-card-hover:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 40px -12px rgba(21, 21, 26, 0.18);
+  box-shadow: 0 18px 40px -12px rgba(15, 23, 42, 0.18);
 }
 
 .b1-link {

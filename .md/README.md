@@ -9,23 +9,25 @@
 ├── README.md                       # 이 파일 — 문서 인덱스 + 컨벤션
 ├── design/                         # 디자인 시스템 (살아있는 문서)
 │   └── color-palette.md
+├── domains/                        # 도메인별 상세 (살아있는 문서)
+│   └── home.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
-    └── 0001-sky-palette.md
+    ├── 0001-sky-palette.md
+    └── 0002-home-ia-and-tone.md
 ```
 
-향후 도메인이 늘어나면 추가될 카테고리(빈 폴더는 미리 만들지 않음):
+향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
 
 - `architecture/` — 데이터 흐름·라우팅·상태 관리·렌더링 전략
-- `domains/` — 도메인별 상세 (home, worship-video, …)
 
 ## 문서 카테고리
 
 | 폴더 | 성격 | 추가 규칙 |
 |------|------|-----------|
 | `design/` | **살아있는 문서** — 현재 상태만 기술 | 변경 시 기존 파일 직접 업데이트. 변경 이력은 ADR로 분리 |
+| `domains/` | **살아있는 문서** — 도메인별 상세 | 도메인 1개당 파일 1개. 변경 시 기존 파일 업데이트 |
 | `decisions/` | **불변 문서** — 결정 시점의 기록 | 새 결정마다 새 파일 생성. 기존 ADR은 수정하지 않음(폐기 시 상태 필드만 변경) |
 | `architecture/` *(향후)* | 살아있는 문서 | 변경 시 기존 파일 업데이트 |
-| `domains/` *(향후)* | 살아있는 문서 | 도메인 1개당 파일 1개 |
 
 ## 현재 문서 목록
 
@@ -33,9 +35,14 @@
 
 - [color-palette.md](design/color-palette.md) — B1 Sky 팔레트. 컬러 토큰 정의·시각적 위계·Tailwind 사용 예시·접근성
 
+### Domains
+
+- [home.md](domains/home.md) — 홈(`/`) 페이지의 7섹션 IA·섹션별 사양·CTA·모바일 적응·미결 사항
+
 ### Decisions
 
 - [0001-sky-palette.md](decisions/0001-sky-palette.md) — 2026-05-07 — Warm Paper 팔레트에서 Sky Blue 팔레트로 전환한 의사결정 기록
+- [0002-home-ia-and-tone.md](decisions/0002-home-ia-and-tone.md) — 2026-05-07 — 홈 1순위 타깃·카피 톤 원칙·7섹션 IA 결정
 
 ## 컨벤션
 
@@ -87,7 +94,8 @@
 | 코드 변경 | 함께 업데이트할 문서 |
 |-----------|----------------------|
 | [src/app/globals.css](../src/app/globals.css) 의 팔레트 토큰 | [design/color-palette.md](design/color-palette.md) |
-| 도메인 추가/구조 변경 | `domains/<domain>.md` *(향후)* |
+| [src/app/page.tsx](../src/app/page.tsx) 또는 [src/domains/home/](../src/domains/home/) 변경 | [domains/home.md](domains/home.md) |
+| 도메인 추가/구조 변경 | `domains/<domain>.md` |
 | 라우팅·상태 관리·렌더링 전략 변경 | `architecture/*.md` *(향후)* |
 
 이 표는 새 카테고리/문서가 추가될 때마다 함께 갱신.

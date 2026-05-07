@@ -15,7 +15,7 @@ export const WorshipTimes = () => {
   const last = services.length - 1;
 
   return (
-    <section className="px-5 pt-6 pb-14 md:px-10 md:pt-8 md:pb-24">
+    <section id="worship" className="px-5 pt-6 pb-14 md:px-10 md:pt-8 md:pb-24">
       <Reveal>
         <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
           <h2 className="text-b1-text m-0 text-[24px] font-bold tracking-[-0.02em] md:text-[30px]">

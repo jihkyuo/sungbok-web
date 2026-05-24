@@ -35,15 +35,22 @@ export const HomeHero = () => {
     const seg = (x: number, s: number, e: number) => clamp((x - s) / (e - s), 0, 1);
     const smooth = (x: number) => x * x * (3 - 2 * x);
 
-    // 닫힘 배경: 흰 위로 블루 글로우 두 개가 천천히 일렁임
+    // 닫힘 배경: 블루 글로우 세 개가 서로 다른 모서리에서 시작해 다른 축·방향·속도로 일렁임
     const heroBg = (t: number) => {
-      const x1 = 50 + 22 * Math.sin(t * 0.00017);
-      const y1 = 42 + 18 * Math.sin(t * 0.00012 + 1.3);
-      const x2 = 46 + 26 * Math.sin(t * 0.00011 + 2.1);
-      const y2 = 58 + 20 * Math.sin(t * 0.00015 + 0.5);
+      // glow1 — 좌상에서 주로 가로(좌↔우)로 쓸림
+      const x1 = 28 + 32 * Math.sin(t * 0.00016);
+      const y1 = 30 + 12 * Math.sin(t * 0.00010 + 1.0);
+      // glow2 — 우하에서 주로 세로(상↔하)로 쓸림
+      const x2 = 74 + 14 * Math.sin(t * 0.00009 + 2.0);
+      const y2 = 66 + 26 * Math.sin(t * 0.00013 + 0.4);
+      // glow3 — 좌하 ↔ 우상 대각선으로 이동(가장 느림)
+      const p3 = Math.sin(t * 0.00007 + 4.0);
+      const x3 = 42 + 32 * p3;
+      const y3 = 64 - 28 * p3;
       return (
         `radial-gradient(44% 50% at ${x1.toFixed(1)}% ${y1.toFixed(1)}%, rgba(37,99,235,0.20) 0%, rgba(37,99,235,0.07) 42%, transparent 70%),` +
-        `radial-gradient(40% 46% at ${x2.toFixed(1)}% ${y2.toFixed(1)}%, rgba(91,127,224,0.16) 0%, rgba(91,127,224,0.05) 45%, transparent 72%)`
+        `radial-gradient(40% 46% at ${x2.toFixed(1)}% ${y2.toFixed(1)}%, rgba(91,127,224,0.16) 0%, rgba(91,127,224,0.05) 45%, transparent 72%),` +
+        `radial-gradient(38% 44% at ${x3.toFixed(1)}% ${y3.toFixed(1)}%, rgba(120,170,255,0.16) 0%, rgba(120,170,255,0.05) 46%, transparent 72%)`
       );
     };
 

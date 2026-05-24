@@ -1,19 +1,10 @@
-import { HERO_WORSHIP_TIMES } from '@/domains/home/data/worshipTimes';
+import { WORSHIP_GROUPS } from '@/domains/home/data/worshipTimes';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { cn } from '@/shared/lib/utils';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
-const periodLabel = (time: string) =>
-  time.includes('오전') ? 'AM' : time.includes('오후') ? 'PM' : '';
-
-const stripPeriod = (time: string) =>
-  time.replace('오전 ', '').replace('오후 ', '').replace('저녁 ', '');
-
 export const WorshipTimes = () => {
-  const services = HERO_WORSHIP_TIMES;
-  const last = services.length - 1;
-
   return (
     <section id="worship" className="px-5 pt-6 pb-14 md:px-10 md:pt-8 md:pb-24">
       <Reveal>
@@ -31,37 +22,45 @@ export const WorshipTimes = () => {
         </div>
       </Reveal>
 
-      <div className="bg-b1-surface border-b1-border grid grid-cols-2 overflow-hidden rounded-2xl border md:grid-cols-4">
-        {services.map((service, i) => {
-          const isMobileBottomRow = i >= services.length - 2;
-          const isMobileLeftCol = i % 2 === 0;
-
-          return (
-            <Reveal
-              key={service.name}
-              delay={i * 60}
-              className={cn(
-                'p-5 md:px-[18px] md:py-7',
-                // mobile dividers
-                isMobileLeftCol && 'border-b1-border border-r md:border-r-0',
-                !isMobileBottomRow && 'border-b1-border border-b md:border-b-0',
-                // desktop dividers (vertical between cells)
-                i !== last && 'md:border-b1-border md:border-r'
-              )}
-            >
-              <div className="b1-mono text-b1-muted mb-2.5 text-[10px] tracking-[0.08em]">
-                {String(i + 1).padStart(2, '0')} · {service.place}
-              </div>
-              <div className="text-b1-sub mb-1.5 text-[14px] font-medium">{service.name}</div>
-              <div className="b1-mono text-b1-accent text-[22px] font-bold tracking-[-0.01em]">
-                {stripPeriod(service.time)}
-              </div>
-              <div className="b1-mono text-b1-muted text-[10px] tracking-[0.08em]">
-                {periodLabel(service.time)}
-              </div>
+      <div className="bg-b1-surface border-b1-border overflow-hidden rounded-2xl border">
+        {WORSHIP_GROUPS.map((group, gi) => (
+          <div key={group.label} className={cn(gi !== 0 && 'border-b1-border border-t')}>
+            <Reveal className="bg-b1-bg border-b1-border border-b px-5 py-2.5">
+              <h3 className="b1-mono text-b1-sub m-0 text-[11px] font-semibold tracking-[0.08em]">
+                {group.label}
+              </h3>
             </Reveal>
-          );
-        })}
+
+            <ul className="m-0 list-none p-0">
+              {group.services.map((service, i) => (
+                <Reveal
+                  as="li"
+                  key={service.name}
+                  delay={i * 35}
+                  className={cn(
+                    'grid grid-cols-[78px_1fr_auto] items-center gap-3 px-5 py-3 md:grid-cols-[96px_1fr_auto] md:py-3.5',
+                    i !== group.services.length - 1 && 'border-b1-border border-b'
+                  )}
+                >
+                  <span className="b1-mono text-b1-accent text-[13px] font-bold tracking-[-0.01em] md:text-[14px]">
+                    {service.time}
+                  </span>
+                  <span className="text-b1-text text-[14px] font-medium">
+                    {service.name}
+                    {service.note && (
+                      <span className="text-b1-muted ml-1.5 text-[11px] font-normal">
+                        {service.note}
+                      </span>
+                    )}
+                  </span>
+                  <span className="b1-mono text-b1-muted text-right text-[11px] tracking-[0.02em]">
+                    {service.place}
+                  </span>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </section>
   );

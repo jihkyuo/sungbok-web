@@ -238,39 +238,20 @@
   animation: b1-pulse 2.5s ease-in-out infinite;
 }
 
-/* HomeHero — 메인 카피의 강조 단어 (형광펜 underline) */
-.b1-hero-highlight {
-  position: relative;
-  isolation: isolate;
-}
-.b1-hero-highlight::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 6%;
-  height: 14%;
-  background: var(--color-b1-accent);
-  opacity: 0.18;
-  z-index: -1;
-  border-radius: 2px;
-}
-
 /* ─────────────────────────────────────────────────────────────
- * HomeHero v2 (sketch 12: Stable Bleed + Text)
+ * HomeHero v5 (고정 전경 + 차오르는 엇갈림 섹션)
  * ───────────────────────────────────────────────────────────── */
 
-/* Ken Burns 미세 줌 — 활성 사진 9초간 천천히 확대 */
-@keyframes b1-hero-kenburns {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.04);
-  }
-}
-.b1-hero-kenburns {
-  animation: b1-hero-kenburns 9s ease-out forwards;
+/* 차오르는 콘텐츠(예배·담임목사) 배경 — 따뜻함→차가움 세로 그라데이션 */
+.b1-lead-gradient {
+  background: linear-gradient(
+    180deg,
+    #f3e3cc 0%,
+    #efd9bf 26%,
+    #d7d9e0 56%,
+    #cad7ef 80%,
+    #bcccea 100%
+  );
 }
 
 /* 스크롤 큐 — 액센트 점이 아래로 흘러내림 */
@@ -285,24 +266,4 @@
 .b1-hero-scroll-drop {
   background: linear-gradient(to bottom, transparent, var(--color-b1-accent));
   animation: b1-hero-scroll-drop 1.8s ease-in-out infinite;
-}
-
-/* 미확보 사진 자리표시자 — 3종
-   진짜 사진 확보되면 heroStages.ts 에서 image 임포트만 바꾸면 됨 */
-.b1-hero-ph-interior {
-  background:
-    radial-gradient(ellipse at 30% 30%, rgba(255, 220, 150, 0.55), transparent 55%),
-    radial-gradient(ellipse at 70% 60%, rgba(200, 220, 240, 0.4), transparent 55%),
-    linear-gradient(135deg, #d4a574 0%, #6e4a16 100%);
-}
-.b1-hero-ph-worship {
-  background:
-    radial-gradient(ellipse at 50% 30%, rgba(180, 200, 230, 0.55), transparent 50%),
-    radial-gradient(ellipse at 50% 80%, rgba(255, 200, 120, 0.3), transparent 60%),
-    linear-gradient(180deg, #1e3a5f 0%, #0a1929 100%);
-}
-.b1-hero-ph-pastor {
-  background:
-    radial-gradient(ellipse at 50% 35%, rgba(240, 220, 195, 0.6), transparent 55%),
-    linear-gradient(135deg, #6b7d96 0%, #3a4960 100%);
 }

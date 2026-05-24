@@ -11,6 +11,8 @@
 │   └── color-palette.md
 ├── domains/                        # 도메인별 상세 (살아있는 문서)
 │   └── home.md
+├── workflow/                       # 작업 방식·도구 (살아있는 문서)
+│   └── prototype-preview.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
@@ -27,6 +29,7 @@
 |------|------|-----------|
 | `design/` | **살아있는 문서** — 현재 상태만 기술 | 변경 시 기존 파일 직접 업데이트. 변경 이력은 ADR로 분리 |
 | `domains/` | **살아있는 문서** — 도메인별 상세 | 도메인 1개당 파일 1개. 변경 시 기존 파일 업데이트 |
+| `workflow/` | **살아있는 문서** — 작업 방식·도구 | 방식 변경 시 기존 파일 업데이트 |
 | `decisions/` | **불변 문서** — 결정 시점의 기록 | 새 결정마다 새 파일 생성. 기존 ADR은 수정하지 않음(폐기 시 상태 필드만 변경) |
 | `architecture/` *(향후)* | 살아있는 문서 | 변경 시 기존 파일 업데이트 |
 
@@ -39,6 +42,10 @@
 ### Domains
 
 - [home.md](domains/home.md) — 홈(`/`) 페이지의 7섹션 IA·섹션별 사양·CTA·모바일 적응·미결 사항
+
+### Workflow
+
+- [prototype-preview.md](workflow/prototype-preview.md) — 스크롤·모션 동작을 확정 전 브라우저에서 굴려보는 프로토타입 방식(로컬 HTTP 서버)
 
 ### Decisions
 

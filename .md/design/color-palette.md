@@ -40,6 +40,7 @@ CSS 변수 정의 위치: [src/app/globals.css](../../src/app/globals.css) 의 `
 | `--color-b1-accent` | `#2563EB` | **메인 악센트.** CTA 버튼, 링크, 강조 도트, 큰 숫자, 아이콘, 뱃지 | ~5.2:1 (AA) |
 | `--color-b1-accent2` | `#5B7FE0` | 보조 악센트. 미디엄 인디고로 메인↔중성 사이 톤 다리(bridge) 역할 | ~3.7:1 (AA Large) |
 | `--color-b1-accent-soft` | `#E8F0FE` | 소프트 틴트 배경. 카드 강조·선택 상태·정보 영역 배경 | — |
+| `--color-b1-sunday` | `#DC2626` | 주일(주일예배) 강조 포인트. '주일' 워드마크·도트에만 사용 | ~4.5:1 (AA) |
 
 ### 플레이스홀더 (Placeholder)
 

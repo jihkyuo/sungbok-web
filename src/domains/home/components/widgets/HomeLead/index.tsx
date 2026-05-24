@@ -73,7 +73,7 @@ export const HomeLead = () => {
       style={{ background: INITIAL_BG }}
     >
       {/* 예배 · 표어 — 사진 좌 / 문구 우 */}
-      <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
+      <section className="flex min-h-screen items-center px-[6vw] py-[9vh] [scroll-snap-align:start]">
         <div className="mx-auto flex w-full max-w-[1320px] flex-row-reverse items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
             <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#ffd9a8] uppercase">
@@ -104,7 +104,7 @@ export const HomeLead = () => {
       </section>
 
       {/* 담임목사 — 문구 좌 / 사진 우 */}
-      <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
+      <section className="flex min-h-screen items-center px-[6vw] py-[9vh] [scroll-snap-align:start]">
         <div className="mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
             <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#ffd9a8] uppercase">

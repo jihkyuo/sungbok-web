@@ -1,6 +1,6 @@
-import { WORSHIP_GROUPS } from '@/domains/home/data/worshipTimes';
+import { WorshipTimesDesktop } from '@/domains/home/components/widgets/WorshipTimes/desktop';
+import { WorshipTimesMobile } from '@/domains/home/components/widgets/WorshipTimes/mobile';
 import { Reveal } from '@/shared/components/features/Reveal';
-import { cn } from '@/shared/lib/utils';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -22,45 +22,12 @@ export const WorshipTimes = () => {
         </div>
       </Reveal>
 
-      <div className="bg-b1-surface border-b1-border overflow-hidden rounded-2xl border">
-        {WORSHIP_GROUPS.map((group, gi) => (
-          <div key={group.label} className={cn(gi !== 0 && 'border-b1-border border-t')}>
-            <Reveal className="bg-b1-bg border-b1-border border-b px-5 py-2.5">
-              <h3 className="b1-mono text-b1-sub m-0 text-[11px] font-semibold tracking-[0.08em]">
-                {group.label}
-              </h3>
-            </Reveal>
-
-            <ul className="m-0 list-none p-0">
-              {group.services.map((service, i) => (
-                <Reveal
-                  as="li"
-                  key={service.name}
-                  delay={i * 35}
-                  className={cn(
-                    'grid grid-cols-[78px_1fr_auto] items-center gap-3 px-5 py-3 md:grid-cols-[96px_1fr_auto] md:py-3.5',
-                    i !== group.services.length - 1 && 'border-b1-border border-b'
-                  )}
-                >
-                  <span className="b1-mono text-b1-accent text-[13px] font-bold tracking-[-0.01em] md:text-[14px]">
-                    {service.time}
-                  </span>
-                  <span className="text-b1-text text-[14px] font-medium">
-                    {service.name}
-                    {service.note && (
-                      <span className="text-b1-muted ml-1.5 text-[11px] font-normal">
-                        {service.note}
-                      </span>
-                    )}
-                  </span>
-                  <span className="b1-mono text-b1-muted text-right text-[11px] tracking-[0.02em]">
-                    {service.place}
-                  </span>
-                </Reveal>
-              ))}
-            </ul>
-          </div>
-        ))}
+      {/* 모바일: 그룹 리스트 / 데스크톱: T3 정류장 타임라인 (별도 디자인) */}
+      <div className="md:hidden">
+        <WorshipTimesMobile />
+      </div>
+      <div className="hidden md:block">
+        <WorshipTimesDesktop />
       </div>
     </section>
   );

@@ -64,12 +64,7 @@ export const DockNav = () => {
   }, [shown, moveTo]);
 
   return (
-    <header
-      className={cn(
-        'fixed inset-x-0 z-50 flex justify-center px-4 transition-[top] duration-300',
-        scrolled ? 'top-3' : 'top-[18px]'
-      )}
-    >
+    <header className="fixed inset-x-0 top-[18px] z-50 flex justify-center px-4">
       <div
         className={cn(
           'pointer-events-auto flex items-center gap-1 rounded-full border py-2 pr-2 pl-[18px] backdrop-blur-lg backdrop-saturate-150 transition-all duration-300',
@@ -125,7 +120,7 @@ export const DockNav = () => {
                         : 'pointer-events-none -translate-y-1 opacity-0'
                     )}
                   >
-                    <div className="w-[200px] rounded-2xl border border-white/70 bg-white/[0.82] p-2 shadow-[0_20px_44px_-16px_rgba(15,23,42,0.26)] backdrop-blur-lg backdrop-saturate-150">
+                    <div className="border-b1-border w-[200px] rounded-2xl border bg-white/95 p-2 shadow-[0_24px_48px_-16px_rgba(15,23,42,0.30)] backdrop-blur-xl backdrop-saturate-150">
                       {subs.map((s) => (
                         <Link
                           key={s}

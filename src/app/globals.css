@@ -20,6 +20,7 @@
   --color-b1-accent: #2563eb;
   --color-b1-accent2: #5b7fe0;
   --color-b1-accent-soft: #e8f0fe;
+  --color-b1-sunday: #dc2626; /* 주일 강조 포인트 (워드마크·도트 전용) */
   --color-b1-placeholder: #ecf0f7;
   --color-b1-placeholder-tone: #c2cddc;
 
@@ -132,6 +133,8 @@
     scroll-behavior: smooth;
     /* offset for sticky header when jumping to anchors */
     scroll-padding-top: 80px;
+    /* 비차단 스크롤 보정 — 히어로 휴지/예배/담임 지점에서만 부드럽게 스냅(빠른 스크롤은 통과) */
+    scroll-snap-type: y proximity;
   }
 
   * {

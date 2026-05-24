@@ -13,7 +13,8 @@
 │   └── home.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
-    └── 0002-home-ia-and-tone.md
+    ├── 0002-home-ia-and-tone.md
+    └── 0003-hero-v2-bleed-blur-kenburns.md
 ```
 
 향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
@@ -43,6 +44,7 @@
 
 - [0001-sky-palette.md](decisions/0001-sky-palette.md) — 2026-05-07 — Warm Paper 팔레트에서 Sky Blue 팔레트로 전환한 의사결정 기록
 - [0002-home-ia-and-tone.md](decisions/0002-home-ia-and-tone.md) — 2026-05-07 — 홈 1순위 타깃·카피 톤 원칙·7섹션 IA 결정
+- [0003-hero-v2-bleed-blur-kenburns.md](decisions/0003-hero-v2-bleed-blur-kenburns.md) — 2026-05-24 — 히어로를 사진 4단 Bleed + Blur 페이드 + Ken Burns(sketch 12)로 확정, ADR 0002 미결 종결
 
 ## 컨벤션
 

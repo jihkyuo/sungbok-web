@@ -121,30 +121,34 @@ export const HomeHero = () => {
           ))}
         </div>
 
-        {/* 좌측 텍스트 — 위치 고정, 4단 blur 페이드 */}
+        {/* 좌측 텍스트 + CTA — 위치 고정, 4단 blur 페이드 */}
         <div className="relative z-[3] mx-auto flex h-full w-full max-w-[1440px] items-center px-5 md:px-10">
-          <div className="relative min-h-[380px] w-full md:w-[46%]">
-            {stages.map((s, i) => (
-              <CopyBlock key={s.id} stage={s} active={i === activeStage} />
-            ))}
-          </div>
-        </div>
+          <div className="w-full md:w-[46%]">
+            {/* 카피 4단을 같은 grid 셀에 겹쳐 쌓아 높이를 가장 긴 단계 기준으로 고정.
+                덕분에 아래 CTA가 텍스트 바로 밑에 붙으면서도 단계 전환 때 움직이지 않음 */}
+            <div className="grid items-start">
+              {stages.map((s, i) => (
+                <CopyBlock key={s.id} stage={s} active={i === activeStage} />
+              ))}
+            </div>
 
-        {/* CTA — 위치 완전 고정 */}
-        <div className="absolute bottom-[72px] left-5 z-[4] flex flex-wrap items-center gap-3 md:left-10">
-          <Link
-            href="#worship"
-            className="bg-b1-accent text-b1-bg inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-[15px] font-bold shadow-[0_14px_30px_-10px_rgba(37,99,235,0.5)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:opacity-95 active:scale-[0.97]"
-          >
-            이번 주 예배 시간
-            <ArrowRight size={14} strokeWidth={2.5} />
-          </Link>
-          <Link
-            href="#location"
-            className="text-b1-text hover:border-b-b1-text inline-flex items-center gap-2 border-b-2 border-transparent px-2 py-4 text-[14px] font-semibold transition-colors"
-          >
-            오시는 길
-          </Link>
+            {/* CTA — 텍스트 바로 아래, 위치 고정 */}
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="#worship"
+                className="bg-b1-accent text-b1-bg inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-[15px] font-bold shadow-[0_14px_30px_-10px_rgba(37,99,235,0.5)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:opacity-95 active:scale-[0.97]"
+              >
+                이번 주 예배 시간
+                <ArrowRight size={14} strokeWidth={2.5} />
+              </Link>
+              <Link
+                href="#location"
+                className="text-b1-text hover:border-b-b1-text inline-flex items-center gap-2 border-b-2 border-transparent px-2 py-4 text-[14px] font-semibold transition-colors"
+              >
+                오시는 길
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* 스크롤 큐 */}
@@ -218,7 +222,7 @@ function PhotoLayer({
 function CopyBlock({ stage, active }: { stage: (typeof HERO_STAGES)[number]; active: boolean }) {
   return (
     <div
-      className={`pointer-events-none absolute inset-x-0 top-0 transition-[opacity,filter,transform] duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+      className={`pointer-events-none transition-[opacity,filter,transform] duration-600 ease-[cubic-bezier(0.4,0,0.2,1)] [grid-area:1/1] ${
         active
           ? 'pointer-events-auto scale-100 opacity-100 [filter:blur(0px)]'
           : 'scale-[1.02] opacity-0 [filter:blur(10px)]'

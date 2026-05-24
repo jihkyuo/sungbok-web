@@ -13,13 +13,9 @@ import { cn } from '@/shared/lib/utils';
 const cols = { gridTemplateColumns: `repeat(${SUNDAY_TIMES.length}, minmax(0, 1fr))` };
 
 const SundayHeader = () => (
-  <div className="flex items-baseline gap-2.5">
-    <span className="bg-b1-sunday size-2.5 self-center rounded-full" />
-    <h3 className="m-0 text-[26px] font-bold tracking-[-0.01em]">
-      <span className="text-b1-sunday">주일</span>
-      <span className="text-b1-text">예배</span>
-    </h3>
-    <span className="text-b1-sub text-[14px]">· 예루살렘성전 3F</span>
+  <div className="flex items-center gap-3">
+    <span className="bg-b1-sunday h-8 w-[5px] rounded-full" />
+    <h3 className="text-b1-sunday m-0 text-[32px] font-bold tracking-[-0.01em]">주일</h3>
   </div>
 );
 
@@ -51,7 +47,10 @@ const WeekdayStrip = () => (
   <div className="bg-b1-border border-b1-border grid grid-cols-3 gap-px overflow-hidden rounded-2xl border">
     {WEEKDAY_SECTIONS.map((sec) => (
       <div key={sec.day} className="bg-b1-surface px-7 py-6">
-        <h4 className="text-b1-text m-0 mb-4 text-[19px] font-bold">{sec.day}</h4>
+        <div className="mb-4 flex items-center gap-2.5">
+          <span className="bg-b1-accent h-5 w-[4px] rounded-full" />
+          <h4 className="text-b1-text m-0 text-[19px] font-bold">{sec.day}</h4>
+        </div>
         <ul className="m-0 flex list-none flex-col gap-3.5 p-0">
           {sec.services.map((s) => (
             <li key={s.name} className="flex items-baseline gap-3">

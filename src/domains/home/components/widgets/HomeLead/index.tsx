@@ -1,10 +1,12 @@
 /**
  * HomeLead — v8. 전경 히어로 다음, 위로 차오르는 두 섹션(예배·담임목사).
  *
- * 배경은 따뜻한 글로우가 스크롤에 따라 좌상(예배 사진)→우하(담임 사진)으로 대각선
- * 이동하고, 베이스가 앰버(예배) → 차분한 네이비(담임)로 전환한다(루트 1장에 깔린 그라데이션).
- * 예배 섹션은 그 위에 문구 전용 크림 워시(.b1-worship-wash)를 덮어 사진(앰버)과 대비를 키우고
- * 검은 텍스트로 가독성을 준다(밝은 키). 담임 섹션은 네이비 위 흰 텍스트(강한 대비).
+ * 배경은 루트 한 장에 깔린 전면(full-bleed) 그라데이션이다(섹션 오버레이 없음 → 경계선 없음).
+ * 거의 수평이라 세로 위치와 무관하게 색이 일정하고, 스크롤(sp 0→1)에 따라 좌/우 스톱이 각각
+ * 보간되며 예배(앰버, 문구 쪽 밝음)→담임(네이비)로 매끄럽게 어두워진다. 좌우 반전 레이아웃은
+ * 스톱 배정으로 흡수(예배 사진 좌·문구 우 / 담임 문구 좌·사진 우; 모바일은 세로 스택).
+ * 그 위로 따뜻한 강조 글로우가 좌상(예배 사진)→우하(담임 사진)으로 이동한다.
+ * 담임 섹션은 네이비 위 흰 텍스트(강한 대비), 예배는 밝은 쪽 위 검은 텍스트.
  * 고정된 HomeHero 위로 차고 올라와 덮는다(page.tsx 의 불투명 래퍼가 스택 보장).
  *
  * 표어/담임목사 카피는 placeholder — 사무국 검수 필요.
@@ -17,14 +19,14 @@ import { useEffect, useRef } from 'react';
 import pastorImg from '@/assets/images/main/pastor.jpg';
 import worshipImg from '@/assets/images/main/worship.jpg';
 
-// 예배(밝은 앰버) → 담임목사(네이비). 좌상단 A, 우하단 B.
-const A0 = [222, 146, 72];
-const A1 = [40, 52, 100];
-const B0 = [104, 52, 22];
-const B1 = [14, 20, 46];
+// 예배(앰버) → 담임목사(네이비). 전면 수평 그라데이션의 양 끝 스톱을 각각 보간한다.
+const AMBER = [222, 146, 72]; // 예배 사진 쪽
+const CREAM = [243, 210, 164]; // 예배 문구 쪽 — 살짝 더 밝은 라이트 앰버
+const NAVY = [40, 52, 100]; // 담임 문구 쪽 (흰 텍스트 가독)
+const DKNAVY = [14, 20, 46]; // 담임 사진 쪽 (가장 어두움)
 const INITIAL_BG =
   'radial-gradient(54% 60% at 26.0% 38.0%, rgba(240,162,82,0.95) 0%, rgba(236,150,68,0.42) 40%, rgba(236,150,68,0) 70%),' +
-  'linear-gradient(120deg, rgb(222,146,72) 0%, rgb(104,52,22) 100%)';
+  'linear-gradient(94deg, rgb(222,146,72) 0%, rgb(243,210,164) 100%)';
 
 export const HomeLead = () => {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -35,10 +37,16 @@ export const HomeLead = () => {
     const mix = (c1: number[], c2: number[], t: number) =>
       `rgb(${Math.round(lerp(c1[0], c2[0], t))},${Math.round(lerp(c1[1], c2[1], t))},${Math.round(lerp(c1[2], c2[2], t))})`;
     const leadBg = (sp: number) => {
+      // 무빙 강조 글로우 — 좌상(예배 사진)→우하(담임 사진)으로 이동.
       const gx = 26 + sp * 48;
-      const gy = 38 + sp * 42; // 좌상→우하 대각선
+      const gy = 38 + sp * 42;
       const glow = `radial-gradient(54% 60% at ${gx.toFixed(1)}% ${gy.toFixed(1)}%, rgba(240,162,82,0.95) 0%, rgba(236,150,68,0.42) 40%, rgba(236,150,68,0) 70%)`;
-      const base = `linear-gradient(120deg, ${mix(A0, A1, sp)} 0%, ${mix(B0, B1, sp)} 100%)`;
+      // 전면 그라데이션 — 거의 수평이라 세로 위치와 무관하게 "문구 쪽이 밝다"가 유지된다.
+      // 좌우 반전 레이아웃을 스톱 배정으로 흡수: 데스크톱은 가로, 모바일(세로 스택)은 세로.
+      const base =
+        window.innerWidth < 860
+          ? `linear-gradient(180deg, ${mix(CREAM, NAVY, sp)} 0%, ${mix(AMBER, DKNAVY, sp)} 100%)`
+          : `linear-gradient(94deg, ${mix(AMBER, NAVY, sp)} 0%, ${mix(CREAM, DKNAVY, sp)} 100%)`;
       return `${glow}, ${base}`;
     };
 
@@ -75,10 +83,7 @@ export const HomeLead = () => {
       style={{ background: INITIAL_BG }}
     >
       {/* 예배 · 표어 — 사진 좌 / 문구 우 */}
-      <section
-        data-snap="worship"
-        className="b1-worship-wash flex min-h-screen items-center px-[6vw] py-[9vh]"
-      >
+      <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
         <div className="mx-auto flex w-full max-w-[1320px] flex-row-reverse items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
             <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#7c3f12] uppercase">
@@ -109,7 +114,7 @@ export const HomeLead = () => {
       </section>
 
       {/* 담임목사 — 문구 좌 / 사진 우 */}
-      <section data-snap="pastor" className="flex min-h-screen items-center px-[6vw] py-[9vh]">
+      <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
         <div className="mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
             <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#ffd9a8] uppercase">

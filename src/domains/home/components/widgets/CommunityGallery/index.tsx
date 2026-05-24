@@ -1,4 +1,6 @@
 import { MINISTRIES } from '@/domains/home/data/ministries';
+import { Section } from '@/domains/home/components/features/Section';
+import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
@@ -6,24 +8,25 @@ import Link from 'next/link';
 
 export const CommunityGallery = () => {
   return (
-    <section className="bg-b1-surface border-t-b1-border border-t px-5 py-10 md:px-10 md:py-24">
+    <Section className="bg-b1-surface border-t-b1-border border-t">
       <Reveal>
-        <div className="mb-9 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="b1-mono text-b1-accent mb-3 text-[11px] tracking-[0.16em]">
-              ● COMMUNITY
-            </div>
-            <h2 className="text-b1-text m-0 text-[32px] leading-[1.05] font-bold tracking-[-0.03em] md:text-[56px]">
+        <SectionTitle
+          tier="editorial"
+          eyebrow="● COMMUNITY"
+          title={
+            <>
               한 사람을
               <br />
               환대하는 공동체
-            </h2>
-          </div>
-          <p className="text-b1-sub m-0 max-w-[360px] text-[15px] leading-[1.8]">
-            세대와 자리를 가리지 않고 서로의 이야기를 듣는 작은 공동체들. 각 부서는 일년 내내 열려
-            있습니다.
-          </p>
-        </div>
+            </>
+          }
+          action={
+            <p className="text-b1-sub m-0 max-w-[360px] text-[15px] leading-[1.8]">
+              세대와 자리를 가리지 않고 서로의 이야기를 듣는 작은 공동체들. 각 부서는 일년 내내
+              열려 있습니다.
+            </p>
+          }
+        />
       </Reveal>
 
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
@@ -58,6 +61,6 @@ export const CommunityGallery = () => {
           </Reveal>
         ))}
       </div>
-    </section>
+    </Section>
   );
 };

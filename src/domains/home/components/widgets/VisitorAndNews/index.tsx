@@ -1,3 +1,4 @@
+import { Section } from '@/domains/home/components/features/Section';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -18,7 +19,7 @@ const NEWS_ITEMS = [
 
 export const VisitorAndNews = () => {
   return (
-    <section className="px-5 py-10 md:px-10 md:py-24">
+    <Section>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
         <Reveal className="md:col-span-6">
           <div className="bg-b1-accent text-b1-bg flex h-full flex-col rounded-2xl px-6 py-8 md:px-9 md:py-11">
@@ -80,6 +81,6 @@ export const VisitorAndNews = () => {
           </div>
         </Reveal>
       </div>
-    </section>
+    </Section>
   );
 };

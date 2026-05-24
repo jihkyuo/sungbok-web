@@ -1,3 +1,5 @@
+import { Section } from '@/domains/home/components/features/Section';
+import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { ArrowUpRight, Bus, Car, MapPin, Phone } from 'lucide-react';
 
@@ -31,25 +33,19 @@ const ACCESS_INFO = [
 
 export const LocationMap = () => {
   return (
-    <section
-      id="location"
-      className="bg-b1-bg border-t-b1-border scroll-mt-24 border-t px-5 py-14 md:px-10 md:py-24"
-    >
+    <Section id="location" className="bg-b1-bg border-t-b1-border border-t">
       <Reveal>
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="b1-mono text-b1-accent mb-3 text-[11px] tracking-[0.16em]">
-              ● LOCATION
-            </div>
-            <h2 className="text-b1-text m-0 text-[32px] leading-[1.05] font-bold tracking-[-0.03em] md:text-[48px]">
-              찾아오시는 길
-            </h2>
-          </div>
-          <p className="text-b1-sub m-0 max-w-[360px] text-[15px] leading-[1.8]">
-            지하철·버스·자차 모두 편리합니다. 처음 오시는 분께는 안내 위원이 자리까지 안내해
-            드립니다.
-          </p>
-        </div>
+        <SectionTitle
+          tier="editorial"
+          eyebrow="● LOCATION"
+          title="찾아오시는 길"
+          action={
+            <p className="text-b1-sub m-0 max-w-[360px] text-[15px] leading-[1.8]">
+              지하철·버스·자차 모두 편리합니다. 처음 오시는 분께는 안내 위원이 자리까지 안내해
+              드립니다.
+            </p>
+          }
+        />
       </Reveal>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
@@ -123,6 +119,6 @@ export const LocationMap = () => {
           </div>
         </Reveal>
       </div>
-    </section>
+    </Section>
   );
 };

@@ -1,3 +1,5 @@
+import { Section } from '@/domains/home/components/features/Section';
+import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -19,20 +21,20 @@ const SERMON_YOUTH = {
 
 export const RecentSermons = () => {
   return (
-    <section className="px-5 pb-14 md:px-10 md:pb-24">
+    <Section>
       <Reveal>
-        <div className="mb-6 flex items-baseline justify-between">
-          <h2 className="text-b1-text m-0 text-[24px] font-bold tracking-[-0.02em] md:text-[30px]">
-            최근 설교
-          </h2>
-          <Link
-            href="/worship-video"
-            className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
-          >
-            SERMON ARCHIVE
-            <ArrowRight size={12} strokeWidth={2} />
-          </Link>
-        </div>
+        <SectionTitle
+          title="최근 설교"
+          action={
+            <Link
+              href="/worship-video"
+              className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
+            >
+              SERMON ARCHIVE
+              <ArrowRight size={12} strokeWidth={2} />
+            </Link>
+          }
+        />
       </Reveal>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-12 md:gap-6">
@@ -107,6 +109,6 @@ export const RecentSermons = () => {
           </div>
         </Reveal>
       </div>
-    </section>
+    </Section>
   );
 };

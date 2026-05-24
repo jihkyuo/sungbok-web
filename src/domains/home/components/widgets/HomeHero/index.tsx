@@ -125,14 +125,11 @@ export const HomeHero = () => {
     };
     rafId = requestAnimationFrame(loop);
 
-    // ── 스크롤 보정 ──────────────────────────────────────────────
-    // (A) 인트로 자동재생: 최상단에서 아래로 스크롤하면 입력을 막고 ~1.4초 동안
-    //     천천히 문 개방+CTA 지점까지 자동 스크롤한 뒤 멈춤(문 열림이 보이게).
-    // (B) 리드 영역: 스크롤-엔드 시 예배/담임 지점으로 부드럽게 보정(빠른 스크롤 통과).
+    // ── 인트로 자동재생만 ────────────────────────────────────────
+    // 최상단에서 아래로 스크롤하면 입력을 막고 문을 천천히 열며 CTA 지점(restY)까지 자동 스크롤.
+    // CTA 아래(예배·담임 등)는 보정/스냅 없이 일반 스크롤.
     let lastY = window.scrollY;
-    let lastT = performance.now();
     let dir = 1;
-    let maxV = 0;
     let snapTimer = 0;
     let scrollAnim = 0;
     let programmatic = false;
@@ -140,35 +137,8 @@ export const HomeHero = () => {
     let introPlayed = window.scrollY > 4; // 중간 위치 로드면 인트로 이미 끝난 것으로
     let touchStartY = 0;
     const loadGuardUntil = performance.now() + 400;
-    const easeSine = (p: number) => 0.5 * (1 - Math.cos(Math.PI * clamp(p, 0, 1)));
 
     const restY = () => window.innerHeight * 0.98;
-    const sectionY = (name: string) => {
-      const el = document.querySelector(`[data-snap="${name}"]`) as HTMLElement | null;
-      return el ? Math.round(el.getBoundingClientRect().top + window.scrollY - 80) : null;
-    };
-
-    const animateTo = (toY: number, dur: number, onDone?: () => void) => {
-      cancelAnimationFrame(scrollAnim);
-      const fromY = window.scrollY;
-      const dist = toY - fromY;
-      if (Math.abs(dist) < 2) {
-        onDone?.();
-        return;
-      }
-      const start = performance.now();
-      programmatic = true;
-      const step = (now: number) => {
-        const p = clamp((now - start) / dur, 0, 1);
-        window.scrollTo(0, Math.round(fromY + dist * easeSine(p)));
-        if (p < 1) scrollAnim = requestAnimationFrame(step);
-        else {
-          programmatic = false;
-          onDone?.();
-        }
-      };
-      scrollAnim = requestAnimationFrame(step);
-    };
 
     // 인트로 자동재생 — 문 열림을 시간 기반 "선형" 진행도로 구동해 일정 속도로 천천히 보이게.
     // (scrollY 도 함께 restY 로 이동하지만 히어로는 고정이라, 보이는 건 introOverride 가 여는 문)
@@ -201,10 +171,11 @@ export const HomeHero = () => {
     const onWheel = (e: WheelEvent) => {
       if (reduced) return;
       if (playing) {
-        e.preventDefault(); // 인트로 재생 중 입력 차단(자동 스크롤 보장)
+        e.preventDefault(); // 인트로 재생 중 입력 차단
         return;
       }
-      if (!introPlayed && e.deltaY > 0 && window.scrollY < restY()) {
+      if (introPlayed) return; // 인트로 끝나면 일반 스크롤(예배·담임 보정 없음)
+      if (e.deltaY > 0 && window.scrollY < restY()) {
         e.preventDefault();
         playIntro();
       }
@@ -218,7 +189,8 @@ export const HomeHero = () => {
         e.preventDefault();
         return;
       }
-      if (!introPlayed && window.scrollY < restY()) {
+      if (introPlayed) return;
+      if (window.scrollY < restY()) {
         const dy = touchStartY - (e.touches[0]?.clientY ?? 0); // >0 = 아래로 스크롤
         if (dy > 6) {
           e.preventDefault();
@@ -227,45 +199,16 @@ export const HomeHero = () => {
       }
     };
 
+    // 비휠 입력(스크롤바/키보드) 폴백: 최상단에서 아래로 내려가면 인트로 재생
     const onScrollEnd = () => {
-      const fling = maxV > 1.5;
-      maxV = 0;
-      if (reduced || programmatic || fling) return;
+      if (reduced || programmatic || playing || introPlayed) return;
       if (performance.now() < loadGuardUntil) return;
-      const y = window.scrollY;
-      const rY = restY();
-      if (y < rY) {
-        // 비휠 입력(스크롤바/키보드) 폴백: 아래로 내려가면 인트로 재생
-        if (!introPlayed && dir > 0 && y > 24) playIntro();
-        return;
-      }
-      // 리드 영역: 예배/담임/휴지 중 최근접으로 보정
-      const wY = sectionY('worship');
-      const pY = sectionY('pastor');
-      const maxZone = (pY ?? rY) + window.innerHeight * 0.5;
-      if (y > maxZone) return; // 그 아래는 자유 스크롤
-      const pts = [rY, wY, pY].filter((v): v is number => v != null);
-      let nearest: number | null = null;
-      let nd = Infinity;
-      for (const pt of pts) {
-        const d = Math.abs(y - pt);
-        if (d < nd) {
-          nd = d;
-          nearest = pt;
-        }
-      }
-      if (nearest != null && nd > 4 && nd < window.innerHeight * 0.75) {
-        animateTo(nearest, clamp(nd * 1.1, 500, 1000));
-      }
+      if (dir > 0 && window.scrollY > 24 && window.scrollY < restY()) playIntro();
     };
     const onScroll = () => {
-      const now = performance.now();
       const y = window.scrollY;
-      const dt = Math.max(1, now - lastT);
-      maxV = Math.max(maxV, Math.abs((y - lastY) / dt));
       dir = y >= lastY ? 1 : -1;
       lastY = y;
-      lastT = now;
       window.clearTimeout(snapTimer);
       snapTimer = window.setTimeout(onScrollEnd, 140);
     };

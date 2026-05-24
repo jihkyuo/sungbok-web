@@ -22,7 +22,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-b1-surface border-t-b1-border border-t px-5 pt-10 pb-6 md:px-10 md:pt-14 md:pb-8">
+    <footer className="bg-b1-surface border-t-b1-border relative z-10 border-t px-5 pt-10 pb-6 md:px-10 md:pt-14 md:pb-8">
       <div className="grid grid-cols-1 gap-7 pb-10 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr] md:gap-8">
         <div>
           <div className="text-[18px] font-bold">

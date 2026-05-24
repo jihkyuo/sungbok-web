@@ -44,6 +44,13 @@ export default function RootLayout({
           crossOrigin="anonymous"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
         />
+        {/* 표어용 붓글씨 서예체 */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body
         suppressHydrationWarning

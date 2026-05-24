@@ -3,6 +3,8 @@ export const stripPeriod = (t: string) => t.replace('오전 ', '').replace('오�
 
 export const periodLabel = (t: string) => (t.includes('오전') ? 'AM' : 'PM');
 
+export const periodKo = (t: string) => (t.includes('오전') ? '오전' : '오후');
+
 export const toMinutes = (t: string) => {
   const pm = t.includes('오후');
   const [h, m] = stripPeriod(t).split(':').map(Number);

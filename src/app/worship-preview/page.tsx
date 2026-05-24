@@ -1,30 +1,33 @@
 // 임시 시안 비교 페이지 — 데스크톱 WorshipTimes 레이아웃 탐색용. 확정 후 삭제.
-import { DayAgenda } from '@/domains/home/components/widgets/WorshipTimes/_variants/DayAgenda';
-import { RedAgenda } from '@/domains/home/components/widgets/WorshipTimes/_variants/RedAgenda';
-import { RedPosterAgenda } from '@/domains/home/components/widgets/WorshipTimes/_variants/RedPosterAgenda';
-import { RedSplitPoster } from '@/domains/home/components/widgets/WorshipTimes/_variants/RedSplitPoster';
+import { BigSectionHeaders } from '@/domains/home/components/widgets/WorshipTimes/_variants/BigSectionHeaders';
+import { HorizontalTimeline } from '@/domains/home/components/widgets/WorshipTimes/_variants/HorizontalTimeline';
+import { TicketStub } from '@/domains/home/components/widgets/WorshipTimes/_variants/TicketStub';
+import { TimeGenMatrix } from '@/domains/home/components/widgets/WorshipTimes/_variants/TimeGenMatrix';
+import { TwoPanel } from '@/domains/home/components/widgets/WorshipTimes/_variants/TwoPanel';
+import { WeekCalendar } from '@/domains/home/components/widgets/WorshipTimes/_variants/WeekCalendar';
 
 const VARIANTS = [
-  { id: 'E', tag: '기존', name: '요일별 아젠다 (기존)', el: <DayAgenda /> },
-  { id: 'E2', tag: '레드+포스터', name: '레드 포스터 헤드 + 아젠다', el: <RedPosterAgenda /> },
-  { id: 'E3', tag: '레드+포스터', name: '빅 레드 타이포 (화이트)', el: <RedAgenda /> },
-  { id: 'E4', tag: '레드+포스터', name: '레드 세로 포스터 + 스트립', el: <RedSplitPoster /> },
+  { id: 'I5', tag: '킵', name: '가로 타임라인 (킵)', el: <HorizontalTimeline /> },
+  { id: 'K1', tag: '신규', name: '주간 캘린더 (일~토)', el: <WeekCalendar /> },
+  { id: 'K2', tag: '신규', name: '티켓 스텁 카드', el: <TicketStub /> },
+  { id: 'K3', tag: '신규', name: '빅 섹션 헤더', el: <BigSectionHeaders /> },
+  { id: 'K4', tag: '신규', name: '2-업 패널 (장년 | 다음세대)', el: <TwoPanel /> },
+  { id: 'K5', tag: '신규', name: '시간×세대 매트릭스', el: <TimeGenMatrix /> },
 ];
 
 const tagClass = (tag: string) => {
   const base = 'b1-mono rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-[0.08em]';
-  if (tag === '기존') return `${base} bg-b1-placeholder text-b1-muted`;
-  return `${base} bg-[#b91c1c] text-white`;
+  return tag === '킵' ? `${base} bg-b1-accent text-white` : `${base} bg-b1-placeholder text-b1-muted`;
 };
 
 export default function WorshipPreviewPage() {
   return (
     <main className="bg-b1-bg min-h-screen px-10 py-12">
       <h1 className="text-b1-text mb-2 text-[28px] font-bold tracking-[-0.02em]">
-        WorshipTimes 데스크톱 시안 — 3차 (E 발전형)
+        WorshipTimes 데스크톱 시안 — 8차 (킵 I5 + 신규 5종)
       </h1>
       <p className="text-b1-sub mb-10 text-[14px]">
-        붉은 주일 강조 · 1~5부 포스터 · 텍스트 확대 · 장소 진하게. 맨 위는 비교용 기존 E.
+        맨 위는 킵한 I5(비교용). 아래 K1~K5가 이번 신규. 공통 규칙 전부 유지.
       </p>
       {VARIANTS.map((v) => (
         <section key={v.id} id={`variant-${v.id}`} className="mb-16">

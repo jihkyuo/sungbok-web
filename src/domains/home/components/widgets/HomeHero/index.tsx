@@ -2,9 +2,12 @@
  * HomeHero — v8 (고정 전경 + 자동 일렁이는 블루 글로우 + 문 경계 그림자)
  *
  * 닫힌 첫 화면은 흰 배경 위로 테마 블루 글로우가 시간 기반으로 천천히 일렁인다(산뜻).
- * 스크롤하면 위아래 마스크가 열리며 전경 사진이 드러나고(열리는 경계선에 그림자),
+ * 스크롤하면 위아래 마스크가 열리며 전경 사진이 드러나고(열리는 경계선에 풀폭 그림자),
  * 타이틀이 중앙→좌측으로 안착한다. 히어로는 `fixed -z-10`으로 고정되어 아래 콘텐츠
  * (HomeLead 등)가 위로 차고 올라와 덮는다.
+ *
+ * 첫 페인트는 "닫힘=중앙 타이틀" 상태로 SSR 되어 새로고침 시 좌→중앙 점프가 없다.
+ * 문 경계 그림자는 마스크 밖 풀폭 오버레이라 왼쪽에서 잘리지 않는다.
  */
 'use client';
 
@@ -40,6 +43,11 @@ export const HomeHero = () => {
       );
     };
 
+    // 사진 bleed 박스: top -12%, height 124% (of viewport)
+    const WRAP_TOP = -0.12;
+    const WRAP_H = 1.24;
+    const EDGE_H = 46;
+
     let rafId = 0;
     const render = (t: number) => {
       const vh = window.innerHeight;
@@ -52,24 +60,27 @@ export const HomeHero = () => {
       }
       if (phRef.current) phRef.current.style.transform = `scale(${(1.08 - 0.08 * open).toFixed(3)})`;
 
-      // 열리는 문 경계선 그림자 (클립 경계에 맞춤)
+      // 열리는 문 경계선 그림자 — 풀폭, 사진 클립 경계의 뷰포트 y 에 배치
       const show = open > 0.02 && open < 0.999 ? '1' : '0';
+      const topY = (WRAP_TOP + (inset / 100) * WRAP_H) * vh;
+      const botY = (WRAP_TOP + WRAP_H - (inset / 100) * WRAP_H) * vh;
       if (edgeTopRef.current) {
-        edgeTopRef.current.style.top = `${inset.toFixed(1)}%`;
+        edgeTopRef.current.style.top = `${topY.toFixed(1)}px`;
         edgeTopRef.current.style.opacity = show;
       }
       if (edgeBottomRef.current) {
-        edgeBottomRef.current.style.bottom = `${inset.toFixed(1)}%`;
+        edgeBottomRef.current.style.top = `${(botY - EDGE_H).toFixed(1)}px`;
         edgeBottomRef.current.style.opacity = show;
       }
 
+      // 타이틀 — 중앙(SSR) → 스크롤하면 좌측 도크로 보간 (첫 페인트와 동일해 점프 없음)
       const copy = copyRef.current;
       if (copy) {
         const blockW = copy.offsetWidth;
-        const tx0 = window.innerWidth * 0.5 - (window.innerWidth * 0.07 + blockW / 2);
-        const tx = reduced ? 0 : tx0 * (1 - open);
+        const dockShift = blockW / 2 - window.innerWidth * 0.43; // 중앙 → left-7% (음수)
+        const tx = reduced ? dockShift : dockShift * open;
         const sc = reduced ? 1 : 1.1 - 0.1 * open;
-        copy.style.transform = `translate(${tx.toFixed(1)}px, -50%) scale(${sc.toFixed(3)})`;
+        copy.style.transform = `translate(calc(-50% + ${tx.toFixed(1)}px), -50%) scale(${sc.toFixed(3)})`;
       }
       if (cueRef.current) cueRef.current.style.opacity = hp > 0.04 ? '0' : '1';
 
@@ -117,30 +128,32 @@ export const HomeHero = () => {
               alt="성복교회 전경"
               fill
               priority
-              sizes="84vw"
+              quality={85}
+              sizes="(max-width: 768px) 96vw, 84vw"
               className="object-cover object-[55%_50%]"
             />
           </div>
-          {/* 문 경계 그림자 (위/아래) */}
-          <div
-            ref={edgeTopRef}
-            aria-hidden
-            className="absolute inset-x-0 z-[3] h-[46px]"
-            style={{ top: '50%', background: 'linear-gradient(to bottom, rgba(0,0,0,0.5), transparent)' }}
-          />
-          <div
-            ref={edgeBottomRef}
-            aria-hidden
-            className="absolute inset-x-0 z-[3] h-[46px]"
-            style={{ bottom: '50%', background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }}
-          />
         </div>
 
-        {/* 타이틀 — 처음엔 중앙, 스크롤하면 좌측 안착 (처음부터 또렷) */}
+        {/* 문 경계 그림자 (위/아래) — 마스크 밖 풀폭, 경계선이 화면 전체로 연속 */}
+        <div
+          ref={edgeTopRef}
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 z-[3] h-[46px]"
+          style={{ top: '50%', opacity: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.42), transparent)' }}
+        />
+        <div
+          ref={edgeBottomRef}
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 z-[3] h-[46px]"
+          style={{ top: '50%', opacity: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.42), transparent)' }}
+        />
+
+        {/* 타이틀 — SSR 중앙(닫힘 상태), 스크롤하면 좌측 안착 (처음부터 또렷) */}
         <div
           ref={copyRef}
-          className="absolute top-1/2 left-[7%] z-[4] max-w-[560px] -translate-y-1/2 text-center will-change-transform"
-          style={{ transformOrigin: 'center center' }}
+          className="absolute top-1/2 left-1/2 z-[4] max-w-[560px] text-center will-change-transform"
+          style={{ transformOrigin: 'center center', transform: 'translate(-50%, -50%) scale(1.1)' }}
         >
           <span className="text-b1-text mb-[18px] block text-[clamp(16px,1.7vw,21px)] font-bold tracking-[0.02em]">
             대한예수교장로회 성복교회

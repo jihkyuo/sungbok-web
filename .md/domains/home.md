@@ -55,6 +55,10 @@
 4. **히어로 이미지 `sizes`는 `scale(1.08)`+bleed 반영 반응형** + `quality` 명시.
    - 깨지면: 가로 뷰포트를 좁히면 전경 사진이 **흐릿**(작은 후보 업스케일).
    - 위치: `HomeHero` `<Image sizes="(max-width:768px) 96vw, 84vw" quality={85} />`.
+5. **문 열림은 최상단 트리거 일방향(latch)** — door/CTA/타이틀은 단조 래치 `introMax`로 구동. 닫힘에서 시작하는 건 "최상단에서 로드"될 때뿐(신규 진입/최상단 새로고침); 한번 열리면 스크롤 업에도 **닫히지 않고** open+CTA 유지, 중간 위치 새로고침은 즉시 open+CTA.
+   - 깨지면: 문이 열렸다 스크롤 올리면 **역방향으로 다시 닫힘**, 또는 중간 새로고침 시 인트로가 다시 재생.
+   - 위치: `HomeHero`. 문 열림 연출은 **시간 기반 `introOverride`(선형)**로 그리고(스크롤 이징에 묶지 말 것 — 빠른 중간에 몰려 안 보임), 재생 후 `introMax` 래치로 고정. 인트로 자동재생/예배·담임 보정은 JS 가이드 스냅이 담당(CSS scroll-snap 미사용).
+   - 재사용 패턴 상세: [patterns/scroll-autoplay-intro.md](../patterns/scroll-autoplay-intro.md).
 
 ### 2. PastorWelcome (신설)
 

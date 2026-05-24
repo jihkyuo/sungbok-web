@@ -2,7 +2,9 @@
  * HomeLead — v8. 전경 히어로 다음, 위로 차오르는 두 섹션(예배·담임목사).
  *
  * 배경은 따뜻한 글로우가 스크롤에 따라 좌상(예배 사진)→우하(담임 사진)으로 대각선
- * 이동하고, 베이스가 밝은 앰버(예배) → 차분한 네이비(담임)로 전환(강한 대비, 흰 텍스트).
+ * 이동하고, 베이스가 앰버(예배) → 차분한 네이비(담임)로 전환한다(루트 1장에 깔린 그라데이션).
+ * 예배 섹션은 그 위에 문구 전용 크림 워시(.b1-worship-wash)를 덮어 사진(앰버)과 대비를 키우고
+ * 검은 텍스트로 가독성을 준다(밝은 키). 담임 섹션은 네이비 위 흰 텍스트(강한 대비).
  * 고정된 HomeHero 위로 차고 올라와 덮는다(page.tsx 의 불투명 래퍼가 스택 보장).
  *
  * 표어/담임목사 카피는 placeholder — 사무국 검수 필요.
@@ -73,19 +75,22 @@ export const HomeLead = () => {
       style={{ background: INITIAL_BG }}
     >
       {/* 예배 · 표어 — 사진 좌 / 문구 우 */}
-      <section className="flex min-h-screen items-center px-[6vw] py-[9vh] [scroll-snap-align:start]">
+      <section
+        data-snap="worship"
+        className="b1-worship-wash flex min-h-screen items-center px-[6vw] py-[9vh]"
+      >
         <div className="mx-auto flex w-full max-w-[1320px] flex-row-reverse items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
-            <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#ffd9a8] uppercase">
-              <span className="block h-1.5 w-1.5 rounded-full bg-[#ffd9a8]" />
+            <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#7c3f12] uppercase">
+              <span className="block h-1.5 w-1.5 rounded-full bg-[#7c3f12]" />
               예배 · 2026 표어
             </span>
-            <h2 className="b1-brush text-[clamp(40px,5.4vw,76px)] leading-[1.15] text-white text-balance">
+            <h2 className="b1-brush text-[clamp(40px,5.4vw,76px)] leading-[1.15] text-[#2a1a0c] text-balance">
               새 사람을 입고
               <br />
-              <span className="text-[#ffcf96]">묵은 땅</span>을 기경하라
+              <span className="text-[#b5611a]">묵은 땅</span>을 기경하라
             </h2>
-            <div className="b1-mono mt-[18px] text-[13px] tracking-[0.04em] text-white/60">
+            <div className="b1-mono mt-[18px] text-[13px] tracking-[0.04em] text-[#3a2713]/65">
               엡 4:22–24 · 호 10:12
             </div>
           </div>
@@ -104,7 +109,7 @@ export const HomeLead = () => {
       </section>
 
       {/* 담임목사 — 문구 좌 / 사진 우 */}
-      <section className="flex min-h-screen items-center px-[6vw] py-[9vh] [scroll-snap-align:start]">
+      <section data-snap="pastor" className="flex min-h-screen items-center px-[6vw] py-[9vh]">
         <div className="mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
             <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#ffd9a8] uppercase">

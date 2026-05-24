@@ -1,11 +1,12 @@
 /**
- * HomeHero — v8 (고정 전경 문열림 + 자동 일렁이는 블루 글로우 + CTA 단계)
+ * HomeHero — v8 (일방향 문열림 인트로 + 능동 스크롤 보정)
  *
- * 닫힌 첫 화면: 흰 배경 위 블루 글로우가 작은 점에서 서서히 퍼지며 등장(인트로),
- * 이후 시간 기반으로 천천히 일렁인다. 스크롤하면 위아래 마스크가 열리며(가벼운 경계
- * 그림자, 풀폭) 전경 사진이 드러나고 타이틀이 중앙→좌측으로 안착한다. 문이 다 열린
- * 뒤 한 단계 더 — CTA가 타이틀 아래에서 페이드인. 그 다음에야 아래 콘텐츠(HomeLead)가
- * 차오른다. 히어로는 `fixed -z-10` 고정.
+ * 문 열림·CTA·타이틀은 단조 래치 `introMax`로 구동된다. 즉 한 번 열리면 스크롤을
+ * 올려도 닫히지 않고 open+CTA 화면을 유지하며, 닫힘에서 시작하는 건 오직 "최상단에서
+ * 로드"될 때뿐(신규 진입/최상단 새로고침). 중간 위치 새로고침은 즉시 open+CTA.
+ *
+ * 능동 스크롤 보정(JS): 최상단에서 아래로 스크롤하면 문 개방+CTA 지점까지 자동으로
+ * 이어주고, 이어서 예배/담임 지점으로 부드럽게 유도한다. 빠른 스크롤은 통과.
  *
  * 회귀 금지 불변식은 .md/domains/home.md "HomeHero — 회귀 방지 불변식" 참조.
  */
@@ -50,14 +51,20 @@ export const HomeHero = () => {
     const WRAP_H = 1.24; // 높이 124%
     const EDGE_H = 32; // 경계 그림자 높이(가볍게)
 
+    // 단조 래치: 최상단 로드(scrollY≈0)만 닫힘에서 시작, 그 외(조금이라도 내려옴)는 즉시 완전 open
+    let introMax = window.scrollY > 4 ? 1 : 0;
+    // 인트로 자동재생 중에는 문 열림을 scrollY가 아니라 "시간 기반 진행도"로 구동(일정 속도로 서서히).
+    let introOverride: number | null = null;
     let t0 = 0;
     let rafId = 0;
     const render = (t: number) => {
       if (!t0) t0 = t;
       const vh = window.innerHeight;
-      // 문 열림: 첫 ~0.65vh 동안 완료 (이후 CTA 단계 → 그 다음 콘텐츠 차오름)
-      const hp = clamp(window.scrollY / (vh * 0.7), 0, 1);
-      const open = reduced ? 1 : smooth(seg(hp, 0.05, 0.9));
+      // 인트로 진행도: 문 완전 개방 + CTA 등장이 ~1.0vh 에서 완료
+      const intro = clamp(window.scrollY / (vh * 1.0), 0, 1);
+      introMax = Math.max(introMax, intro);
+      const eff = reduced ? 1 : introOverride !== null ? introOverride : introMax;
+      const open = reduced ? 1 : smooth(seg(eff, 0.04, 0.7));
       const inset = (1 - open) * 50;
 
       if (wrapRef.current) {
@@ -78,7 +85,7 @@ export const HomeHero = () => {
         edgeBottomRef.current.style.opacity = show;
       }
 
-      // 타이틀 — 중앙(SSR) → 스크롤하면 좌측 도크로 보간
+      // 타이틀 — 중앙(SSR) → 열리며 좌측 도크로 (introMax 기반이라 비가역)
       const copy = copyRef.current;
       if (copy) {
         const blockW = copy.offsetWidth;
@@ -88,17 +95,18 @@ export const HomeHero = () => {
         copy.style.transform = `translate(calc(-50% + ${tx.toFixed(1)}px), -50%) scale(${sc.toFixed(3)})`;
       }
 
-      // CTA 단계 — 문이 열린 뒤 [0.65vh, 1.0vh] 구간에서 아래에서 페이드인
+      // CTA 단계 — 문이 열린 뒤 (introMax 0.62→0.96) 아래에서 페이드인
       if (ctaRef.current) {
-        const ctaP = reduced ? 1 : clamp((window.scrollY - vh * 0.65) / (vh * 0.35), 0, 1);
+        const ctaP = reduced ? 1 : clamp((eff - 0.68) / 0.32, 0, 1);
         ctaRef.current.style.opacity = ctaP.toFixed(2);
         ctaRef.current.style.transform = `translateY(${((1 - ctaP) * 14).toFixed(1)}px)`;
         ctaRef.current.style.pointerEvents = ctaP > 0.4 ? 'auto' : 'none';
       }
 
-      if (cueRef.current) cueRef.current.style.opacity = hp > 0.04 ? '0' : '1';
+      // 한번 열리면 큐는 다시 안 보이게
+      if (cueRef.current) cueRef.current.style.opacity = introMax > 0.02 ? '0' : '1';
 
-      // 닫힘 글로우: 인트로(작은 점→퍼짐, 페이드인) 후 일렁임, 문 열리며 잦아듦
+      // 닫힘 글로우: 인트로 램프 후 일렁임, 문 열리며 잦아듦
       if (glowRef.current) {
         if (!reduced && open < 0.999) {
           const introEase = smooth(clamp((t - t0) / 700, 0, 1));
@@ -116,7 +124,167 @@ export const HomeHero = () => {
       rafId = requestAnimationFrame(loop);
     };
     rafId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafId);
+
+    // ── 스크롤 보정 ──────────────────────────────────────────────
+    // (A) 인트로 자동재생: 최상단에서 아래로 스크롤하면 입력을 막고 ~1.4초 동안
+    //     천천히 문 개방+CTA 지점까지 자동 스크롤한 뒤 멈춤(문 열림이 보이게).
+    // (B) 리드 영역: 스크롤-엔드 시 예배/담임 지점으로 부드럽게 보정(빠른 스크롤 통과).
+    let lastY = window.scrollY;
+    let lastT = performance.now();
+    let dir = 1;
+    let maxV = 0;
+    let snapTimer = 0;
+    let scrollAnim = 0;
+    let programmatic = false;
+    let playing = false;
+    let introPlayed = window.scrollY > 4; // 중간 위치 로드면 인트로 이미 끝난 것으로
+    let touchStartY = 0;
+    const loadGuardUntil = performance.now() + 400;
+    const easeSine = (p: number) => 0.5 * (1 - Math.cos(Math.PI * clamp(p, 0, 1)));
+
+    const restY = () => window.innerHeight * 0.98;
+    const sectionY = (name: string) => {
+      const el = document.querySelector(`[data-snap="${name}"]`) as HTMLElement | null;
+      return el ? Math.round(el.getBoundingClientRect().top + window.scrollY - 80) : null;
+    };
+
+    const animateTo = (toY: number, dur: number, onDone?: () => void) => {
+      cancelAnimationFrame(scrollAnim);
+      const fromY = window.scrollY;
+      const dist = toY - fromY;
+      if (Math.abs(dist) < 2) {
+        onDone?.();
+        return;
+      }
+      const start = performance.now();
+      programmatic = true;
+      const step = (now: number) => {
+        const p = clamp((now - start) / dur, 0, 1);
+        window.scrollTo(0, Math.round(fromY + dist * easeSine(p)));
+        if (p < 1) scrollAnim = requestAnimationFrame(step);
+        else {
+          programmatic = false;
+          onDone?.();
+        }
+      };
+      scrollAnim = requestAnimationFrame(step);
+    };
+
+    // 인트로 자동재생 — 문 열림을 시간 기반 "선형" 진행도로 구동해 일정 속도로 천천히 보이게.
+    // (scrollY 도 함께 restY 로 이동하지만 히어로는 고정이라, 보이는 건 introOverride 가 여는 문)
+    const playIntro = () => {
+      if (reduced || playing || introPlayed) return;
+      playing = true;
+      introPlayed = true;
+      cancelAnimationFrame(scrollAnim);
+      const fromY = window.scrollY;
+      const toY = restY();
+      const D = 1800; // 전체 인트로 길이(문 열림은 약 0~70% 구간 = ~1.26초). 튜닝값.
+      const start = performance.now();
+      programmatic = true;
+      const step = (now: number) => {
+        const q = clamp((now - start) / D, 0, 1);
+        introOverride = q; // 선형 → 문이 일정 속도로 서서히 열림(렌더의 smooth가 양 끝만 완만하게)
+        window.scrollTo(0, Math.round(fromY + (toY - fromY) * q));
+        if (q < 1) {
+          scrollAnim = requestAnimationFrame(step);
+        } else {
+          introOverride = null;
+          introMax = 1;
+          programmatic = false;
+          playing = false;
+        }
+      };
+      scrollAnim = requestAnimationFrame(step);
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (reduced) return;
+      if (playing) {
+        e.preventDefault(); // 인트로 재생 중 입력 차단(자동 스크롤 보장)
+        return;
+      }
+      if (!introPlayed && e.deltaY > 0 && window.scrollY < restY()) {
+        e.preventDefault();
+        playIntro();
+      }
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0]?.clientY ?? 0;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (reduced) return;
+      if (playing) {
+        e.preventDefault();
+        return;
+      }
+      if (!introPlayed && window.scrollY < restY()) {
+        const dy = touchStartY - (e.touches[0]?.clientY ?? 0); // >0 = 아래로 스크롤
+        if (dy > 6) {
+          e.preventDefault();
+          playIntro();
+        }
+      }
+    };
+
+    const onScrollEnd = () => {
+      const fling = maxV > 1.5;
+      maxV = 0;
+      if (reduced || programmatic || fling) return;
+      if (performance.now() < loadGuardUntil) return;
+      const y = window.scrollY;
+      const rY = restY();
+      if (y < rY) {
+        // 비휠 입력(스크롤바/키보드) 폴백: 아래로 내려가면 인트로 재생
+        if (!introPlayed && dir > 0 && y > 24) playIntro();
+        return;
+      }
+      // 리드 영역: 예배/담임/휴지 중 최근접으로 보정
+      const wY = sectionY('worship');
+      const pY = sectionY('pastor');
+      const maxZone = (pY ?? rY) + window.innerHeight * 0.5;
+      if (y > maxZone) return; // 그 아래는 자유 스크롤
+      const pts = [rY, wY, pY].filter((v): v is number => v != null);
+      let nearest: number | null = null;
+      let nd = Infinity;
+      for (const pt of pts) {
+        const d = Math.abs(y - pt);
+        if (d < nd) {
+          nd = d;
+          nearest = pt;
+        }
+      }
+      if (nearest != null && nd > 4 && nd < window.innerHeight * 0.75) {
+        animateTo(nearest, clamp(nd * 1.1, 500, 1000));
+      }
+    };
+    const onScroll = () => {
+      const now = performance.now();
+      const y = window.scrollY;
+      const dt = Math.max(1, now - lastT);
+      maxV = Math.max(maxV, Math.abs((y - lastY) / dt));
+      dir = y >= lastY ? 1 : -1;
+      lastY = y;
+      lastT = now;
+      window.clearTimeout(snapTimer);
+      snapTimer = window.setTimeout(onScrollEnd, 140);
+    };
+    if (!reduced) {
+      document.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('wheel', onWheel, { passive: false });
+      window.addEventListener('touchstart', onTouchStart, { passive: true });
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      cancelAnimationFrame(scrollAnim);
+      document.removeEventListener('scroll', onScroll);
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.clearTimeout(snapTimer);
+    };
   }, []);
 
   return (
@@ -170,7 +338,7 @@ export const HomeHero = () => {
           style={{ top: '50%', opacity: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.22), transparent)' }}
         />
 
-        {/* 타이틀 — SSR 중앙(닫힘 상태), 스크롤하면 좌측 안착. 문 열린 뒤 CTA 페이드인 */}
+        {/* 타이틀 — SSR 중앙(닫힘 상태), 열리며 좌측 안착. 문 열린 뒤 CTA 페이드인 */}
         <div
           ref={copyRef}
           className="absolute top-1/2 left-1/2 z-[4] max-w-[560px] text-center will-change-transform"
@@ -220,13 +388,8 @@ export const HomeHero = () => {
         </div>
       </section>
 
-      {/* 히어로 점유 스크롤(240vh) — 중간에 "휴지" 스냅 마커. pointer-events-none 라
-          뒤쪽 고정 히어로의 CTA가 클릭 가능하다. */}
-      <div aria-hidden className="pointer-events-none">
-        <div className="h-[100vh]" />
-        <div className="h-0" style={{ scrollSnapAlign: 'start' }} />
-        <div className="h-[140vh]" />
-      </div>
+      {/* 히어로 점유 스크롤(240vh). pointer-events-none 라 뒤쪽 고정 히어로 CTA 클릭 가능 */}
+      <div aria-hidden className="pointer-events-none h-[240vh]" />
     </>
   );
 };

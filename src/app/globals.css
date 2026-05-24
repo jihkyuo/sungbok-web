@@ -133,8 +133,6 @@
     scroll-behavior: smooth;
     /* offset for sticky header when jumping to anchors */
     scroll-padding-top: 80px;
-    /* 비차단 스크롤 보정 — 히어로 휴지/예배/담임 지점에서만 부드럽게 스냅(빠른 스크롤은 통과) */
-    scroll-snap-type: y proximity;
   }
 
   * {

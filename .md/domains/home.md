@@ -49,9 +49,9 @@
 2. **문 경계 그림자는 좌측 페이드 마스크 밖, 풀폭 오버레이** — 사진 `#a1wrap`(좌측 `mask-image`) **안에 넣지 말 것**. rAF로 클립 경계의 뷰포트 y에 맞춰 화면 전체 너비로 배치.
    - 깨지면: 문 열림 경계선이 **왼쪽에서 잘림**(불완전한 문).
    - 위치: `HomeHero` `edgeTop`/`edgeBottom` (히어로 직계, z 사진과 타이틀 사이).
-3. **스크롤 위치 복원은 즉시(non-smooth)로 유지** — 로드 시 `scroll-behavior:auto`를 잠깐 강제해 복원을 즉시화하고, 그 뒤 CSS `smooth`로 복귀. **복원 기능 자체는 유지**.
-   - 깨지면: 중간 스크롤에서 새로고침 시 인터랙션이 **처음부터 바쁘게 재생**되며 자리잡음.
-   - 위치: `src/app/_provider.tsx` (마운트 시 토글). cf. `globals.css` `html { scroll-behavior: smooth }`.
+3. **스크롤 위치 복원은 즉시(non-smooth)로 유지** — 사이트 전역 스무딩은 **Lenis**(`src/app/_provider.tsx` 의 `ReactLenis root`)가 관리한다. Lenis 는 마운트 시 **현재(복원된) 스크롤 위치에서 시작**하므로(0에서 애니메이션하지 않음) 복원이 즉시 유지된다. 과거의 `scroll-behavior` 토글 핵은 제거됐고, `globals.css` 의 `html { scroll-behavior: smooth }` 도 제거(Lenis 와 충돌).
+   - 깨지면: 중간 스크롤에서 새로고침 시 인터랙션이 **처음부터 바쁘게 재생**되거나 0→복원 위치로 애니메이션 스크롤됨.
+   - 위치: `src/app/_provider.tsx` (`ReactLenis root`). cf. `globals.css` `html { scroll-padding-top: 80px }`(Lenis `anchors.offset:-80` 과 짝).
 4. **히어로 이미지 `sizes`는 `scale(1.08)`+bleed 반영 반응형** + `quality` 명시.
    - 깨지면: 가로 뷰포트를 좁히면 전경 사진이 **흐릿**(작은 후보 업스케일).
    - 위치: `HomeHero` `<Image sizes="(max-width:768px) 96vw, 84vw" quality={85} />`.
@@ -59,6 +59,7 @@
    - 금지: 일방향 래치(`introMax` 단조 증가, 중간 로드 즉시-완전-open)는 **사용자 결정으로 제거** — 다시 도입하지 말 것(문은 가역이어야 함).
    - 주의: 문 열림 연출을 스크롤 이징에 묶지 말 것(빠른 중간 구간에 몰려 안 보임) → 자동재생은 시간 기반 선형.
    - **자동재생 스크롤은 `window.scrollTo({ top, behavior: 'instant' })`** — 2-인자 `scrollTo(0,y)`는 CSS `scroll-behavior:smooth`를 타서 scrollY가 목표를 **지연 추종**한다. 그러면 재생 종료(`introOverride=null`) 순간 `eff`가 시간기반→지연된 scrollY로 바뀌며 문이 **닫혔다 다시 열린다**(래치 제거로 노출된 버그). instant 로 scrollY를 introOverride와 정확 동기화해야 이음매가 없다.
+   - **인트로 동안 Lenis 정지(stop) → 종료 시 재개(start)** — 전역 Lenis 도 휠을 가로채므로, 최상단 인트로 대기/재생 중에는 `lenis.stop()` 으로 얼려 히어로의 instant scrollTo 와 충돌을 막는다(정지 상태 Lenis 는 wheel 을 preventDefault 만 하고 전파는 막지 않아, 히어로의 자체 onWheel 이 정상 트리거됨). 종료 시 `lenis.start()` — `start()→reset()` 이 내부 스크롤 상태를 실제 위치로 동기화해 스냅이 없다. 중간 로드(`scrollY>4`)면 정지하지 않고 Lenis 그대로. **이 stop/start 브라케팅을 제거하면 첫 인트로가 Lenis 와 싸워 튄다.** 위치: `HomeHero` `useLenis()` + 인트로 완료 분기.
    - **`restY = window.innerHeight`(=인트로 완료 지점, intro=1.0)** — restY가 intro 완료점보다 작으면(예: 0.98vh) 정지 시 `eff<1`이라 **CTA가 끝까지(opacity 1) 안 떠서** 어정쩡하게 멈춘다. 둘을 일치시킬 것.
    - 범위: **인트로(top→CTA)만** JS 자동재생. CTA 아래(예배·담임 등)는 보정/스냅 없는 일반 스크롤.
    - 재사용 패턴 상세: [patterns/scroll-autoplay-intro.md](../patterns/scroll-autoplay-intro.md).

@@ -41,6 +41,9 @@ importers:
       googleapis:
         specifier: ^149.0.0
         version: 149.0.0
+      lenis:
+        specifier: ^1.3.23
+        version: 1.3.23(react@19.1.0)
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -350,11 +353,11 @@ packages:
       '@tanstack/query-core': '>= 4.0.0'
       '@tanstack/react-query': '>= 4.0.0'
 
-  '@maxim_mazurok/gapi.client.discovery-v1@0.1.20200806':
-    resolution: {integrity: sha512-Wl6UfmZVDdWbY3PUu8E2ULk9RPLjnMqp/iOA4tcK8Ne+U/GmlnWP/e34IaZNGArfl7iXJNOG+/3Rj9L9jQyF9Q==}
+  '@maxim_mazurok/gapi.client.discovery-v1@0.5.20200806':
+    resolution: {integrity: sha512-oVq9hnnI5VhAtsx55iJbPz8NRfJtWFpI1kINKeuygzCvsx90b1GQDeN3MDUvhADXiQ7+Izs316cqBnJjoDxCow==}
 
-  '@maxim_mazurok/gapi.client.youtube-v3@0.0.20250605':
-    resolution: {integrity: sha512-zAgLO0/GZM7lyL1rFIcXg9TEhYavf7TAlJgExUibDRvULVod/XgTg7P2FVSL8CfGmNR0dU0A9UdeYR7WKzWpNQ==}
+  '@maxim_mazurok/gapi.client.youtube-v3@0.2.20260317':
+    resolution: {integrity: sha512-LwzCUqE0dO9SapxO/gH0XsJSABZZYVSDSY3i5mbFQ/tKZQ/OsMo5r8/yPBAFWC6t9jGpaKIyt8Bi8tWT8ANZMg==}
 
   '@napi-rs/wasm-runtime@0.2.10':
     resolution: {integrity: sha512-bCsCyeZEwVErsGmyPNSzwfwFn4OdxBj0mmv6hOFucB/k81Ojdu68RbZdxYsRQUPc9l6SU5F/cG+bXgWs3oUgsQ==}
@@ -1760,6 +1763,20 @@ packages:
     resolution: {integrity: sha512-MbjN408fEndfiQXbFQ1vnd+1NoLDsnQW41410oQBXiyXDMYH5z505juWa4KUE1LqxRC7DgOgZDbKLxHIwm27hA==}
     engines: {node: '>=0.10'}
 
+  lenis@1.3.23:
+    resolution: {integrity: sha512-YxYq3TJqj9sJNv0V9SkyQHejt14xwyIwgDaaMK89Uf9SxQfIszu+gTQSSphh6BWlLTNVKvvXAGkg+Zf+oFIevg==}
+    peerDependencies:
+      '@nuxt/kit': '>=3.0.0'
+      react: '>=17.0.0'
+      vue: '>=3.0.0'
+    peerDependenciesMeta:
+      '@nuxt/kit':
+        optional: true
+      react:
+        optional: true
+      vue:
+        optional: true
+
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
@@ -2619,12 +2636,12 @@ snapshots:
       '@tanstack/query-core': 5.77.2
       '@tanstack/react-query': 5.77.2(react@19.1.0)
 
-  '@maxim_mazurok/gapi.client.discovery-v1@0.1.20200806':
+  '@maxim_mazurok/gapi.client.discovery-v1@0.5.20200806':
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
 
-  '@maxim_mazurok/gapi.client.youtube-v3@0.0.20250605':
+  '@maxim_mazurok/gapi.client.youtube-v3@0.2.20260317':
     dependencies:
       '@types/gapi.client': 1.0.8
       '@types/gapi.client.discovery-v1': 0.0.4
@@ -3033,15 +3050,15 @@ snapshots:
 
   '@types/gapi.client.discovery-v1@0.0.4':
     dependencies:
-      '@maxim_mazurok/gapi.client.discovery-v1': 0.1.20200806
+      '@maxim_mazurok/gapi.client.discovery-v1': 0.5.20200806
 
   '@types/gapi.client.youtube-v3@0.0.4':
     dependencies:
-      '@maxim_mazurok/gapi.client.youtube-v3': 0.0.20250605
+      '@maxim_mazurok/gapi.client.youtube-v3': 0.2.20260317
 
   '@types/gapi.client.youtube@3.0.4':
     dependencies:
-      '@maxim_mazurok/gapi.client.youtube-v3': 0.0.20250605
+      '@maxim_mazurok/gapi.client.youtube-v3': 0.2.20260317
 
   '@types/gapi.client@1.0.8': {}
 
@@ -4192,6 +4209,10 @@ snapshots:
   language-tags@1.0.9:
     dependencies:
       language-subtag-registry: 0.3.23
+
+  lenis@1.3.23(react@19.1.0):
+    optionalDependencies:
+      react: 19.1.0
 
   levn@0.4.1:
     dependencies:

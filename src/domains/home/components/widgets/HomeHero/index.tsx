@@ -10,6 +10,7 @@
  */
 'use client';
 
+import { useLenis } from 'lenis/react';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,6 +27,21 @@ export const HomeHero = () => {
   const glowRef = useRef<HTMLDivElement>(null);
   const edgeTopRef = useRef<HTMLDivElement>(null);
   const edgeBottomRef = useRef<HTMLDivElement>(null);
+
+  // 사이트 전역 Lenis(_provider.tsx) 인스턴스. 인트로 자동재생 동안에는 멈췄다가(stop)
+  // 종료 시 재개(start)해, 히어로의 자체 휠 하이재킹·instant scrollTo 와 충돌하지 않게 한다.
+  const lenis = useLenis();
+  const lenisRef = useRef(lenis);
+  lenisRef.current = lenis;
+
+  // 최상단(인트로 대기)에서만 Lenis 를 정지 — 첫 스크롤 시 히어로의 네이티브 인트로가 단독 구동.
+  // 중간 위치로 로드되면 인트로는 이미 끝난 것이므로(introPlayed) Lenis 를 그대로 가동한다.
+  useEffect(() => {
+    if (!lenis) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.scrollY > 4) return;
+    lenis.stop();
+  }, [lenis]);
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -167,6 +183,9 @@ export const HomeHero = () => {
           introOverride = null;
           programmatic = false;
           playing = false;
+          // 인트로 종료 → 스무스 스크롤 재개. start()→reset()이 animatedScroll/targetScroll 을
+          // 현재 실제 위치(=restY)로 동기화하므로 스냅 없이 이어진다.
+          lenisRef.current?.start();
         }
       };
       scrollAnim = requestAnimationFrame(step);

@@ -144,6 +144,12 @@
     @apply bg-background text-foreground;
   }
 
+  /* 이미지 native drag(고스트가 커서를 따라오는 현상) 차단 */
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
   h1,
   h2,
   h3 {

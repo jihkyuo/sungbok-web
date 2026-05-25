@@ -1,12 +1,10 @@
 /**
- * HomeHero — v8 (일방향 문열림 인트로 + 능동 스크롤 보정)
+ * HomeHero — v8 (문열림 인트로 자동재생 + 가역 스크롤 연동)
  *
- * 문 열림·CTA·타이틀은 단조 래치 `introMax`로 구동된다. 즉 한 번 열리면 스크롤을
- * 올려도 닫히지 않고 open+CTA 화면을 유지하며, 닫힘에서 시작하는 건 오직 "최상단에서
- * 로드"될 때뿐(신규 진입/최상단 새로고침). 중간 위치 새로고침은 즉시 open+CTA.
- *
- * 능동 스크롤 보정(JS): 최상단에서 아래로 스크롤하면 문 개방+CTA 지점까지 자동으로
- * 이어주고, 이어서 예배/담임 지점으로 부드럽게 유도한다. 빠른 스크롤은 통과.
+ * 문 열림·CTA·타이틀은 실시간 scrollY(`intro`)에 연동된다 — 내리면 열리고 올리면
+ * 닫힌다(가역, 래치 없음). 단 최상단에서 첫 스크롤 시에는 입력을 잠그고 ~1.8초 동안
+ * 시간 기반(`introOverride`)으로 문을 천천히 자동 개방+CTA 지점까지 스크롤한다(1회).
+ * 그 아래(예배/담임 등)는 보정/스냅 없는 일반 스크롤.
  *
  * 회귀 금지 불변식은 .md/domains/home.md "HomeHero — 회귀 방지 불변식" 참조.
  */
@@ -58,9 +56,8 @@ export const HomeHero = () => {
     const WRAP_H = 1.24; // 높이 124%
     const EDGE_H = 32; // 경계 그림자 높이(가볍게)
 
-    // 단조 래치: 최상단 로드(scrollY≈0)만 닫힘에서 시작, 그 외(조금이라도 내려옴)는 즉시 완전 open
-    let introMax = window.scrollY > 4 ? 1 : 0;
     // 인트로 자동재생 중에는 문 열림을 scrollY가 아니라 "시간 기반 진행도"로 구동(일정 속도로 서서히).
+    // 그 외에는 문/CTA/타이틀이 실시간 scrollY 에 연동(가역 — 올리면 닫힘).
     let introOverride: number | null = null;
     let t0 = 0;
     let rafId = 0;
@@ -69,8 +66,7 @@ export const HomeHero = () => {
       const vh = window.innerHeight;
       // 인트로 진행도: 문 완전 개방 + CTA 등장이 ~1.0vh 에서 완료
       const intro = clamp(window.scrollY / (vh * 1.0), 0, 1);
-      introMax = Math.max(introMax, intro);
-      const eff = reduced ? 1 : introOverride !== null ? introOverride : introMax;
+      const eff = reduced ? 1 : introOverride !== null ? introOverride : intro;
       const open = reduced ? 1 : smooth(seg(eff, 0.04, 0.7));
       const inset = (1 - open) * 50;
 
@@ -92,7 +88,7 @@ export const HomeHero = () => {
         edgeBottomRef.current.style.opacity = show;
       }
 
-      // 타이틀 — 중앙(SSR) → 열리며 좌측 도크로 (introMax 기반이라 비가역)
+      // 타이틀 — 중앙(SSR) → 열리며 좌측 도크로 (scrollY 기반, 가역)
       const copy = copyRef.current;
       if (copy) {
         const blockW = copy.offsetWidth;
@@ -102,7 +98,7 @@ export const HomeHero = () => {
         copy.style.transform = `translate(calc(-50% + ${tx.toFixed(1)}px), -50%) scale(${sc.toFixed(3)})`;
       }
 
-      // CTA 단계 — 문이 열린 뒤 (introMax 0.62→0.96) 아래에서 페이드인
+      // CTA 단계 — 문이 열린 뒤 (eff 0.68→1.0) 아래에서 페이드인 (스크롤 올리면 같이 사라짐)
       if (ctaRef.current) {
         const ctaP = reduced ? 1 : clamp((eff - 0.68) / 0.32, 0, 1);
         ctaRef.current.style.opacity = ctaP.toFixed(2);
@@ -110,16 +106,14 @@ export const HomeHero = () => {
         ctaRef.current.style.pointerEvents = ctaP > 0.4 ? 'auto' : 'none';
       }
 
-      // 한번 열리면 큐는 다시 안 보이게
-      if (cueRef.current) cueRef.current.style.opacity = introMax > 0.02 ? '0' : '1';
+      // 스크롤 내려가면 큐 숨김(최상단에선 보임 — 가역)
+      if (cueRef.current) cueRef.current.style.opacity = intro > 0.04 ? '0' : '1';
 
-      // 닫힘 글로우: 인트로 램프 후 일렁임, 문 열리며 잦아듦
+      // 닫힘 글로우: 첫 페인트 인라인 상태에서 이어받아 일렁임, 문 열리며 잦아듦
       if (glowRef.current) {
         if (!reduced && open < 0.999) {
-          const introEase = smooth(clamp((t - t0) / 700, 0, 1));
-          glowRef.current.style.background = heroBg(t);
-          glowRef.current.style.opacity = ((1 - open) * introEase).toFixed(2);
-          glowRef.current.style.transform = `scale(${(0.7 + 0.3 * introEase).toFixed(3)})`;
+          glowRef.current.style.background = heroBg(t - t0);
+          glowRef.current.style.opacity = (1 - open).toFixed(2);
         } else {
           glowRef.current.style.opacity = '0';
         }
@@ -145,7 +139,9 @@ export const HomeHero = () => {
     let touchStartY = 0;
     const loadGuardUntil = performance.now() + 400;
 
-    const restY = () => window.innerHeight * 0.98;
+    // 인트로 완료 지점과 정확히 일치(intro = scrollY/vh = 1.0). 그래야 재생 종료 시
+    // eff 1.0→1.0 으로 이어지고 CTA(eff 0.68→1.0)도 끝까지 페이드인된다.
+    const restY = () => window.innerHeight;
 
     // 인트로 자동재생 — 문 열림을 시간 기반 "선형" 진행도로 구동해 일정 속도로 천천히 보이게.
     // (scrollY 도 함께 restY 로 이동하지만 히어로는 고정이라, 보이는 건 introOverride 가 여는 문)
@@ -162,12 +158,13 @@ export const HomeHero = () => {
       const step = (now: number) => {
         const q = clamp((now - start) / D, 0, 1);
         introOverride = q; // 선형 → 문이 일정 속도로 서서히 열림(렌더의 smooth가 양 끝만 완만하게)
-        window.scrollTo(0, Math.round(fromY + (toY - fromY) * q));
+        // behavior:'instant' 로 CSS scroll-behavior:smooth 를 우회 — scrollY 가 introOverride 와
+        // 정확히 동기화돼야 재생 종료 시 eff=introOverride → eff=intro 전환에서 문이 튀지 않는다.
+        window.scrollTo({ top: Math.round(fromY + (toY - fromY) * q), behavior: 'instant' });
         if (q < 1) {
           scrollAnim = requestAnimationFrame(step);
         } else {
           introOverride = null;
-          introMax = 1;
           programmatic = false;
           playing = false;
         }
@@ -240,12 +237,18 @@ export const HomeHero = () => {
   return (
     <>
       <section aria-label="성복교회 전경" className="fixed inset-0 z-0 overflow-hidden bg-[#f6fafe]">
-        {/* 자동 일렁이는 블루 글로우 (인트로: 작은 점에서 서서히 퍼짐) */}
+        {/* 자동 일렁이는 블루 글로우 — 첫 페인트부터 닫힘 상태로 등장(인라인), rAF 가 일렁임 인계 */}
         <div
           ref={glowRef}
           aria-hidden
           className="pointer-events-none absolute inset-0 z-[1]"
-          style={{ opacity: 0, transform: 'scale(0.7)' }}
+          style={{
+            opacity: 1,
+            background:
+              'radial-gradient(44% 50% at 28.0% 40.1%, rgba(37,99,235,0.20) 0%, rgba(37,99,235,0.07) 42%, transparent 70%),' +
+              'radial-gradient(40% 46% at 86.7% 76.1%, rgba(91,127,224,0.16) 0%, rgba(91,127,224,0.05) 45%, transparent 72%),' +
+              'radial-gradient(38% 44% at 17.8% 85.2%, rgba(120,170,255,0.16) 0%, rgba(120,170,255,0.05) 46%, transparent 72%)',
+          }}
         />
 
         {/* 전경 사진 — 우측 흘러넘침 + 좌측 페이드, 스크롤로 위아래 열림 */}

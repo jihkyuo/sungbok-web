@@ -48,7 +48,7 @@
 
 ### Workflow
 
-- [prototype-preview.md](workflow/prototype-preview.md) — 스크롤·모션 동작을 확정 전 브라우저에서 굴려보는 프로토타입 방식(로컬 HTTP 서버)
+- [prototype-preview.md](workflow/prototype-preview.md) — 시안(디자인 변형) 탐색·라이브 프리뷰 방식. 좋은 시안의 조건(콘텐츠 분리·쏠림 금지·등장/사라짐 설계) + `<name>-preview` 라우트 + `_variants/` + 전용 dev 포트 + 비인터랙티브 영상/스크롤 헬퍼 + browse 자기점검. (구 standalone HTML 방식 폐기)
 
 ### Patterns
 

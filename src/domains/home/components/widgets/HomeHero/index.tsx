@@ -1,367 +1,145 @@
 /**
- * HomeHero — v8 (문열림 인트로 자동재생 + 가역 스크롤 연동)
+ * HomeHero — 메시+키네틱 DockSlide (시안 B 적용, 잠정).
  *
- * 문 열림·CTA·타이틀은 실시간 scrollY(`intro`)에 연동된다 — 내리면 열리고 올리면
- * 닫힌다(가역, 래치 없음). 단 최상단에서 첫 스크롤 시에는 입력을 잠그고 ~1.8초 동안
- * 시간 기반(`introOverride`)으로 문을 천천히 자동 개방+CTA 지점까지 스크롤한다(1회).
- * 그 아래(예배/담임 등)는 보정/스냅 없는 일반 스크롤.
+ * 파스텔 메시(웜화이트) 배경 + 키네틱 그라데 타이틀 + 우측 전경(좌측 경계가 메시로 자연 페이드).
+ * 최상단: 문구가 화면 중앙, 전경은 안 보임. 스크롤하면 문구가 좌측으로 도킹되며 전경이 우측에서
+ * 서서히 등장(opacity 0→1)하고 선명해진다(scale 1.08→1). transform/opacity 만 — 잔카 없음.
+ * sticky 200vh 트랙(핀 ~85vh). prefers-reduced-motion 이면 트랙 없이 정적 최종상태로 렌더.
  *
- * 회귀 금지 불변식은 .md/domains/home.md "HomeHero — 회귀 방지 불변식" 참조.
+ * 추가 시안 비교 예정(프리뷰 hero-preview/, _variants/ 유지). 확정 시 토큰화 + ADR 0004.
  */
 'use client';
 
-import { useLenis } from 'lenis/react';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import mainExterior from '@/assets/images/main/main01.jpg';
 
+const PHOTO_MASK =
+  'linear-gradient(to left,#000 0%,#000 50%,rgba(0,0,0,0.55) 74%,rgba(0,0,0,0.12) 90%,transparent 100%)';
+
+const KEYFRAMES = `
+  @keyframes hh-mesh1 {0%{transform:translate(-8%,-6%) scale(1)}50%{transform:translate(10%,8%) scale(1.2)}100%{transform:translate(-8%,-6%) scale(1)}}
+  @keyframes hh-mesh2 {0%{transform:translate(8%,10%) scale(1.1)}50%{transform:translate(-10%,-4%) scale(1)}100%{transform:translate(8%,10%) scale(1.1)}}
+  @keyframes hh-mesh3 {0%{transform:translate(-4%,6%) scale(1.05)}50%{transform:translate(8%,-8%) scale(1.18)}100%{transform:translate(-4%,6%) scale(1.05)}}
+  @keyframes hh-grad {0%{background-position:0% 50%}100%{background-position:200% 50%}}
+  .hh-acc{background-image:linear-gradient(90deg,#2563eb,#7fb8ff,#5b7fe0,#2563eb);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:hh-grad 7s linear infinite}
+`;
+
+const Mesh = () => (
+  <>
+    <style>{KEYFRAMES}</style>
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute -top-[15%] -left-[5%] h-[65vh] w-[65vh] rounded-full opacity-70 blur-[90px]" style={{ background: '#bcd3f5', animation: 'hh-mesh1 24s ease-in-out infinite', willChange: 'transform' }} />
+      <div className="absolute top-[25%] right-[-8%] h-[70vh] w-[70vh] rounded-full opacity-60 blur-[100px]" style={{ background: '#f3d9c0', animation: 'hh-mesh2 30s ease-in-out infinite', willChange: 'transform' }} />
+      <div className="absolute bottom-[-12%] left-[28%] h-[55vh] w-[55vh] rounded-full opacity-55 blur-[90px]" style={{ background: '#d8c8ec', animation: 'hh-mesh3 34s ease-in-out infinite', willChange: 'transform' }} />
+    </div>
+  </>
+);
+
+const Copy = () => (
+  <>
+    <span className="text-b1-sub mb-5 block text-[clamp(15px,1.6vw,20px)] font-bold tracking-[0.02em]">
+      대한예수교장로회 성복교회
+    </span>
+    <h1 className="font-extrabold tracking-[-0.03em] text-[#2a3556]" style={{ fontSize: 'clamp(32px,4.4vw,66px)', lineHeight: 1.08 }}>
+      삶에 <span className="hh-acc">기쁨</span>과 <span className="hh-acc">소망</span>을<br className="md:hidden" /> 주는 교회
+    </h1>
+    <div className="mt-7 inline-flex items-center gap-3 rounded-full border border-white/60 bg-white/55 px-5 py-2.5 text-[13px] font-semibold text-[#3a4252] shadow-[0_10px_30px_-12px_rgba(15,23,42,0.25)] backdrop-blur-md">
+      <span className="bg-b1-accent h-2 w-2 rounded-full" />
+      주일예배 오전 11:30 · 1~5부
+    </div>
+    <div className="mt-8 flex flex-wrap items-center gap-3">
+      <Link
+        href="#worship"
+        className="bg-b1-accent text-b1-bg inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-bold shadow-[0_14px_30px_-10px_rgba(37,99,235,0.5)] transition-transform duration-300 ease-out hover:-translate-y-0.5"
+      >
+        이번 주 예배 시간
+        <ArrowRight size={14} strokeWidth={2.5} />
+      </Link>
+      <Link
+        href="#location"
+        className="text-b1-text hover:border-b-b1-text inline-flex items-center border-b-2 border-transparent px-2 py-3 text-[14px] font-semibold transition-colors"
+      >
+        오시는 길
+      </Link>
+    </div>
+  </>
+);
+
+const Photo = ({ refEl, hidden }: { refEl?: React.Ref<HTMLDivElement>; hidden?: boolean }) => (
+  <div
+    ref={refEl}
+    aria-hidden
+    className="absolute top-0 right-0 bottom-0 w-[74%] will-change-transform"
+    style={{ opacity: hidden ? 0 : 1, WebkitMaskImage: PHOTO_MASK, maskImage: PHOTO_MASK }}
+  >
+    <Image src={mainExterior} alt="성복교회 전경" fill priority quality={85} sizes="(max-width:768px) 96vw, 74vw" className="object-cover object-[55%_50%]" />
+  </div>
+);
+
 export const HomeHero = () => {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const phRef = useRef<HTMLDivElement>(null);
+  const [reduced] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
+  const photoRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const cueRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const edgeTopRef = useRef<HTMLDivElement>(null);
-  const edgeBottomRef = useRef<HTMLDivElement>(null);
-
-  // 사이트 전역 Lenis(_provider.tsx) 인스턴스. 인트로 자동재생 동안에는 멈췄다가(stop)
-  // 종료 시 재개(start)해, 히어로의 자체 휠 하이재킹·instant scrollTo 와 충돌하지 않게 한다.
-  const lenis = useLenis();
-  const lenisRef = useRef(lenis);
-  lenisRef.current = lenis;
-
-  // 최상단(인트로 대기)에서만 Lenis 를 정지 — 첫 스크롤 시 히어로의 네이티브 인트로가 단독 구동.
-  // 중간 위치로 로드되면 인트로는 이미 끝난 것이므로(introPlayed) Lenis 를 그대로 가동한다.
-  useEffect(() => {
-    if (!lenis) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (window.scrollY > 4) return;
-    lenis.stop();
-  }, [lenis]);
 
   useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
     const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
-    const seg = (x: number, s: number, e: number) => clamp((x - s) / (e - s), 0, 1);
-    const smooth = (x: number) => x * x * (3 - 2 * x);
-
-    // 닫힘 배경: 블루 글로우 세 개가 서로 다른 모서리에서 시작해 다른 축·방향·속도로 일렁임
-    const heroBg = (t: number) => {
-      // glow1 — 좌상에서 주로 가로(좌↔우)로 쓸림
-      const x1 = 28 + 32 * Math.sin(t * 0.00016);
-      const y1 = 30 + 12 * Math.sin(t * 0.00010 + 1.0);
-      // glow2 — 우하에서 주로 세로(상↔하)로 쓸림
-      const x2 = 74 + 14 * Math.sin(t * 0.00009 + 2.0);
-      const y2 = 66 + 26 * Math.sin(t * 0.00013 + 0.4);
-      // glow3 — 좌하 ↔ 우상 대각선으로 이동(가장 느림)
-      const p3 = Math.sin(t * 0.00007 + 4.0);
-      const x3 = 42 + 32 * p3;
-      const y3 = 64 - 28 * p3;
-      return (
-        `radial-gradient(44% 50% at ${x1.toFixed(1)}% ${y1.toFixed(1)}%, rgba(37,99,235,0.20) 0%, rgba(37,99,235,0.07) 42%, transparent 70%),` +
-        `radial-gradient(40% 46% at ${x2.toFixed(1)}% ${y2.toFixed(1)}%, rgba(91,127,224,0.16) 0%, rgba(91,127,224,0.05) 45%, transparent 72%),` +
-        `radial-gradient(38% 44% at ${x3.toFixed(1)}% ${y3.toFixed(1)}%, rgba(120,170,255,0.16) 0%, rgba(120,170,255,0.05) 46%, transparent 72%)`
-      );
+    const ease = (x: number) => 1 - Math.pow(1 - x, 3);
+    let blockW = copyRef.current?.offsetWidth ?? 480;
+    const measure = () => {
+      if (copyRef.current) blockW = copyRef.current.offsetWidth;
     };
+    measure();
+    window.addEventListener('resize', measure);
 
-    const WRAP_TOP = -0.12; // 사진 bleed 박스 top (-12%)
-    const WRAP_H = 1.24; // 높이 124%
-    const EDGE_H = 32; // 경계 그림자 높이(가볍게)
-
-    // 인트로 자동재생 중에는 문 열림을 scrollY가 아니라 "시간 기반 진행도"로 구동(일정 속도로 서서히).
-    // 그 외에는 문/CTA/타이틀이 실시간 scrollY 에 연동(가역 — 올리면 닫힘).
-    let introOverride: number | null = null;
-    let t0 = 0;
-    let rafId = 0;
-    const render = (t: number) => {
-      if (!t0) t0 = t;
-      const vh = window.innerHeight;
-      // 인트로 진행도: 문 완전 개방 + CTA 등장이 ~1.0vh 에서 완료
-      const intro = clamp(window.scrollY / (vh * 1.0), 0, 1);
-      const eff = reduced ? 1 : introOverride !== null ? introOverride : intro;
-      const open = reduced ? 1 : smooth(seg(eff, 0.04, 0.7));
-      const inset = (1 - open) * 50;
-
-      if (wrapRef.current) {
-        wrapRef.current.style.clipPath = `inset(${inset.toFixed(1)}% 0% ${inset.toFixed(1)}% 0%)`;
+    let raf = 0;
+    const render = () => {
+      const e = ease(clamp(window.scrollY / (0.85 * window.innerHeight), 0, 1));
+      const dock = blockW / 2 - window.innerWidth * 0.42;
+      if (copyRef.current) copyRef.current.style.transform = `translate(calc(-50% + ${(dock * e).toFixed(1)}px), -50%)`;
+      if (photoRef.current) {
+        photoRef.current.style.opacity = e.toFixed(2);
+        photoRef.current.style.transform = `translateX(${((1 - e) * 44).toFixed(1)}%) scale(${(1.08 - 0.08 * e).toFixed(3)})`;
       }
-      if (phRef.current) phRef.current.style.transform = `scale(${(1.08 - 0.08 * open).toFixed(3)})`;
-
-      // 가벼운 문 경계 그림자 — 풀폭, 사진 클립 경계의 뷰포트 y 에 배치
-      const show = open > 0.02 && open < 0.999 ? '1' : '0';
-      const topY = (WRAP_TOP + (inset / 100) * WRAP_H) * vh;
-      const botY = (WRAP_TOP + WRAP_H - (inset / 100) * WRAP_H) * vh;
-      if (edgeTopRef.current) {
-        edgeTopRef.current.style.top = `${topY.toFixed(1)}px`;
-        edgeTopRef.current.style.opacity = show;
-      }
-      if (edgeBottomRef.current) {
-        edgeBottomRef.current.style.top = `${(botY - EDGE_H).toFixed(1)}px`;
-        edgeBottomRef.current.style.opacity = show;
-      }
-
-      // 타이틀 — 중앙(SSR) → 열리며 좌측 도크로 (scrollY 기반, 가역)
-      const copy = copyRef.current;
-      if (copy) {
-        const blockW = copy.offsetWidth;
-        const dockShift = blockW / 2 - window.innerWidth * 0.43;
-        const tx = reduced ? dockShift : dockShift * open;
-        const sc = reduced ? 1 : 1.1 - 0.1 * open;
-        copy.style.transform = `translate(calc(-50% + ${tx.toFixed(1)}px), -50%) scale(${sc.toFixed(3)})`;
-      }
-
-      // CTA 단계 — 문이 열린 뒤 (eff 0.68→1.0) 아래에서 페이드인 (스크롤 올리면 같이 사라짐)
-      if (ctaRef.current) {
-        const ctaP = reduced ? 1 : clamp((eff - 0.68) / 0.32, 0, 1);
-        ctaRef.current.style.opacity = ctaP.toFixed(2);
-        ctaRef.current.style.transform = `translateY(${((1 - ctaP) * 14).toFixed(1)}px)`;
-        ctaRef.current.style.pointerEvents = ctaP > 0.4 ? 'auto' : 'none';
-      }
-
-      // 스크롤 내려가면 큐 숨김(최상단에선 보임 — 가역)
-      if (cueRef.current) cueRef.current.style.opacity = intro > 0.04 ? '0' : '1';
-
-      // 닫힘 글로우: 첫 페인트 인라인 상태에서 이어받아 일렁임, 문 열리며 잦아듦
-      if (glowRef.current) {
-        if (!reduced && open < 0.999) {
-          glowRef.current.style.background = heroBg(t - t0);
-          glowRef.current.style.opacity = (1 - open).toFixed(2);
-        } else {
-          glowRef.current.style.opacity = '0';
-        }
-      }
+      raf = requestAnimationFrame(render);
     };
-
-    const loop = (t: number) => {
-      if (!document.hidden) render(t);
-      rafId = requestAnimationFrame(loop);
-    };
-    rafId = requestAnimationFrame(loop);
-
-    // ── 인트로 자동재생만 ────────────────────────────────────────
-    // 최상단에서 아래로 스크롤하면 입력을 막고 문을 천천히 열며 CTA 지점(restY)까지 자동 스크롤.
-    // CTA 아래(예배·담임 등)는 보정/스냅 없이 일반 스크롤.
-    let lastY = window.scrollY;
-    let dir = 1;
-    let snapTimer = 0;
-    let scrollAnim = 0;
-    let programmatic = false;
-    let playing = false;
-    let introPlayed = window.scrollY > 4; // 중간 위치 로드면 인트로 이미 끝난 것으로
-    let touchStartY = 0;
-    const loadGuardUntil = performance.now() + 400;
-
-    // 인트로 완료 지점과 정확히 일치(intro = scrollY/vh = 1.0). 그래야 재생 종료 시
-    // eff 1.0→1.0 으로 이어지고 CTA(eff 0.68→1.0)도 끝까지 페이드인된다.
-    const restY = () => window.innerHeight;
-
-    // 인트로 자동재생 — 문 열림을 시간 기반 "선형" 진행도로 구동해 일정 속도로 천천히 보이게.
-    // (scrollY 도 함께 restY 로 이동하지만 히어로는 고정이라, 보이는 건 introOverride 가 여는 문)
-    const playIntro = () => {
-      if (reduced || playing || introPlayed) return;
-      playing = true;
-      introPlayed = true;
-      cancelAnimationFrame(scrollAnim);
-      const fromY = window.scrollY;
-      const toY = restY();
-      const D = 1800; // 전체 인트로 길이(문 열림은 약 0~70% 구간 = ~1.26초). 튜닝값.
-      const start = performance.now();
-      programmatic = true;
-      const step = (now: number) => {
-        const q = clamp((now - start) / D, 0, 1);
-        introOverride = q; // 선형 → 문이 일정 속도로 서서히 열림(렌더의 smooth가 양 끝만 완만하게)
-        // behavior:'instant' 로 CSS scroll-behavior:smooth 를 우회 — scrollY 가 introOverride 와
-        // 정확히 동기화돼야 재생 종료 시 eff=introOverride → eff=intro 전환에서 문이 튀지 않는다.
-        window.scrollTo({ top: Math.round(fromY + (toY - fromY) * q), behavior: 'instant' });
-        if (q < 1) {
-          scrollAnim = requestAnimationFrame(step);
-        } else {
-          introOverride = null;
-          programmatic = false;
-          playing = false;
-          // 인트로 종료 → 스무스 스크롤 재개. start()→reset()이 animatedScroll/targetScroll 을
-          // 현재 실제 위치(=restY)로 동기화하므로 스냅 없이 이어진다.
-          lenisRef.current?.start();
-        }
-      };
-      scrollAnim = requestAnimationFrame(step);
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      if (reduced) return;
-      if (playing) {
-        e.preventDefault(); // 인트로 재생 중 입력 차단
-        return;
-      }
-      if (introPlayed) return; // 인트로 끝나면 일반 스크롤(예배·담임 보정 없음)
-      if (e.deltaY > 0 && window.scrollY < restY()) {
-        e.preventDefault();
-        playIntro();
-      }
-    };
-    const onTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0]?.clientY ?? 0;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (reduced) return;
-      if (playing) {
-        e.preventDefault();
-        return;
-      }
-      if (introPlayed) return;
-      if (window.scrollY < restY()) {
-        const dy = touchStartY - (e.touches[0]?.clientY ?? 0); // >0 = 아래로 스크롤
-        if (dy > 6) {
-          e.preventDefault();
-          playIntro();
-        }
-      }
-    };
-
-    // 비휠 입력(스크롤바/키보드) 폴백: 최상단에서 아래로 내려가면 인트로 재생
-    const onScrollEnd = () => {
-      if (reduced || programmatic || playing || introPlayed) return;
-      if (performance.now() < loadGuardUntil) return;
-      if (dir > 0 && window.scrollY > 24 && window.scrollY < restY()) playIntro();
-    };
-    const onScroll = () => {
-      const y = window.scrollY;
-      dir = y >= lastY ? 1 : -1;
-      lastY = y;
-      window.clearTimeout(snapTimer);
-      snapTimer = window.setTimeout(onScrollEnd, 140);
-    };
-    if (!reduced) {
-      document.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('wheel', onWheel, { passive: false });
-      window.addEventListener('touchstart', onTouchStart, { passive: true });
-      window.addEventListener('touchmove', onTouchMove, { passive: false });
-    }
-
+    raf = requestAnimationFrame(render);
     return () => {
-      cancelAnimationFrame(rafId);
-      cancelAnimationFrame(scrollAnim);
-      document.removeEventListener('scroll', onScroll);
-      window.removeEventListener('wheel', onWheel);
-      window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.clearTimeout(snapTimer);
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', measure);
     };
-  }, []);
+  }, [reduced]);
 
-  return (
-    <>
-      <section aria-label="성복교회 전경" className="fixed inset-0 z-0 overflow-hidden bg-[#f6fafe]">
-        {/* 자동 일렁이는 블루 글로우 — 첫 페인트부터 닫힘 상태로 등장(인라인), rAF 가 일렁임 인계 */}
-        <div
-          ref={glowRef}
-          aria-hidden
-          className="pointer-events-none absolute inset-0 z-[1]"
-          style={{
-            opacity: 1,
-            background:
-              'radial-gradient(44% 50% at 28.0% 40.1%, rgba(37,99,235,0.20) 0%, rgba(37,99,235,0.07) 42%, transparent 70%),' +
-              'radial-gradient(40% 46% at 86.7% 76.1%, rgba(91,127,224,0.16) 0%, rgba(91,127,224,0.05) 45%, transparent 72%),' +
-              'radial-gradient(38% 44% at 17.8% 85.2%, rgba(120,170,255,0.16) 0%, rgba(120,170,255,0.05) 46%, transparent 72%)',
-          }}
-        />
-
-        {/* 전경 사진 — 우측 흘러넘침 + 좌측 페이드, 스크롤로 위아래 열림 */}
-        <div
-          ref={wrapRef}
-          aria-hidden
-          className="absolute -top-[12%] -right-[12%] -bottom-[12%] z-[2] w-[84%] overflow-hidden"
-          style={{
-            WebkitMaskImage:
-              'linear-gradient(to left, black 0%, black 50%, rgba(0,0,0,0.7) 72%, rgba(0,0,0,0.18) 90%, transparent 100%)',
-            maskImage:
-              'linear-gradient(to left, black 0%, black 50%, rgba(0,0,0,0.7) 72%, rgba(0,0,0,0.18) 90%, transparent 100%)',
-            clipPath: 'inset(50% 0% 50% 0%)',
-          }}
-        >
-          <div ref={phRef} className="absolute inset-0 will-change-transform">
-            <Image
-              src={mainExterior}
-              alt="성복교회 전경"
-              fill
-              priority
-              quality={85}
-              sizes="(max-width: 768px) 96vw, 84vw"
-              className="object-cover object-[55%_50%]"
-            />
+  // 접근성: 모션 최소화 시 트랙 없이 정적 최종상태(카피 좌측 + 전경 노출).
+  if (reduced) {
+    return (
+      <section aria-label="성복교회" className="relative min-h-[100svh] w-full overflow-hidden bg-[#f7f4ee]">
+        <Mesh />
+        <Photo />
+        <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1240px] items-center px-6 md:px-[clamp(24px,5vw,72px)]">
+          <div className="max-w-[540px]">
+            <Copy />
           </div>
-        </div>
-
-        {/* 가벼운 문 경계 그림자 (위/아래) — 마스크 밖 풀폭, 경계선이 화면 전체로 연속 */}
-        <div
-          ref={edgeTopRef}
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 z-[3] h-[32px]"
-          style={{ top: '50%', opacity: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.22), transparent)' }}
-        />
-        <div
-          ref={edgeBottomRef}
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 z-[3] h-[32px]"
-          style={{ top: '50%', opacity: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.22), transparent)' }}
-        />
-
-        {/* 타이틀 — SSR 중앙(닫힘 상태), 열리며 좌측 안착. 문 열린 뒤 CTA 페이드인 */}
-        <div
-          ref={copyRef}
-          className="absolute top-1/2 left-1/2 z-[4] max-w-[560px] text-center will-change-transform"
-          style={{ transformOrigin: 'center center', transform: 'translate(-50%, -50%) scale(1.1)' }}
-        >
-          <span className="text-b1-text mb-[18px] block text-[clamp(16px,1.7vw,21px)] font-bold tracking-[0.02em]">
-            대한예수교장로회 성복교회
-          </span>
-          <h1 className="text-b1-text text-[clamp(32px,4.4vw,62px)] leading-[1.12] font-extrabold tracking-[-0.03em] text-balance">
-            삶에 <span className="text-b1-accent">기쁨</span>과 <span className="text-b1-accent">소망</span>을
-            <br />
-            주는 교회
-          </h1>
-
-          {/* CTA — 문 열린 뒤 아래에서 페이드인 (카피·링크는 검수 대상) */}
-          <div
-            ref={ctaRef}
-            className="mt-8 flex flex-wrap items-center justify-center gap-3"
-            style={{ opacity: 0, transform: 'translateY(14px)' }}
-          >
-            <Link
-              href="#worship"
-              className="bg-b1-accent text-b1-bg inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-bold shadow-[0_14px_30px_-10px_rgba(37,99,235,0.5)] transition-transform duration-300 ease-out hover:-translate-y-0.5"
-            >
-              이번 주 예배 시간
-              <ArrowRight size={14} strokeWidth={2.5} />
-            </Link>
-            <Link
-              href="#location"
-              className="text-b1-text hover:border-b-b1-text inline-flex items-center border-b-2 border-transparent px-2 py-3 text-[14px] font-semibold transition-colors"
-            >
-              오시는 길
-            </Link>
-          </div>
-        </div>
-
-        {/* 스크롤 큐 */}
-        <div
-          ref={cueRef}
-          aria-hidden
-          className="b1-mono text-b1-muted pointer-events-none absolute bottom-7 left-1/2 z-[5] flex -translate-x-1/2 flex-col items-center gap-2 text-[10px] tracking-[0.18em] transition-opacity duration-300"
-        >
-          <span>SCROLL</span>
-          <span className="bg-b1-muted relative h-7 w-px overflow-hidden">
-            <span className="b1-hero-scroll-drop absolute inset-x-0 -top-full h-[60%]" />
-          </span>
         </div>
       </section>
+    );
+  }
 
-      {/* 히어로 점유 스크롤(240vh). pointer-events-none 라 뒤쪽 고정 히어로 CTA 클릭 가능 */}
-      <div aria-hidden className="pointer-events-none h-[240vh]" />
-    </>
+  return (
+    <div className="relative" style={{ height: '200vh' }}>
+      <section aria-label="성복교회" className="sticky top-0 h-[100svh] overflow-hidden bg-[#f7f4ee]">
+        <Mesh />
+        <Photo refEl={photoRef} hidden />
+        <div ref={copyRef} className="absolute top-1/2 left-1/2 z-10 w-[88%] max-w-[540px] will-change-transform" style={{ transform: 'translate(-50%, -50%)' }}>
+          <Copy />
+        </div>
+      </section>
+    </div>
   );
 };

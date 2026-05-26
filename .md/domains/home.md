@@ -24,45 +24,32 @@
 
 ## 섹션 사양
 
-### 1. HomeHero v2
+### 1. HomeHero — 메시+키네틱 DockSlide (시안 B 적용, 잠정)
 
-| 항목              | 내용                                                                                                                                                                          |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **목적**          | "이 교회는 누가 운영하고, 어떤 분위기인가?"에 첫 5초 안에 답한다. 스크롤하면서 외관 → 내부 → 예배 → 담임목사 4단계로 흘러간다.                                                |
-| **구조**          | 360vh 스크롤 트랙 + sticky stage (100dvh). 사진은 우측 82% 폭으로 사방 흘러넘쳐 사각형 경계가 없음. 좌측만 부드러운 linear-gradient 마스크로 텍스트 영역에 자연스럽게 페이드. |
-| **인터랙션**      | 사진 4단 (blur 0→20→0, scale 0.96→1.0→1.06) + 활성 사진 9초 Ken Burns. 텍스트 4단 (같은 위치 blur 페이드). CTA·위치 완전 고정. 상단 도트 진행 바.                             |
-| **데이터**        | `src/domains/home/data/heroStages.ts` 의 `HERO_STAGES` 4개 항목. 각 항목에 라벨·이미지·카피 정의.                                                                             |
-| **자산 미확보**   | 4단계 중 3장 (내부·예배·담임목사) 미확보 — 그라디언트 자리표시자로 대체. 촬영 후 `heroStages.ts` 에서 image 임포트로 교체.                                                    |
-| **Primary CTA**   | "이번 주 예배 시간" (`#worship` 앵커)                                                                                                                                         |
-| **Secondary CTA** | "오시는 길" (`#location` 앵커)                                                                                                                                                |
-| **성공 지표**     | 2번 섹션 도달률 ≥ 70%, Primary CTA 클릭률, 평균 체류 5초+                                                                                                                     |
+| 항목              | 내용                                                                                                                                                                                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **목적**          | "이 교회는 누가, 어떤 분위기인가"에 첫 5초 안에 답한다.                                                                                                                                                |
+| **구조**          | sticky 200vh 트랙(핀 ~85vh). 파스텔 메시(웜화이트 `#f7f4ee`) 배경 + 우측 전경(`main01`) 블리드, 좌측 경계가 메시로 자연 페이드(`mask-image`).                                                           |
+| **인터랙션**      | 최상단: 문구 화면 중앙·전경 숨김. 스크롤 시 문구가 좌측 도킹 + 전경이 우측에서 등장(opacity 0→1)·선명(scale 1.08→1). transform/opacity 만. `prefers-reduced-motion` 이면 트랙 없이 정적 최종상태(100vh). |
+| **카피**          | eyebrow "대한예수교장로회 성복교회" + 키네틱 그라데 타이틀 "삶에 기쁨과 소망을 주는 교회"(기쁨·소망 흐르는 그라데, 본문 딥인디고 `#2a3556`) + 글래스 칩 "주일예배 오전 11:30 · 1~5부".                   |
+| **Primary CTA**   | "이번 주 예배 시간" (`#worship` 앵커)                                                                                                                                                                  |
+| **Secondary CTA** | "오시는 길" (`#location` 앵커)                                                                                                                                                                         |
+| **상태**          | 잠정 적용 — 추가 시안 비교 예정(프리뷰 `src/app/hero-preview/`, `HomeHero/_variants/` 유지). 확정 시 색 토큰화(`globals.css` + `color-palette.md`) + ADR 0004 기록.                                     |
 
-> 배경·대안 비교는 [ADR 0003](../decisions/0003-hero-v2-bleed-blur-kenburns.md) 참조.
+> 시안 비교 경위: 메시 배경+키네틱 카피(A) + 우측 전경 블리드(C)를 결합한 DockSlide(B). 구 v2(Bleed+Blur+KenBurns)는 [ADR 0003](../decisions/0003-hero-v2-bleed-blur-kenburns.md), 구 v8(문열림)은 폐기.
 
-#### HomeHero — 회귀 방지 불변식
+#### HomeHero — 불변식 (수정 시 유지)
 
-> 현재 구현은 v8(고정 전경 문열림 히어로 + 차오르는 예배·담임 섹션 + 전면 그라데이션 전환)이다. 배경은 루트 한 장의 거의-수평 전면(full-bleed) 그라데이션으로, 스크롤에 따라 양 끝 스톱이 각각 보간되며 예배(앰버·문구 쪽 밝음)→담임(네이비)로 **경계·핫스팟 없이** 매끄럽게 어두워진다(vivtel.com 식). 섹션 단위 오버레이·작은 radial 스포트라이트는 경계선/손전등 얼룩을 만들어 **금지**. (위 v2 표는 추후 전면 갱신 예정.) 아래는 개발 중 **다시 깨지면 안 되는** 인터랙션 불변식 — 수정 시 반드시 유지·검증할 것.
+> 현재 구현은 시안 B(메시+키네틱 DockSlide)다. 구 v8(고정 전경 문열림 + `introOverride` 자동재생 + Lenis `stop/start` + glow/edge/cue/240vh spacer)는 **폐기** — 다시 도입하지 말 것. 자기완결 구현으로 임시 프리뷰(`HomeHero/_variants/`)에 의존하지 않는다(프리뷰 삭제해도 프로덕션 무관).
 
-1. **타이틀 SSR 중앙화** — 닫힘 타이틀은 **첫 페인트(서버)부터 중앙**이어야 하고, JS가 스크롤 `open`에 따라 좌측으로 보간한다. 기본 CSS를 좌측 도크 위치로 두지 말 것.
-   - 깨지면: 최상단 새로고침 시 타이틀이 **왼쪽→중앙으로 튐**.
-   - 위치: `HomeHero` `#a1copy` (기본 `left-1/2` + 인라인 `translate(-50%,-50%)`).
-2. **문 경계 그림자는 좌측 페이드 마스크 밖, 풀폭 오버레이** — 사진 `#a1wrap`(좌측 `mask-image`) **안에 넣지 말 것**. rAF로 클립 경계의 뷰포트 y에 맞춰 화면 전체 너비로 배치.
-   - 깨지면: 문 열림 경계선이 **왼쪽에서 잘림**(불완전한 문).
-   - 위치: `HomeHero` `edgeTop`/`edgeBottom` (히어로 직계, z 사진과 타이틀 사이).
-3. **스크롤 위치 복원은 즉시(non-smooth)로 유지** — 사이트 전역 스무딩은 **Lenis**(`src/app/_provider.tsx` 의 `ReactLenis root`)가 관리한다. Lenis 는 마운트 시 **현재(복원된) 스크롤 위치에서 시작**하므로(0에서 애니메이션하지 않음) 복원이 즉시 유지된다. 과거의 `scroll-behavior` 토글 핵은 제거됐고, `globals.css` 의 `html { scroll-behavior: smooth }` 도 제거(Lenis 와 충돌).
-   - 깨지면: 중간 스크롤에서 새로고침 시 인터랙션이 **처음부터 바쁘게 재생**되거나 0→복원 위치로 애니메이션 스크롤됨.
-   - 위치: `src/app/_provider.tsx` (`ReactLenis root`). cf. `globals.css` `html { scroll-padding-top: 80px }`(Lenis `anchors.offset:-80` 과 짝).
-4. **히어로 이미지 `sizes`는 `scale(1.08)`+bleed 반영 반응형** + `quality` 명시.
-   - 깨지면: 가로 뷰포트를 좁히면 전경 사진이 **흐릿**(작은 후보 업스케일).
-   - 위치: `HomeHero` `<Image sizes="(max-width:768px) 96vw, 84vw" quality={85} />`.
-5. **문 열림 = scrollY 연동(가역) + 첫 스크롤 자동재생(1회)** — door/CTA/타이틀은 실시간 `intro`(scrollY)로 구동 → 내리면 열리고 **올리면 닫힌다**(래치 없음). 단 최상단 첫 스크롤 시엔 입력을 잠그고 ~1.8초 동안 **시간 기반 `introOverride`(선형)**로 천천히 자동 개방+CTA까지 스크롤(1회, `introPlayed` 게이트).
-   - 금지: 일방향 래치(`introMax` 단조 증가, 중간 로드 즉시-완전-open)는 **사용자 결정으로 제거** — 다시 도입하지 말 것(문은 가역이어야 함).
-   - 주의: 문 열림 연출을 스크롤 이징에 묶지 말 것(빠른 중간 구간에 몰려 안 보임) → 자동재생은 시간 기반 선형.
-   - **자동재생 스크롤은 `window.scrollTo({ top, behavior: 'instant' })`** — 2-인자 `scrollTo(0,y)`는 CSS `scroll-behavior:smooth`를 타서 scrollY가 목표를 **지연 추종**한다. 그러면 재생 종료(`introOverride=null`) 순간 `eff`가 시간기반→지연된 scrollY로 바뀌며 문이 **닫혔다 다시 열린다**(래치 제거로 노출된 버그). instant 로 scrollY를 introOverride와 정확 동기화해야 이음매가 없다.
-   - **인트로 동안 Lenis 정지(stop) → 종료 시 재개(start)** — 전역 Lenis 도 휠을 가로채므로, 최상단 인트로 대기/재생 중에는 `lenis.stop()` 으로 얼려 히어로의 instant scrollTo 와 충돌을 막는다(정지 상태 Lenis 는 wheel 을 preventDefault 만 하고 전파는 막지 않아, 히어로의 자체 onWheel 이 정상 트리거됨). 종료 시 `lenis.start()` — `start()→reset()` 이 내부 스크롤 상태를 실제 위치로 동기화해 스냅이 없다. 중간 로드(`scrollY>4`)면 정지하지 않고 Lenis 그대로. **이 stop/start 브라케팅을 제거하면 첫 인트로가 Lenis 와 싸워 튄다.** 위치: `HomeHero` `useLenis()` + 인트로 완료 분기.
-   - **`restY = window.innerHeight`(=인트로 완료 지점, intro=1.0)** — restY가 intro 완료점보다 작으면(예: 0.98vh) 정지 시 `eff<1`이라 **CTA가 끝까지(opacity 1) 안 떠서** 어정쩡하게 멈춘다. 둘을 일치시킬 것.
-   - 범위: **인트로(top→CTA)만** JS 자동재생. CTA 아래(예배·담임 등)는 보정/스냅 없는 일반 스크롤.
-   - 재사용 패턴 상세: [patterns/scroll-autoplay-intro.md](../patterns/scroll-autoplay-intro.md).
+1. **카피 SSR 중앙** — 카피 블록은 첫 페인트부터 `left-1/2 top-1/2` + 인라인 `translate(-50%,-50%)` 로 **중앙**, JS(rAF)가 스크롤 진행 `e` 로 좌측 도킹: `dock = blockW/2 - innerWidth*0.42`, `translateX(dock*e)`. 좌측 도크를 기본 CSS로 두지 말 것(최상단 새로고침 시 튐). `blockW` 는 마운트/리사이즈 시 `offsetWidth` 캐시(rAF 내 레이아웃 읽기 금지).
+2. **전경은 첫 프레임 숨김 → 스크롤 등장** — 애니 분기에서 전경 초기 `opacity:0`, rAF 가 `e` 로 `opacity 0→1` · `translateX 44%→0` · `scale 1.08→1`. 좌측 경계는 `mask-image`(linear, 좌측 transparent)로 메시에 자연 페이드(하드 경계·문열림 금지).
+3. **transform/opacity·mask 만 애니메이트** — `filter:blur()` 애니·clip-path 스크럽 금지(잔카). 메시 블롭은 `transform`만(블러는 정적).
+4. **reduced-motion = 정적 최종상태** — `prefers-reduced-motion` 이면 200vh 트랙·rAF 없이 **100vh 정적**(카피 좌측 + 전경 노출)으로 렌더. 스크롤 연동을 끄되 빈 화면/데드 스크롤이 안 생기게 최종상태를 보일 것.
+5. **CTA 앵커 유지** — `이번 주 예배 시간`=`#worship`(WorshipTimes `id`), `오시는 길`=`#location`(LocationMap `id`). Lenis `anchors.offset:-80`(`_provider.tsx`)로 헤더 보정.
+6. **이미지 `sizes`+`quality` 반응형** — `<Image sizes="(max-width:768px) 96vw, 74vw" quality={85} priority />`(좁은 뷰포트 업스케일 흐림 방지).
+
+> 전역 스무딩은 Lenis(`_provider.tsx` `ReactLenis root`)가 관리하며 B는 Lenis 를 stop/start 하지 않는다(인트로 하이재킹 없음).
 
 ### 2. PastorWelcome (신설)
 

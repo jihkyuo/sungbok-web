@@ -51,7 +51,7 @@ const Copy = () => (
       <span className="bg-b1-accent h-2 w-2 rounded-full" />
       주일예배 오전 11:30 · 1~5부
     </div>
-    <div className="mt-8 flex flex-wrap items-center gap-3">
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
       <Link
         href="#worship"
         className="bg-b1-accent text-b1-bg inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-bold shadow-[0_14px_30px_-10px_rgba(37,99,235,0.5)] transition-transform duration-300 ease-out hover:-translate-y-0.5"
@@ -123,7 +123,7 @@ export const HomeHero = () => {
         <Mesh />
         <Photo />
         <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1240px] items-center px-6 md:px-[clamp(24px,5vw,72px)]">
-          <div className="max-w-[540px]">
+          <div className="max-w-[540px] text-center">
             <Copy />
           </div>
         </div>
@@ -136,7 +136,7 @@ export const HomeHero = () => {
       <section aria-label="성복교회" className="sticky top-0 h-[100svh] overflow-hidden bg-[#f7f4ee]">
         <Mesh />
         <Photo refEl={photoRef} hidden />
-        <div ref={copyRef} className="absolute top-1/2 left-1/2 z-10 w-[88%] max-w-[540px] will-change-transform" style={{ transform: 'translate(-50%, -50%)' }}>
+        <div ref={copyRef} className="absolute top-1/2 left-1/2 z-10 w-[88%] max-w-[540px] text-center will-change-transform" style={{ transform: 'translate(-50%, -50%)' }}>
           <Copy />
         </div>
       </section>

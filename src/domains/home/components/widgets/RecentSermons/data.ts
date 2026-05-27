@@ -23,8 +23,8 @@ export const YOUTH_VIDEO_EMBED =
 /** 설교 아카이브 라우트 */
 export const ARCHIVE_HREF = '/worship-video';
 
-/** 청년부 유튜브 채널 (외부 링크) — 실제 채널 URL로 교체 예정 */
-export const YOUTH_CHANNEL_HREF = 'https://www.youtube.com/';
+/** 청년부 유튜브 채널 (외부 링크) — AllLive 올리브워십 */
+export const YOUTH_CHANNEL_HREF = 'https://www.youtube.com/@allliveworship';
 
 export const YOUTH = {
   team: '청년부 예배팀',

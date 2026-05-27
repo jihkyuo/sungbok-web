@@ -1,8 +1,11 @@
 'use client';
 
-import { Volume2, VolumeX, Youtube } from 'lucide-react';
+import { ArrowUpRight, Volume2, VolumeX, Youtube } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+
+import allLiveLogo from '@/assets/icons/allLive-team-logo.png';
 
 import { POSTER, YOUTH, YOUTH_CHANNEL_HREF, YOUTH_VIDEO_EMBED } from './data';
 import { useTurntable } from './useTurntable';
@@ -84,6 +87,10 @@ export const TurntableStage = ({
   // postMessage 명령을 보내 mute/unMute. (클릭 시점이라 unMute 가 정책상 허용됨)
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [muted, setMuted] = useState(true);
+  // 채널 칩: 호버 또는 자동 펄스로 펼침 (호버 우선)
+  const [hovered, setHovered] = useState(false);
+  const [autoExpanded, setAutoExpanded] = useState(false);
+  const expanded = hovered || autoExpanded;
   const toggleMute = () => {
     iframeRef.current?.contentWindow?.postMessage(
       JSON.stringify({ event: 'command', func: muted ? 'unMute' : 'mute', args: [] }),
@@ -111,6 +118,8 @@ export const TurntableStage = ({
   const coverW = vw / vh >= AR ? vw : vh * AR;
   const coverH = vw / vh >= AR ? vw / AR : vh;
   const labelOp = cl((expand - 0.3) / 0.6);
+  // 확장 마지막 구간(expand 0.7→1)에서 페이드·상승하며 등장하는 레이어드 카드
+  const layeredOp = cl((expand - 0.7) / 0.3);
   const reflBoost = 1 + cl((q - TRIGGER) / 0.12) * 0.8;
 
   const discRef = useRef<HTMLDivElement>(null);
@@ -122,10 +131,13 @@ export const TurntableStage = ({
   const targetVelRef = useRef(0);
   const tiltRef = useRef(0);
   const qRef = useRef(0);
+  const chipVisibleRef = useRef(false);
+  const hoveredEverRef = useRef(false);
   const boxRef = useRef({ hw: 0, hh: 0, cr: 0 });
   targetVelRef.current = targetVelOf(q);
   tiltRef.current = tiltDeg;
   qRef.current = q;
+  chipVisibleRef.current = layeredOp > 0.9;
   const vminPx = typeof window !== 'undefined' ? Math.min(window.innerWidth, window.innerHeight) / 100 : 8;
   const gapPx = 1.4 * vminPx;
   boxRef.current = {
@@ -162,6 +174,27 @@ export const TurntableStage = ({
   useEffect(() => {
     const t = setTimeout(() => setPosterFaded(true), 2500);
     return () => clearTimeout(t);
+  }, []);
+
+  // 채널 칩 1회 자동 열림 — 칩 첫 등장 후 3초간 호버가 없으면 열고, 열린 뒤 4초 후 닫음(반복 없음).
+  // 3초 내 호버한 적 있으면 자동열림 취소 → 호버/타이머 액션 충돌 방지.
+  useEffect(() => {
+    let openT: ReturnType<typeof setTimeout> | undefined;
+    let closeT: ReturnType<typeof setTimeout> | undefined;
+    const wait = setInterval(() => {
+      if (!chipVisibleRef.current) return;
+      clearInterval(wait);
+      openT = setTimeout(() => {
+        if (hoveredEverRef.current) return;
+        setAutoExpanded(true);
+        closeT = setTimeout(() => setAutoExpanded(false), 4000);
+      }, 3000);
+    }, 200);
+    return () => {
+      clearInterval(wait);
+      if (openT) clearTimeout(openT);
+      if (closeT) clearTimeout(closeT);
+    };
   }, []);
 
   return (
@@ -273,6 +306,52 @@ export const TurntableStage = ({
             <div className="b1-mono text-[10px] tracking-[0.16em] opacity-85">● 청년 예배 · YOUTH WORSHIP</div>
             <div className="mt-1 text-[22px] font-bold md:text-[30px]">청년 예배</div>
           </div>
+        </div>
+
+        {/* 청년부 유튜브 채널 — 카드 우측하단 모서리에 흰 원형 배지(검은 로고)로 고정.
+            호버/자동열림 시 로고는 모서리에 둔 채 라벨이 왼쪽으로 펼쳐져 채널 링크로 이동 */}
+        <div
+          className="pointer-events-none absolute top-1/2 left-1/2 z-30"
+          style={{
+            width: `${vw}vmin`,
+            height: `${vh}vmin`,
+            transform: `translate(calc(-50% + ${tx}vmin), -50%)`,
+            opacity: layeredOp,
+          }}
+          aria-hidden={layeredOp < 0.5}
+        >
+          <Link
+            href={YOUTH_CHANNEL_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => {
+              setHovered(true);
+              hoveredEverRef.current = true;
+            }}
+            onMouseLeave={() => setHovered(false)}
+            aria-label="청년부 유튜브 채널"
+            className="absolute right-2 -bottom-2 flex items-center rounded-full bg-white p-1.5 text-slate-900 no-underline shadow-[0_12px_34px_-12px_rgba(0,0,0,0.65)]"
+            style={{
+              transform: `translateY(${(1 - layeredOp) * 14}px)`,
+              pointerEvents: layeredOp > 0.5 ? 'auto' : 'none',
+            }}
+          >
+            <span className="relative flex h-11 w-11 shrink-0 overflow-hidden rounded-full bg-white">
+              <Image src={allLiveLogo} alt="AllLive 올리브워십" fill sizes="44px" className="object-contain" />
+            </span>
+            <span
+              className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-[13px] font-semibold tracking-[-0.01em] transition-all duration-500 ease-out"
+              style={{
+                maxWidth: expanded ? '13rem' : 0,
+                opacity: expanded ? 1 : 0,
+                marginLeft: expanded ? '0.6rem' : 0,
+                marginRight: expanded ? '0.4rem' : 0,
+              }}
+            >
+              청년부 유튜브 채널
+              <ArrowUpRight size={15} className="shrink-0" />
+            </span>
+          </Link>
         </div>
 
         {/* 에디토리얼 캡션 */}

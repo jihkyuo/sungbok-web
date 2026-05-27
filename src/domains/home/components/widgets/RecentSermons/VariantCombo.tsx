@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, ArrowUpRight, Play, Youtube } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Youtube } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -12,7 +12,6 @@ import { AmbientVideo } from './AmbientVideo';
 import {
   ARCHIVE_HREF,
   LATEST_SERMON,
-  POSTER_ALT,
   SERMON_STILLS,
   YOUTH,
   YOUTH_CHANNEL_HREF,
@@ -49,11 +48,8 @@ export const VariantCombo = () => (
             href={ARCHIVE_HREF}
             className="b1-card-hover group relative block h-full overflow-hidden rounded-2xl no-underline"
           >
-            <Image src={POSTER_ALT} alt="" fill sizes="60vw" className="object-cover" />
+            <AmbientVideo className="absolute inset-0 h-full w-full" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-            <span className="absolute top-1/2 left-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 transition-transform group-hover:scale-110">
-              <Play size={24} fill="currentColor" />
-            </span>
             <div className="absolute bottom-6 left-6 text-white">
               <div className="b1-mono text-[11px] tracking-[0.06em] opacity-85">
                 최근 설교 · {LATEST_SERMON.date}

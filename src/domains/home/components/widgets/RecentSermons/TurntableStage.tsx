@@ -1,11 +1,10 @@
 'use client';
 
-import { Youtube } from 'lucide-react';
+import { Volume2, VolumeX, Youtube } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { AmbientVideo } from './AmbientVideo';
-import { YOUTH, YOUTH_CHANNEL_HREF } from './data';
+import { POSTER, YOUTH, YOUTH_CHANNEL_HREF, YOUTH_VIDEO_EMBED } from './data';
 import { useTurntable } from './useTurntable';
 import { WaveRing } from './WaveRing';
 
@@ -76,6 +75,22 @@ export const TurntableStage = ({
 }: Props) => {
   const { ref, q } = useTurntable();
   const hasReflect = disc === 'vinyl' || disc === 'cd';
+  // 임베드 로드 직후 잠깐 노출되는 YouTube 재생 컨트롤을 가리는 포스터.
+  // 페이지 진입(마운트) 시점부터 영상은 자동재생되고, 컨트롤이 사라질 즈음 페이드아웃 →
+  // 사용자가 스크롤로 턴테이블에 도달할 땐 이미 깨끗한 재생 상태.
+  const [posterFaded, setPosterFaded] = useState(false);
+
+  // 무음 자동재생이 기본 — 버튼(=사용자 제스처)으로만 소리 토글. enablejsapi 임베드에
+  // postMessage 명령을 보내 mute/unMute. (클릭 시점이라 unMute 가 정책상 허용됨)
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [muted, setMuted] = useState(true);
+  const toggleMute = () => {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: 'command', func: muted ? 'unMute' : 'mute', args: [] }),
+      'https://www.youtube.com',
+    );
+    setMuted((m) => !m);
+  };
 
   let blackD: number;
   if (q < GROW_END) blackD = lerp(28, 56, q / GROW_END);
@@ -90,6 +105,11 @@ export const TurntableStage = ({
   const vw = lerp(vBase, endW, expand);
   const vh = lerp(vBase, endH, expand);
   const tx = -shiftLeftVmin * expand;
+  // YouTube iframe 은 object-cover 가 없으므로, 원형(≈1:1)→카드(16:9) 모핑 컨테이너를
+  // 매 프레임 덮도록 16:9 iframe 크기를 계산해 중앙 정렬·클립한다.
+  const AR = 16 / 9;
+  const coverW = vw / vh >= AR ? vw : vh * AR;
+  const coverH = vw / vh >= AR ? vw / AR : vh;
   const labelOp = cl((expand - 0.3) / 0.6);
   const reflBoost = 1 + cl((q - TRIGGER) / 0.12) * 0.8;
 
@@ -137,6 +157,11 @@ export const TurntableStage = ({
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
+  }, []);
+
+  useEffect(() => {
+    const t = setTimeout(() => setPosterFaded(true), 2500);
+    return () => clearTimeout(t);
   }, []);
 
   return (
@@ -219,7 +244,7 @@ export const TurntableStage = ({
 
         {/* 중앙 영상 — 원형 → 카드 */}
         <div
-          className="absolute top-1/2 left-1/2 z-20 overflow-hidden will-change-transform"
+          className="absolute top-1/2 left-1/2 z-20 overflow-hidden bg-black will-change-transform"
           style={{
             width: `${vw}vmin`,
             height: `${vh}vmin`,
@@ -228,7 +253,22 @@ export const TurntableStage = ({
             boxShadow: expand > 0.05 ? '0 40px 100px -30px rgba(0,0,0,0.75)' : 'none',
           }}
         >
-          <AmbientVideo className="absolute inset-0 h-full w-full" />
+          <iframe
+            ref={iframeRef}
+            src={`${YOUTH_VIDEO_EMBED}&enablejsapi=1`}
+            title="청년 예배"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0"
+            style={{ width: `${coverW}vmin`, height: `${coverH}vmin` }}
+            tabIndex={-1}
+            aria-hidden
+          />
+          {/* 로드 직후 컨트롤 노출 구간을 가리는 포스터 — 자동재생 안정화 후 페이드아웃 */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+            style={{ backgroundImage: `url(${POSTER.src})`, opacity: posterFaded ? 0 : 1 }}
+          />
           <div className="absolute right-5 bottom-5 left-5 text-white" style={{ opacity: caption ? 0 : labelOp }}>
             <div className="b1-mono text-[10px] tracking-[0.16em] opacity-85">● 청년 예배 · YOUTH WORSHIP</div>
             <div className="mt-1 text-[22px] font-bold md:text-[30px]">청년 예배</div>
@@ -263,6 +303,17 @@ export const TurntableStage = ({
         >
           SCROLL
         </div>
+
+        {/* 음소거 토글 — 클릭(제스처)으로만 소리 on/off. 위치/디자인 임시(우하단). */}
+        <button
+          type="button"
+          onClick={toggleMute}
+          aria-label={muted ? '소리 켜기' : '소리 끄기'}
+          aria-pressed={!muted}
+          className="pointer-events-auto absolute right-6 bottom-6 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60"
+        >
+          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+        </button>
       </div>
     </section>
   );

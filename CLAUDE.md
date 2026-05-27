@@ -27,6 +27,9 @@ Next.js 15 (App Router) + TypeScript + Tailwind CSS 4 기반 교회 웹사이트
 |------|----------------|
 | `src/app/globals.css` 팔레트 토큰 | [.md/design/color-palette.md](.md/design/color-palette.md) |
 
+### 시안(디자인 변형) 작업
+레이아웃·효과·인터랙션 시안을 탐색·비교할 때는 [.md/workflow/prototype-preview.md](.md/workflow/prototype-preview.md) 의 방식을 따르세요. 프리뷰 라우트 컨벤션·전용 dev 포트·재사용 헬퍼·확정 후 정리 규칙이 모두 거기 있습니다.
+
 ### 중요 의사결정 기록
 스택 전환, 팔레트 교체, 라우팅 구조 변경 등 되돌리기 어려운 결정은 `.md/decisions/` 에 ADR(Architecture Decision Record) 형식으로 기록하세요. 양식과 번호 컨벤션은 [.md/README.md](.md/README.md) 참조.
 

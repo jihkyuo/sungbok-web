@@ -3,21 +3,24 @@ import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
 import { HomeLead } from '@/domains/home/components/widgets/HomeLead';
 import { LocationMap } from '@/domains/home/components/widgets/LocationMap';
 import { RecentSermons } from '@/domains/home/components/widgets/RecentSermons';
-import { VariantCombo } from '@/domains/home/components/widgets/RecentSermons/_variants/VariantCombo';
+import { TurntableStage } from '@/domains/home/components/widgets/RecentSermons/TurntableStage';
+import { VariantCombo } from '@/domains/home/components/widgets/RecentSermons/VariantCombo';
 import { VisitorAndNews } from '@/domains/home/components/widgets/VisitorAndNews';
 import { WorshipTimes } from '@/domains/home/components/widgets/WorshipTimes';
 
 export default function Home() {
   return (
     <>
-      {/* 고정 전경 히어로 (HomeHero 안에 fixed 히어로 + 스크롤 spacer) */}
+      {/* 히어로 (HomeHero: sticky 200vh 트랙 — 중앙 카피 → 좌측 도킹 + 전경 등장) */}
       <HomeHero />
-      {/* 히어로 위로 차오르는 불투명 묶음 — HomeLead(표어·담임목사) + 기존 섹션 */}
+      {/* 히어로 다음 섹션 묶음 — HomeLead(표어·담임목사) + 기존 섹션 */}
       <div className="bg-b1-bg relative z-0">
         <HomeLead />
         <WorshipTimes />
-        {/* 조합 시안 — 기존 최근설교 위. 시안 확정 시 정식 컴포넌트로 이식 후 제거 */}
+        {/* 최근 설교 + 청년 영상 (조합) */}
         <VariantCombo />
+        {/* 청년 예배 영상 — LP 턴테이블 */}
+        <TurntableStage endW={80} endH={45} endRadiusPx={16} darkHex="#0b0b0d" />
         <RecentSermons />
         <CommunityGallery />
         <VisitorAndNews />

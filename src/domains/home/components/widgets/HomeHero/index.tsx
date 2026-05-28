@@ -6,7 +6,7 @@
  * 서서히 등장(opacity 0→1)하고 선명해진다(scale 1.08→1). transform/opacity 만 — 잔카 없음.
  * sticky 200vh 트랙(핀 ~85vh). prefers-reduced-motion 이면 트랙 없이 정적 최종상태로 렌더.
  *
- * 추가 시안 비교 예정(프리뷰 hero-preview/, _variants/ 유지). 확정 시 토큰화 + ADR 0004.
+ * 시안 비교 종료(2026-05-28) — 프리뷰 hero-preview/ · _variants/ 제거. 토큰화 + ADR 0004 추후.
  */
 'use client';
 

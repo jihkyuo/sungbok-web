@@ -6,7 +6,6 @@ import { HomeLead } from '@/domains/home/components/widgets/HomeLead';
 import { LocationMap } from '@/domains/home/components/widgets/LocationMap';
 import { TurntableStage } from '@/domains/home/components/widgets/RecentSermons/TurntableStage';
 import { VariantCombo } from '@/domains/home/components/widgets/RecentSermons/VariantCombo';
-import { VisitorAndNews } from '@/domains/home/components/widgets/VisitorAndNews';
 import { WorshipTimes } from '@/domains/home/components/widgets/WorshipTimes';
 
 export default function Home() {
@@ -25,7 +24,6 @@ export default function Home() {
         <CommunityGallery />
         {/* 처음 오신 분께 (새신자) — 풀블리드 + 스크롤 고정 배경 + 등록·문의 플로팅 패널 */}
         <FirstVisit />
-        <VisitorAndNews />
         {/* 교회 소식 — 좌 헤드라인 + 우 카드 뉴스 */}
         <ChurchNews />
         <LocationMap />

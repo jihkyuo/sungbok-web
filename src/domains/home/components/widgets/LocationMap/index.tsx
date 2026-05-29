@@ -33,7 +33,7 @@ const ACCESS_INFO = [
 
 export const LocationMap = () => {
   return (
-    <Section id="location" className="bg-b1-bg border-t-b1-border border-t">
+    <Section id="location" className="bg-b1-bg">
       <Reveal>
         <SectionTitle
           tier="editorial"

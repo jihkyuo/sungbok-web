@@ -22,11 +22,11 @@ export default function Home() {
         {/* 청년 예배 영상 — LP 턴테이블 */}
         <TurntableStage endW={80} endH={45} endRadiusPx={16} darkHex="#0b0b0d" />
         <CommunityGallery />
-        {/* 처음 오신 분께 (새신자) — 풀블리드 + 스크롤 고정 배경 + 등록·문의 플로팅 패널 */}
-        <FirstVisit />
         {/* 교회 소식 — 좌 헤드라인 + 우 카드 뉴스 */}
         <ChurchNews />
         <LocationMap />
+        {/* 처음 오신 분께 (새신자) — 풀블리드 + 스크롤 고정 배경 + 등록·문의 플로팅 패널 */}
+        <FirstVisit />
       </div>
     </>
   );

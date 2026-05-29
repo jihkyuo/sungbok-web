@@ -118,13 +118,13 @@ export const HomeLead = () => {
       <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
         <div className="mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
-            <p className="b1-brush text-[clamp(26px,3vw,42px)] leading-none text-[#ffcf96]">
+            <p className="b1-brush text-[clamp(28px,3.2vw,44px)] leading-[1.15] text-[#ffcf96]">
               할렐루야!
             </p>
-            <h2 className="mt-3 text-[clamp(26px,3.4vw,46px)] leading-[1.25] font-extrabold tracking-[-0.025em] text-white text-balance">
+            <h2 className="mt-4 text-[clamp(30px,4vw,54px)] leading-[1.2] font-extrabold tracking-[-0.025em] text-white text-balance">
               예수님의 이름으로 환영합니다.
             </h2>
-            <p className="mt-7 max-w-[540px] text-[clamp(15px,1.4vw,18px)] leading-[1.85] text-white/75 text-balance">
+            <p className="mt-8 max-w-[560px] text-[clamp(15px,1.45vw,18px)] leading-[1.9] text-white/75 text-balance">
               언제나{' '}
               <span className="font-semibold whitespace-nowrap text-[#ffcf96]">
                 하나님의 축복
@@ -139,7 +139,7 @@ export const HomeLead = () => {
               </span>
               이 여러분들의 인생 가운데 온전히 임하시길 진심으로 기원합니다.
             </p>
-            <div className="mt-9 flex items-center gap-3.5">
+            <div className="mt-10 flex items-center gap-3.5">
               <span className="b1-mono text-[15px] font-semibold tracking-[0.04em] text-white/95">
                 성복교회 담임목사
               </span>

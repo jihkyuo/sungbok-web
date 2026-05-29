@@ -16,6 +16,7 @@
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 
+import pastorSign from '@/assets/images/pastor-sign.png';
 import pastorImg from '@/assets/images/main/pastor.jpg';
 import worshipImg from '@/assets/images/main/worship.jpg';
 
@@ -117,16 +118,37 @@ export const HomeLead = () => {
       <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
         <div className="mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
           <div className="min-w-0 flex-1">
-            <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#ffd9a8] uppercase">
-              <span className="block h-1.5 w-1.5 rounded-full bg-[#ffd9a8]" />
-              담임목사
-            </span>
-            <h2 className="text-[clamp(28px,3.4vw,48px)] leading-[1.2] font-extrabold tracking-[-0.025em] text-white text-balance">
-              <span className="text-[#ffcf96]">기다리는</span> 자리
-            </h2>
-            <p className="mt-[18px] max-w-[420px] text-[16px] leading-[1.7] text-white/80">
-              ○○○ 담임목사 · 1985년부터 함께.
+            <p className="b1-brush text-[clamp(26px,3vw,42px)] leading-none text-[#ffcf96]">
+              할렐루야!
             </p>
+            <h2 className="mt-3 text-[clamp(26px,3.4vw,46px)] leading-[1.25] font-extrabold tracking-[-0.025em] text-white text-balance">
+              예수님의 이름으로 환영합니다.
+            </h2>
+            <p className="mt-7 max-w-[540px] text-[clamp(15px,1.4vw,18px)] leading-[1.85] text-white/75 text-balance">
+              언제나{' '}
+              <span className="font-semibold whitespace-nowrap text-[#ffcf96]">
+                하나님의 축복
+              </span>
+              과{' '}
+              <span className="font-semibold whitespace-nowrap text-[#ffcf96]">
+                예수님의 은혜
+              </span>
+              와{' '}
+              <span className="font-semibold whitespace-nowrap text-[#ffcf96]">
+                성령님의 평강
+              </span>
+              이 여러분들의 인생 가운데 온전히 임하시길 진심으로 기원합니다.
+            </p>
+            <div className="mt-9 flex items-center gap-3.5">
+              <span className="b1-mono text-[15px] font-semibold tracking-[0.04em] text-white/95">
+                성복교회 담임목사
+              </span>
+              <Image
+                src={pastorSign}
+                alt="이요셉"
+                className="h-12 w-auto mix-blend-screen brightness-110 invert sepia saturate-150"
+              />
+            </div>
           </div>
           <div className="min-w-0 flex-[0.9]">
             <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px] shadow-[0_40px_80px_-28px_rgba(0,0,0,0.6)]">

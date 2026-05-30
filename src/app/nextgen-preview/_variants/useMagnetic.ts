@@ -10,7 +10,12 @@ import { useEffect, useRef, useState } from 'react';
  */
 export function useMagnetic(
   positions: { x: number; y: number }[],
-  opts?: { frozen?: () => boolean }
+  opts?: {
+    frozen?: () => boolean;
+    lineRef?: { current: SVGLineElement | null };
+    /** 선의 별 끝점이 가리킬 별 레이어의 시차 계수(px). 별 레이어 transform px(N)과 동일하게 주면 정렬됨. */
+    lineFactor?: number;
+  }
 ) {
   const ref = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
@@ -34,6 +39,17 @@ export function useMagnetic(
       el.style.setProperty('--px', (cx / w - 0.5).toFixed(4));
       el.style.setProperty('--py', (cy / h - 0.5).toFixed(4));
       if (glowRef.current) glowRef.current.style.transform = `translate(${cx - 90}px, ${cy - 90}px)`;
+      const ln = opts?.lineRef?.current;
+      if (ln) {
+        // 별 끝점은 별 레이어 시차(px(lineFactor))만큼 보정해 별 중심과 정확히 연결
+        const f = opts?.lineFactor ?? 0;
+        const ox = (((cx / w - 0.5) * f) / w) * 100;
+        const oy = (((cy / h - 0.5) * f) / h) * 100;
+        ln.setAttribute('x1', ((cx / w) * 100).toFixed(2));
+        ln.setAttribute('y1', ((cy / h) * 100).toFixed(2));
+        ln.setAttribute('x2', (positions[activeRef.current].x + ox).toFixed(2));
+        ln.setAttribute('y2', (positions[activeRef.current].y + oy).toFixed(2));
+      }
       if (Math.abs(tx - cx) > 0.3 || Math.abs(ty - cy) > 0.3) raf = requestAnimationFrame(tick);
     };
     const move = (e: PointerEvent) => {
@@ -41,6 +57,7 @@ export function useMagnetic(
       tx = e.clientX - r.left;
       ty = e.clientY - r.top;
       if (glowRef.current) glowRef.current.style.opacity = '1';
+      if (opts?.lineRef?.current) opts.lineRef.current.style.opacity = '1';
       if (!opts?.frozen?.()) {
         const mx = (tx / r.width) * 100;
         const my = (ty / r.height) * 100;
@@ -64,6 +81,7 @@ export function useMagnetic(
     };
     const leave = () => {
       if (glowRef.current) glowRef.current.style.opacity = '0';
+      if (opts?.lineRef?.current) opts.lineRef.current.style.opacity = '0';
     };
     el.addEventListener('pointermove', move, { passive: true });
     el.addEventListener('pointerdown', move, { passive: true });

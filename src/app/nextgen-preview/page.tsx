@@ -19,7 +19,7 @@ import { WorshipTimes } from '@/domains/home/components/widgets/WorshipTimes';
 import { NEXTGEN_VARIANTS } from './_variants';
 
 export default function NextgenPreviewPage() {
-  const [selected, setSelected] = useState('b');
+  const [selected, setSelected] = useState('develop');
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get('v');
@@ -52,20 +52,19 @@ export default function NextgenPreviewPage() {
           66% { transform: translate(-3%, 4%) scale(0.94); }
         }
         .ng-aurora { animation: ng-aurora 22s ease-in-out infinite; }
-        /* N 별자리 선 그리기 */
-        @keyframes ng-draw { from { stroke-dashoffset: 160; } to { stroke-dashoffset: 0; } }
-        .ng-draw { stroke-dasharray: 160; animation: ng-draw 3.2s ease-out forwards; }
-        /* N 유성 */
-        @keyframes ng-meteor {
-          0% { transform: translate3d(0,0,0) rotate(-28deg); opacity: 0; }
-          8% { opacity: 1; }
-          70% { opacity: 1; }
-          100% { transform: translate3d(-62vw, 42vh, 0) rotate(-28deg); opacity: 0; }
-        }
-        .ng-meteor { animation-name: ng-meteor; animation-timing-function: ease-in; animation-iteration-count: infinite; }
+        /* V 성문 열림 — 디테일 등장 */
+        @keyframes ng-gate { from { opacity: 0; transform: scale(0.965); } to { opacity: 1; transform: scale(1); } }
+        /* X 인플레이스 개화 — 별 자리에서 만개 */
+        @keyframes ng-bloom { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: scale(1); } }
+        /* Q 랙 포커스 — 호버 시 배경 천체층만 흐려지고(섹션 그라데이션은 유지) 비호버 별은 가라앉음 (리렌더 0) */
+        .ng-qback { transition: filter .5s ease, opacity .5s ease; }
+        .ng-star { transition: opacity .35s ease; }
+        .ng-qstage:has(.ng-star:hover) .ng-qback,
+        .ng-qstage:has(.ng-star:focus-visible) .ng-qback { filter: blur(5px); opacity: .5; }
+        .ng-qstage:has(.ng-star:hover) .ng-star:not(:hover),
+        .ng-qstage:has(.ng-star:focus-visible) .ng-star:not(:focus-visible) { opacity: .3; }
         @media (prefers-reduced-motion: reduce) {
-          .ng-twinkle, .ng-float, .ng-aurora, .ng-meteor { animation: none; }
-          .ng-draw { stroke-dashoffset: 0; animation: none; }
+          .ng-twinkle, .ng-float, .ng-aurora { animation: none; }
         }
       `}</style>
 

@@ -1,20 +1,25 @@
 // 임시 시안 레지스트리 — 확정 후 nextgen-preview 폴더째 삭제. (격리: 기존 next-generation-preview와 무관)
-// 다크(여명 아크) 라운드: LP 어둠을 이어받아 섹션 안에서 새벽처럼 밝아져 교회소식으로 연결.
-// 킵: B 스포트라이트 · C 별자리 · E 오로라 글래스 · K=C발전(별 호버 시 B효과).
-// L~P = C(별자리)를 여러 방면으로 변형한 천체 시안들.
+// 킵: B·C·E·K·O·Q·T·V·별의 현상. 참고: W·Y. 신규(O·T·Q 합본, 탭 끝): 합본 포커스/커서 카드/피사계심도/스포트라이트/몰입 확장.
 import type { ComponentType } from 'react';
 
 import { CommunityGallery } from '@/domains/home/components/widgets/CommunityGallery';
 
 import { VariantB } from './VariantB';
 import { VariantC } from './VariantC';
+import { VariantCursorCard } from './VariantCursorCard';
+import { VariantDevelop } from './VariantDevelop';
+import { VariantDive } from './VariantDive';
+import { VariantDof } from './VariantDof';
 import { VariantE } from './VariantE';
+import { VariantFocus } from './VariantFocus';
 import { VariantK } from './VariantK';
-import { VariantL } from './VariantL';
-import { VariantM } from './VariantM';
-import { VariantN } from './VariantN';
 import { VariantO } from './VariantO';
-import { VariantP } from './VariantP';
+import { VariantQ } from './VariantQ';
+import { VariantSpotlight } from './VariantSpotlight';
+import { VariantT } from './VariantT';
+import { VariantV } from './VariantV';
+import { VariantW } from './VariantW';
+import { VariantY } from './VariantY';
 
 export type NextgenVariant = {
   id: string;
@@ -25,78 +30,54 @@ export type NextgenVariant = {
 };
 
 export const NEXTGEN_VARIANTS: NextgenVariant[] = [
-  // ── 킵한 시안 ──
-  {
-    id: 'b',
-    label: 'B 스포트라이트',
-    title: '다음세대',
-    desc: '[킵·다크] 대형 타이포 리스트. 가리키면 그 부서 사진이 배경 스포트라이트로(럭셔리·절제)',
-    C: VariantB,
-  },
-  {
-    id: 'c',
-    label: 'C 별자리',
-    title: '다음세대',
-    desc: '[킵·다크] 밤하늘 빛점 별자리 + 자라남 경로. 하단 지평선이 여명으로 타오름(분위기·추상)',
-    C: VariantC,
-  },
-  {
-    id: 'e',
-    label: 'E 오로라 글래스',
-    title: '다음세대',
-    desc: '[킵·다크] 오로라 위에 떠 있는 프로스티드 글래스 카드(미세 플로트). 하단 여명으로 풀림',
-    C: VariantE,
-  },
-  // ── C 발전형 (별 호버 시 B 스포트라이트) ──
-  {
-    id: 'k',
-    label: 'K 별자리+스포트',
-    title: '다음세대',
-    desc: '[C발전·다크] 별자리 빛점을 가리키면 그 부서 사진이 배경 전면 스포트라이트로 떠오름(C×B)',
-    C: VariantK,
-  },
-  // ── C 변형(천체) 5안 ──
-  {
-    id: 'l',
-    label: 'L 궤도 성좌',
-    title: '다음세대',
-    desc: '[C변형·다크] 중심 코어 둘레 동심 타원 궤도에 아홉 세대가 놓인 별자리. 반짝/부유 + 호버 카드',
-    C: VariantL,
-  },
-  {
-    id: 'm',
-    label: 'M 은하 나선',
-    title: '다음세대',
-    desc: '[C변형·다크] 중심(영아부)→바깥(엘림가족부)으로 감기는 나선 은하. 희미한 나선팔 + 호버 카드',
-    C: VariantM,
-  },
-  {
-    id: 'n',
-    label: 'N 유성 라인',
-    title: '다음세대',
-    desc: '[C변형·다크] 별자리 잇는 선이 그어지듯 그려지고 이따금 유성이 흐름. 호버 카드',
-    C: VariantN,
-  },
-  {
-    id: 'o',
-    label: 'O 심도 성단',
-    title: '다음세대',
-    desc: '[C변형·다크] 여러 겹 별이 깊이를 이루고 커서를 따라 시차로 움직임(parallax). 호버 카드',
-    C: VariantO,
-  },
-  {
-    id: 'p',
-    label: 'P 달+별자리',
-    title: '다음세대',
-    desc: '[C변형·다크] 떠오르는 큰 달을 둘러 아홉 부서 별이 호를 그림. 달빛→여명. 호버 카드',
-    C: VariantP,
-  },
+  // ── 킵 ──
+  { id: 'develop', label: '별의 현상', title: '다음세대', desc: '[킵] 풀블리드 오픈 별밭. 활성 별만 사진으로 현상. 클릭=대형 디테일 만개', C: VariantDevelop },
+  { id: 't', label: 'T 자기장 성도', title: '다음세대', desc: '[킵] 커서 근처 별 자동 활성 + 우측 도시에 패널', C: VariantT },
+  { id: 'v', label: 'V 성문', title: '다음세대', desc: '[킵] 히트존+자동 투어, 클릭 시 몰입 디테일', C: VariantV },
+  { id: 'q', label: 'Q 포커스 풀', title: '다음세대', desc: '[킵] 성운 다층 피사계심도 + 랙 포커스', C: VariantQ },
+  { id: 'o', label: 'O 심도 성단', title: '다음세대', desc: '[킵] 다층 별 시차 + 호버 카드', C: VariantO },
+  { id: 'k', label: 'K 별자리+스포트', title: '다음세대', desc: '[킵] 별 호버 시 배경 스포트라이트', C: VariantK },
+  { id: 'e', label: 'E 오로라 글래스', title: '다음세대', desc: '[킵] 오로라 위 글래스 카드', C: VariantE },
+  { id: 'c', label: 'C 별자리', title: '다음세대', desc: '[킵] 빛점 별자리 + 지평선 여명', C: VariantC },
+  { id: 'b', label: 'B 스포트라이트', title: '다음세대', desc: '[킵] 대형 타이포 리스트 + 배경 스포트라이트', C: VariantB },
   // ── 참고 ──
+  { id: 'w', label: 'W 풀블리드(참고)', title: '다음세대', desc: '[참고] 배경 풀블리드+타이포·클릭 선명화', C: VariantW },
+  { id: 'y', label: 'Y 갤럭시 줌(참고)', title: '다음세대', desc: '[참고] 클릭 줌-인 풀섹션', C: VariantY },
+  { id: 'current', label: '0 현재(밝음)', title: '한 사람을 환대하는 공동체', desc: '[참고] 현재 라이브 CommunityGallery', C: CommunityGallery },
+  // ── O·T·Q 합본 신규 5안 (탭 끝) ──
   {
-    id: 'current',
-    label: '0 현재(밝음)',
-    title: '한 사람을 환대하는 공동체',
-    desc: '[참고] 현재 라이브 CommunityGallery(밝은 카드 그리드) — 다크 전환 전 대비용',
-    C: CommunityGallery,
+    id: 'focus',
+    label: '◆ 합본 포커스',
+    title: '다음세대',
+    desc: '[합본·권장] 풀블리드 별밭 + T 자기장 + O 심도/시차/별 사이즈 + Q 카드+활성 강조+주변 blur·dim. 클릭=잠금',
+    C: VariantFocus,
+  },
+  {
+    id: 'cursorcard',
+    label: '◆ 커서 카드',
+    title: '다음세대',
+    desc: '[합본] 정보 카드가 커서를 따라옴(이동 0) + 활성 강조 + 랙 포커스. 클릭=고정',
+    C: VariantCursorCard,
+  },
+  {
+    id: 'dof',
+    label: '◆ 피사계심도',
+    title: '다음세대',
+    desc: '[합본] 주변 흐림을 깊이 기반 보케로(먼 별일수록 더 흐림), 활성 초점면 또렷 + 카드',
+    C: VariantDof,
+  },
+  {
+    id: 'spotlight',
+    label: '◆ 스포트라이트',
+    title: '다음세대',
+    desc: '[합본] 활성 별 따라가는 빛 마스크(바깥 어둡게+탈채도) + 카드. 플라네타리움 결',
+    C: VariantSpotlight,
+  },
+  {
+    id: 'dive',
+    label: '◆ 몰입 확장',
+    title: '다음세대',
+    desc: '[합본] 호버=카드 미리보기+랙 포커스, 클릭=대형 인플레이스 몰입 디테일(딥 인포)',
+    C: VariantDive,
   },
 ];

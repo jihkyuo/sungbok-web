@@ -19,7 +19,7 @@ import { WorshipTimes } from '@/domains/home/components/widgets/WorshipTimes';
 import { NEXTGEN_VARIANTS } from './_variants';
 
 export default function NextgenPreviewPage() {
-  const [selected, setSelected] = useState('develop');
+  const [selected, setSelected] = useState('cursorcard');
 
   useEffect(() => {
     const v = new URLSearchParams(window.location.search).get('v');
@@ -52,6 +52,9 @@ export default function NextgenPreviewPage() {
           66% { transform: translate(-3%, 4%) scale(0.94); }
         }
         .ng-aurora { animation: ng-aurora 22s ease-in-out infinite; }
+        /* Z 커서 카드 — near 별 스파클(반짝임 고도화) */
+        @keyframes ng-sparkle { 0%, 100% { opacity: 0.45; transform: scale(0.82); } 50% { opacity: 1; transform: scale(1.18); } }
+        .ng-sparkle { animation: ng-sparkle 3s ease-in-out infinite; }
         /* V 성문 열림 — 디테일 등장 */
         @keyframes ng-gate { from { opacity: 0; transform: scale(0.965); } to { opacity: 1; transform: scale(1); } }
         /* X 인플레이스 개화 — 별 자리에서 만개 */
@@ -64,7 +67,7 @@ export default function NextgenPreviewPage() {
         .ng-qstage:has(.ng-star:hover) .ng-star:not(:hover),
         .ng-qstage:has(.ng-star:focus-visible) .ng-star:not(:focus-visible) { opacity: .3; }
         @media (prefers-reduced-motion: reduce) {
-          .ng-twinkle, .ng-float, .ng-aurora { animation: none; }
+          .ng-twinkle, .ng-float, .ng-aurora, .ng-sparkle { animation: none; }
         }
       `}</style>
 

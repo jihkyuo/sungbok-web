@@ -7,6 +7,7 @@ export interface Star {
   s: number; // px
   d: number; // twinkle delay (s)
   o: number; // base opacity
+  dur: number; // twinkle duration (s) — 별마다 다른 반짝임 속도
 }
 
 /** sine 해시 기반 결정론적 의사난수 0~1 */
@@ -23,7 +24,30 @@ export function starField(count: number, seed: number, sizeMin: number, sizeMax:
     s: sizeMin + rnd(i, seed + 2) * (sizeMax - sizeMin),
     d: rnd(i, seed + 3) * 4,
     o: 0.4 + rnd(i, seed + 4) * 0.6,
+    dur: 2.6 + rnd(i, seed + 5) * 4.2,
   }));
+}
+
+/** 은하수 띠 — 대각선(base + x*slope)을 따라 별이 밀집한 군집. "진짜 밤하늘" 시그니처. */
+export function bandField(
+  count: number,
+  seed: number,
+  slope = 0.42,
+  base = 16,
+  thickness = 22,
+): Star[] {
+  return Array.from({ length: count }, (_, i) => {
+    const x = rnd(i, seed) * 100;
+    const y = base + x * slope + (rnd(i, seed + 1) - 0.5) * thickness;
+    return {
+      x,
+      y: Math.max(0, Math.min(100, y)),
+      s: 0.4 + rnd(i, seed + 2) * 1.1,
+      d: rnd(i, seed + 3) * 4,
+      o: 0.25 + rnd(i, seed + 4) * 0.5,
+      dur: 2.6 + rnd(i, seed + 5) * 4.2,
+    };
+  });
 }
 
 export interface Blob {

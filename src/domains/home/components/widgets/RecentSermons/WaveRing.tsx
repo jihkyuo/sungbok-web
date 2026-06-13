@@ -82,8 +82,8 @@ export function WaveRing({ qRef, boxRef, mode = 'bars' }: Props) {
       const ept = (ang: number) => {
         const ca = Math.cos(ang);
         const sa = Math.sin(ang);
-        let nx = ca / rx;
-        let ny = sa / ry;
+        const nx = ca / rx;
+        const ny = sa / ry;
         const nl = Math.hypot(nx, ny) || 1;
         return { px: rx * ca, py: ry * sa, nx: nx / nl, ny: ny / nl };
       };

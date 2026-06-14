@@ -1,9 +1,9 @@
 import { ChurchNews } from '@/domains/home/components/widgets/ChurchNews';
-import { CommunityGallery } from '@/domains/home/components/widgets/CommunityGallery';
 import { FirstVisit } from '@/domains/home/components/widgets/FirstVisit';
 import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
 import { HomeLead } from '@/domains/home/components/widgets/HomeLead';
 import { LocationMap } from '@/domains/home/components/widgets/LocationMap';
+import { NextGeneration } from '@/domains/home/components/widgets/NextGeneration';
 import { TurntableStage } from '@/domains/home/components/widgets/RecentSermons/TurntableStage';
 import { VariantCombo } from '@/domains/home/components/widgets/RecentSermons/VariantCombo';
 import { WorshipTimes } from '@/domains/home/components/widgets/WorshipTimes';
@@ -21,7 +21,8 @@ export default function Home() {
         <VariantCombo />
         {/* 청년 예배 영상 — LP 턴테이블 */}
         <TurntableStage endW={80} endH={45} endRadiusPx={16} darkHex="#0b0b0d" />
-        <CommunityGallery />
+        {/* 다음세대 — LP 어둠 연속 → 여명. 밤하늘 별자리 + 커서 추종 카드 */}
+        <NextGeneration />
         {/* 교회 소식 — 좌 헤드라인 + 우 카드 뉴스 */}
         <ChurchNews />
         <LocationMap />

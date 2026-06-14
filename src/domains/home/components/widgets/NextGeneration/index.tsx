@@ -12,10 +12,15 @@ import { useMagnetic } from './useMagnetic';
 /**
  * 다음세대 — O 심도(5겹 시차) + 밤하늘(은하수·반짝임) + 자기장 + 커서 추종 카드. 배경 별 항상 또렷(blur 없음).
  * 호버 카드에 바로가기 CTA 상시 표시, 클릭=즉시 페이지 이동. 커서↔활성 별 자기장 선.
- * 상단 #0b0b0d(LP 어둠 연속) → 하단 #f6fafe(여명). 다음 섹션으로 매끄럽게 잇는다.
+ * 섹션을 sticky 트랙(200vh)으로 핀해 풀스크린 밤하늘에 충분히 머문다. (LP 어둠 #0b0b0d 연속)
  */
-const BG =
-  'linear-gradient(180deg,#0b0b0d 0% 6%,#0b0d22 12%,#121436 24%,#1c1842 38%,#2e2350 50%,#46315e 61%,#6b4a72 71%,#9a6e86 79%,#c89aa0 86%,#eccdc8 91%,#f1ebf4 95%,#f6fafe 100%)';
+// 단일 하늘 — 위 밤(LP 어둠 #0b0b0d 연속) → 아래 여명(#f6fafe). 무대(~52%)는 밤, 그 아래가 동틈.
+// 하나의 그라데이션으로 깔아 ①밤하늘과 ②동틈 사이 경계를 없앤다.
+const SKY_BG =
+  'linear-gradient(180deg,#0b0b0d 0% 4%,#0b0d22 12%,#11132e 22%,#181538 32%,#201a42 42%,#2b2049 51%,#3c2b57 59%,#553d63 67%,#6b4a72 74%,#8c6480 81%,#b0808e 87%,#d3a6a6 92%,#eccdc8 96%,#f6fafe 100%)';
+// 동틈 상단에 걸쳐 마저 지는 잔별 (무대 별이 사라진 뒤 경계 너머로 이어짐)
+const DAWN_STARS = starField(40, 91, 0.5, 1.6);
+
 const DUST = starField(92, 71, 0.4, 1.1);
 const WAY = bandField(86, 41);
 const FAR = starField(56, 13, 0.6, 1.5);
@@ -83,7 +88,7 @@ export const NextGeneration = () => {
   );
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ background: BG }}>
+    <section className="relative w-full overflow-hidden" style={{ background: SKY_BG }}>
       <style>{`
         @keyframes ng-twinkle { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
         .ng-twinkle { animation: ng-twinkle 3.2s ease-in-out infinite; }
@@ -94,26 +99,30 @@ export const NextGeneration = () => {
         }
       `}</style>
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto w-full max-w-[1320px] px-[6vw] pt-24 md:pt-28">
-        <div className="b1-mono mb-3 text-[11px] font-semibold tracking-[0.16em] text-[#9fb6ff]">{EYEBROW}</div>
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="m-0 text-[36px] leading-[1.05] font-bold tracking-[-0.03em] text-balance text-white md:text-[54px]">{TITLE}</h2>
-          <p className="m-0 max-w-[330px] text-[15px] leading-[1.8] text-white/65">밤하늘을 훑으면 가장 가까운 별이 깨어나고, 정보 카드가 커서를 따라옵니다. 누르면 바로 이동합니다.</p>
+      {/* ① 밤하늘 무대 — 별 인터랙션. 단일 배경 위에 얹혀 sticky 없이 자연 스크롤. */}
+      <div ref={ref} onClick={() => router.push(a.href)} onPointerEnter={() => setEngaged(true)} onPointerLeave={() => setEngaged(false)} className="relative h-screen min-h-[560px] w-full cursor-pointer select-none" style={{ touchAction: 'none' }}>
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto w-full max-w-[1320px] px-[6vw] pt-24 md:pt-28">
+          <div className="b1-mono mb-3 text-[11px] font-semibold tracking-[0.16em] text-[#9fb6ff]">{EYEBROW}</div>
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h2 className="m-0 text-[36px] leading-[1.05] font-bold tracking-[-0.03em] text-balance text-white md:text-[54px]">{TITLE}</h2>
+            <p className="m-0 max-w-[330px] text-[15px] leading-[1.8] text-white/65">밤하늘을 훑으면 가장 가까운 별이 깨어나고, 정보 카드가 커서를 따라옵니다. 누르면 바로 이동합니다.</p>
+          </div>
         </div>
-      </div>
 
-      <div ref={ref} onClick={() => router.push(a.href)} onPointerEnter={() => setEngaged(true)} onPointerLeave={() => setEngaged(false)} className="relative h-[88vh] min-h-[580px] w-full cursor-pointer select-none" style={{ touchAction: 'none' }}>
-        {backdrop}
+        {/* 배경 별 — 무대 하단까지 유지하다 천천히 사라져 동틈으로 자연 전환 */}
+        <div className="absolute inset-0" style={{ maskImage: 'linear-gradient(180deg,#000 0%,#000 72%,transparent 98%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 72%,transparent 98%)' }} aria-hidden>
+          {backdrop}
+        </div>
 
-        {/* 엣지 비네트 (깊이) */}
-        <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(125% 90% at 50% 42%, transparent 55%, rgba(6,6,16,0.55) 100%)' }} aria-hidden />
+        {/* 엣지 비네트 (깊이) — 위쪽 위주, 하단은 비워 이음새가 어두워지지 않게 */}
+        <div className="pointer-events-none absolute inset-0" style={{ background: 'radial-gradient(120% 75% at 50% 28%, transparent 62%, rgba(6,6,16,0.3) 100%)', maskImage: 'linear-gradient(180deg,#000 0%,#000 42%,transparent 68%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 42%,transparent 68%)' }} aria-hidden />
 
-        {/* 자기장 선 (커서 ↔ 활성 별) — 더 뚜렷 + 은은한 광 */}
+        {/* 자기장 선 (커서 ↔ 활성 별) */}
         <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden style={{ filter: 'drop-shadow(0 0 3px rgba(159,182,255,0.85))' }}>
           <line ref={lineRef} x1="50" y1="50" x2={POS[0].x} y2={POS[0].y} stroke="rgba(176,196,255,0.85)" strokeWidth="0.34" strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ opacity: 0, transition: 'opacity 0.3s' }} />
         </svg>
 
-        {/* 부서 별 (가장 가까운 층, 가장 디테일하게 움직임) */}
+        {/* 부서 별 (가장 가까운 층) */}
         <div className="absolute inset-0" style={{ transform: px(32) }}>
           {ORDERED.map((m, i) => {
             const on = active === i;
@@ -145,7 +154,39 @@ export const NextGeneration = () => {
           </div>
         </div>
 
-        {!engaged && <div className="b1-mono pointer-events-none absolute right-[6vw] bottom-6 text-[10px] tracking-[0.14em] text-white/35">밤하늘을 훑어 보세요 · 누르면 이동</div>}
+        {!engaged && <div className="b1-mono pointer-events-none absolute right-[6vw] bottom-6 z-30 text-[10px] tracking-[0.14em] text-white/35">밤하늘을 훑어 보세요 · 누르면 이동</div>}
+      </div>
+
+      {/* ② 동틈 — 같은 하늘이 아래로 이어져 동이 튼다. 무대 별이 사라진 뒤 잔별이 마저 지고 빛이 차오름. */}
+      <div className="relative w-full overflow-hidden" style={{ minHeight: '86vh' }}>
+        {/* 무대 별과 이어 마저 지는 잔별 — 위에서 아래로 소멸 */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ maskImage: 'linear-gradient(180deg,#000 0%,#000 12%,transparent 40%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 12%,transparent 40%)' }}
+          aria-hidden
+        >
+          {DAWN_STARS.map((s, i) => dot(s, i, i % 4 === 0 ? 'ng-sparkle' : 'ng-twinkle', starColor(i), { boxShadow: '0 0 6px 1px rgba(255,255,255,0.4)' }))}
+        </div>
+
+        {/* 지평선 sunrise glow — 하단에서 떠오르는 따뜻한 빛 */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[68%]"
+          style={{ background: 'radial-gradient(ellipse 92% 100% at 50% 116%, rgba(255,233,191,0.9), rgba(255,198,150,0.45) 38%, rgba(255,172,140,0.16) 60%, transparent 78%)' }}
+          aria-hidden
+        />
+
+        {/* 가사 2줄 — 어둠 위에서 빛으로 건너감 */}
+        <div className="absolute inset-x-0 top-[54%] z-10 mx-auto w-full max-w-[1320px] -translate-y-1/2 px-[6vw] text-center">
+          <p className="m-0 text-[20px] leading-[1.6] font-medium tracking-[-0.01em] text-white/85 md:text-[26px]" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>
+            어둔 밤 지나서
+          </p>
+          <p className="m-0 mt-3 text-[30px] leading-[1.3] font-bold tracking-[-0.02em] text-balance md:text-[46px]" style={{ color: '#3a2a22', textShadow: '0 2px 30px rgba(255,236,210,0.55)' }}>
+            동 튼다, 환한 빛 보아라 저 빛
+          </p>
+          <span className="b1-mono mt-6 inline-block text-[11px] tracking-[0.12em]" style={{ color: 'rgba(80,55,45,0.7)' }}>
+            찬송 ‘옳은 길 따르라 의의 길을’ 중
+          </span>
+        </div>
       </div>
     </section>
   );

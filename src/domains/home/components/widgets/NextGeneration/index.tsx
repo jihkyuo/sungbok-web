@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { EYEBROW, ORDERED, STAGE_OF, TITLE } from './data';
-import { bandField, nebula, px, starField, type Star } from './sky';
+import { bandField, nebula, px, q, starField, type Star } from './sky';
 import { useMagnetic } from './useMagnetic';
 
 /**
@@ -68,11 +68,11 @@ export const NextGeneration = () => {
           <div className="absolute top-1/2 left-1/2 h-[42%] w-[150%] -translate-x-1/2 -translate-y-1/2 rotate-[23deg] [filter:blur(46px)]" style={{ background: 'radial-gradient(60% 50% at 50% 50%, rgba(150,170,255,0.16), rgba(120,110,210,0.08) 50%, transparent 75%)' }} />
         </div>
         {/* dust */}
-        <div className="absolute inset-0" style={{ transform: px(3) }} aria-hidden>{DUST.map((s, i) => dot(s, i, 'ng-twinkle', starColor(i), { opacity: s.o * 0.55 }))}</div>
+        <div className="absolute inset-0" style={{ transform: px(3) }} aria-hidden>{DUST.map((s, i) => dot(s, i, 'ng-twinkle', starColor(i), { opacity: q(s.o * 0.55) }))}</div>
         {/* 은하수 별 */}
-        <div className="absolute inset-0" style={{ transform: px(5) }} aria-hidden>{WAY.map((s, i) => dot(s, i, 'ng-twinkle', starColor(i + 2), { opacity: s.o * 0.7 }))}</div>
+        <div className="absolute inset-0" style={{ transform: px(5) }} aria-hidden>{WAY.map((s, i) => dot(s, i, 'ng-twinkle', starColor(i + 2), { opacity: q(s.o * 0.7) }))}</div>
         {/* far */}
-        <div className="absolute inset-0" style={{ transform: px(7) }} aria-hidden>{FAR.map((s, i) => dot(s, i, 'ng-twinkle', starColor(i), { opacity: s.o * 0.8 }))}</div>
+        <div className="absolute inset-0" style={{ transform: px(7) }} aria-hidden>{FAR.map((s, i) => dot(s, i, 'ng-twinkle', starColor(i), { opacity: q(s.o * 0.8) }))}</div>
         {/* mid */}
         <div className="absolute inset-0" style={{ transform: px(13) }} aria-hidden>{MID.map((s, i) => dot(s, i, 'ng-twinkle', starColor(i + 1), { boxShadow: '0 0 6px 1px rgba(255,255,255,0.45)' }))}</div>
         {/* near + 일부 스파클 */}

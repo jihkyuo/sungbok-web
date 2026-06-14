@@ -14,10 +14,11 @@ import { useMagnetic } from './useMagnetic';
  * 호버 카드에 바로가기 CTA 상시 표시, 클릭=즉시 페이지 이동. 커서↔활성 별 자기장 선.
  * 섹션을 sticky 트랙(200vh)으로 핀해 풀스크린 밤하늘에 충분히 머문다. (LP 어둠 #0b0b0d 연속)
  */
-// 단일 하늘 — 위 밤(LP 어둠 #0b0b0d 연속) → 아래 여명(#f6fafe). 무대(~52%)는 밤, 그 아래가 동틈.
-// 하나의 그라데이션으로 깔아 ①밤하늘과 ②동틈 사이 경계를 없앤다.
+// 단일 하늘 — 위 밤(LP 어둠 #0b0b0d 연속) → 무대 아래에서 여명으로 풀려 흰(#f6fafe)까지 한 그라데이션으로 완결.
+// E 오로라 시안의 검증된 여명 아크(보라→로즈→복숭아→흰, 청록 없음)를 채용해 이음새를 한 호흡으로.
+// 끝색 #f6fafe = globals --color-b1-bg 와 동일 → 다음 교회소식(흰)과 경계 없이 이어진다.
 const SKY_BG =
-  'linear-gradient(180deg,#0b0b0d 0% 4%,#0b0d22 12%,#11132e 22%,#181538 32%,#201a42 42%,#2b2049 51%,#3c2b57 59%,#553d63 67%,#6b4a72 74%,#8c6480 81%,#b0808e 87%,#d3a6a6 92%,#eccdc8 96%,#f6fafe 100%)';
+  'linear-gradient(180deg,#0b0b0d 0%,#0c0b11 26%,#171225 46%,#33233f 62%,#6b4763 74%,#b07e84 84%,#e7c2a6 92%,#f6fafe 100%)';
 // 동틈 상단에 걸쳐 마저 지는 잔별 (무대 별이 사라진 뒤 경계 너머로 이어짐)
 const DAWN_STARS = starField(40, 91, 0.5, 1.6);
 
@@ -109,8 +110,8 @@ export const NextGeneration = () => {
           </div>
         </div>
 
-        {/* 배경 별 — 무대 하단까지 유지하다 천천히 사라져 동틈으로 자연 전환 */}
-        <div className="absolute inset-0" style={{ maskImage: 'linear-gradient(180deg,#000 0%,#000 72%,transparent 98%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 72%,transparent 98%)' }} aria-hidden>
+        {/* 배경 별 — 무대 하단까지 유지하다 빛 속으로 늦게 녹아 사라짐 */}
+        <div className="absolute inset-0" style={{ maskImage: 'linear-gradient(180deg,#000 0%,#000 85%,transparent 100%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 85%,transparent 100%)' }} aria-hidden>
           {backdrop}
         </div>
 
@@ -157,35 +158,14 @@ export const NextGeneration = () => {
         {!engaged && <div className="b1-mono pointer-events-none absolute right-[6vw] bottom-6 z-30 text-[10px] tracking-[0.14em] text-white/35">밤하늘을 훑어 보세요 · 누르면 이동</div>}
       </div>
 
-      {/* ② 동틈 — 같은 하늘이 아래로 이어져 동이 튼다. 무대 별이 사라진 뒤 잔별이 마저 지고 빛이 차오름. */}
-      <div className="relative w-full overflow-hidden" style={{ minHeight: '86vh' }}>
-        {/* 무대 별과 이어 마저 지는 잔별 — 위에서 아래로 소멸 */}
+      {/* 여명 꼬리 — 무대 별이 마저 지고(상단) 별 없는 여명 색면(하단)으로 동틈이 호흡한다. 여명~흰·콘텐츠는 교회소식이 흡수. */}
+      <div className="relative w-full overflow-hidden" style={{ height: '58vh', minHeight: 420 }}>
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ maskImage: 'linear-gradient(180deg,#000 0%,#000 12%,transparent 40%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 12%,transparent 40%)' }}
+          style={{ maskImage: 'linear-gradient(180deg,#000 0%,#000 22%,transparent 80%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 22%,transparent 80%)' }}
           aria-hidden
         >
           {DAWN_STARS.map((s, i) => dot(s, i, i % 4 === 0 ? 'ng-sparkle' : 'ng-twinkle', starColor(i), { boxShadow: '0 0 6px 1px rgba(255,255,255,0.4)' }))}
-        </div>
-
-        {/* 지평선 sunrise glow — 하단에서 떠오르는 따뜻한 빛 */}
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[68%]"
-          style={{ background: 'radial-gradient(ellipse 92% 100% at 50% 116%, rgba(255,233,191,0.9), rgba(255,198,150,0.45) 38%, rgba(255,172,140,0.16) 60%, transparent 78%)' }}
-          aria-hidden
-        />
-
-        {/* 가사 2줄 — 어둠 위에서 빛으로 건너감 */}
-        <div className="absolute inset-x-0 top-[54%] z-10 mx-auto w-full max-w-[1320px] -translate-y-1/2 px-[6vw] text-center">
-          <p className="m-0 text-[20px] leading-[1.6] font-medium tracking-[-0.01em] text-white/85 md:text-[26px]" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>
-            어둔 밤 지나서
-          </p>
-          <p className="m-0 mt-3 text-[30px] leading-[1.3] font-bold tracking-[-0.02em] text-balance md:text-[46px]" style={{ color: '#3a2a22', textShadow: '0 2px 30px rgba(255,236,210,0.55)' }}>
-            동 튼다, 환한 빛 보아라 저 빛
-          </p>
-          <span className="b1-mono mt-6 inline-block text-[11px] tracking-[0.12em]" style={{ color: 'rgba(80,55,45,0.7)' }}>
-            찬송 ‘옳은 길 따르라 의의 길을’ 중
-          </span>
         </div>
       </div>
     </section>

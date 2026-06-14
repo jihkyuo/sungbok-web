@@ -16,6 +16,7 @@ export const ChurchNews = () => {
   const headline = CHURCH_NEWS_POSTS[0];
   const cards = CHURCH_NEWS_POSTS.slice(1, 5);
 
+  // 다음세대 하늘이 흰(#f6fafe = --color-b1-bg)으로 완결돼 내려오므로, 여기는 순수 흰 위에서 시작한다(경계 없음).
   return (
     <Section>
       <Reveal>

@@ -1,0 +1,9 @@
+{
+  "name": "sungbok-review-skill",
+  "version": "0.1.0",
+  "description": "변경분을 정확성 버그 + 재사용/단순화 + 프로젝트 컨벤션 관점에서 리뷰하는 diff-review 스킬.",
+  "author": {
+    "name": "지오현"
+  },
+  "keywords": ["code-review", "diff", "nextjs", "quality"]
+}

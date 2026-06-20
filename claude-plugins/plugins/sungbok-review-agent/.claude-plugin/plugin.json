@@ -1,0 +1,9 @@
+{
+  "name": "sungbok-review-agent",
+  "version": "0.1.0",
+  "description": "diff-review 방법론을 따르는 읽기 전용 code-reviewer 서브에이전트.",
+  "author": {
+    "name": "지오현"
+  },
+  "keywords": ["code-review", "subagent", "nextjs", "quality"]
+}

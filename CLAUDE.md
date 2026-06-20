@@ -18,6 +18,8 @@ Next.js 15 (App Router) + TypeScript + Tailwind CSS 4 기반 교회 웹사이트
 
 새 문서를 만들기 전에 인덱스를 먼저 확인하세요. 카테고리·네이밍·동기화 규칙이 모두 거기 있습니다.
 
+> 예외: [DESIGN.md](DESIGN.md) 만 **루트**에 둡니다 — gstack `/design-review` 가 레포 루트에서 이름 고정으로 탐색하기 때문. 디자인 바(채점 기준) 정본이며, 토큰 수치 표는 `.md/design/color-palette.md` 를 참조합니다.
+
 ## 작업 시 주의
 
 ### 디자인 시스템 변경
@@ -29,6 +31,12 @@ Next.js 15 (App Router) + TypeScript + Tailwind CSS 4 기반 교회 웹사이트
 
 ### 시안(디자인 변형) 작업
 레이아웃·효과·인터랙션 시안을 탐색·비교할 때는 [.md/workflow/prototype-preview.md](.md/workflow/prototype-preview.md) 의 방식을 따르세요. 프리뷰 라우트 컨벤션·전용 dev 포트·재사용 헬퍼·확정 후 정리 규칙이 모두 거기 있습니다.
+
+### 디자인 QA
+완성된 UI는 루트 [DESIGN.md](DESIGN.md) 의 바(토큰 규율·카피 톤·모션 바·한글 타이포·a11y·subtraction)에 맞춰 점검합니다. 3단으로 자동화돼 있습니다:
+- **커밋 직전**: `pnpm design:lint --diff` 가 신규 색 하드코딩을 차단(레거시는 `.design-lint-baseline` 으로 grandfather, 토큰 없는 1회성은 같은 라인에 `/* design-lint-ignore: 사유 */`). 전체 리포트는 `pnpm design:lint`.
+- **작업 종료**: UI 변경이 임계를 넘으면 [.claude/hooks/auto-design-review.sh](.claude/hooks/auto-design-review.sh) 가 `/design-qa`(또는 `design-reviewer` 서브에이전트) 실행을 권유.
+- **승격 마일스톤**: 프리뷰 승자를 정식 위젯으로 올린 직후, gstack `/design-review` 로 라이브 감사(런타임 모션·대비 확정). 시점은 prototype-preview §E 참조.
 
 ### 중요 의사결정 기록
 스택 전환, 팔레트 교체, 라우팅 구조 변경 등 되돌리기 어려운 결정은 `.md/decisions/` 에 ADR(Architecture Decision Record) 형식으로 기록하세요. 양식과 번호 컨벤션은 [.md/README.md](.md/README.md) 참조.

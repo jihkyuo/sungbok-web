@@ -1,0 +1,15 @@
+# design-lint baseline — grandfather된 레거시 (파일<TAB>#hex 소문자)
+# 재생성: pnpm design:lint --update-baseline. 신규 위반은 여기 추가하지 말 것.
+src/domains/home/components/widgets/HomeHero/index.tsx	#2a3556
+src/domains/home/components/widgets/HomeHero/index.tsx	#3a4252
+src/domains/home/components/widgets/HomeHero/index.tsx	#f7f4ee
+src/domains/home/components/widgets/HomeLead/index.tsx	#2a1a0c
+src/domains/home/components/widgets/HomeLead/index.tsx	#3a2713
+src/domains/home/components/widgets/HomeLead/index.tsx	#7c3f12
+src/domains/home/components/widgets/HomeLead/index.tsx	#b5611a
+src/domains/home/components/widgets/HomeLead/index.tsx	#ffcf96
+src/domains/home/components/widgets/NextGeneration/index.tsx	#0b0d1e
+src/domains/home/components/widgets/NextGeneration/index.tsx	#9fb6ff
+src/domains/home/components/widgets/RecentSermons/TurntableStage.tsx	#ff0000
+src/domains/home/components/widgets/RecentSermons/VariantCombo.tsx	#ff0000
+src/shared/components/layout/Header/DockNav.tsx	#e8f0fe

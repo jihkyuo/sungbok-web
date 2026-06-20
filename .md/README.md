@@ -40,6 +40,7 @@
 
 ### Design
 
+- [../DESIGN.md](../DESIGN.md) — **(루트 예외)** 디자인 바 정본. gstack `/design-review`·`design-qa` 의 채점 기준(토큰 규율·카피 톤·모션 바·한글 타이포·a11y·subtraction). 루트에 두는 이유·운용은 [CLAUDE.md](../CLAUDE.md) "디자인 QA" 참조. 토큰 수치 표는 아래 color-palette.md
 - [color-palette.md](design/color-palette.md) — B1 Sky 팔레트. 컬러 토큰 정의·시각적 위계·Tailwind 사용 예시·접근성
 
 ### Domains
@@ -110,6 +111,7 @@
 | 코드 변경 | 함께 업데이트할 문서 |
 |-----------|----------------------|
 | [src/app/globals.css](../src/app/globals.css) 의 팔레트 토큰 | [design/color-palette.md](design/color-palette.md) |
+| 디자인 바(토큰 규율·모션·a11y·카피 톤) 규칙 변경 | [../DESIGN.md](../DESIGN.md) |
 | [src/app/page.tsx](../src/app/page.tsx) 또는 [src/domains/home/](../src/domains/home/) 변경 | [domains/home.md](domains/home.md) |
 | 도메인 추가/구조 변경 | `domains/<domain>.md` |
 | 라우팅·상태 관리·렌더링 전략 변경 | `architecture/*.md` *(향후)* |

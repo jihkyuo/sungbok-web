@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "design:lint": "bash scripts/design-lint.sh",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",

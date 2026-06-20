@@ -52,7 +52,7 @@ esac
 
 # 3) 배럴/정적데이터/설정 파일 통과 (vitest coverage exclude 와 동일 기준)
 case "$base" in
-  index.ts|index.tsx|data.ts|*.config.ts|*.config.mts|*.config.tsx) exit 0 ;;
+  index.ts|index.tsx|data.ts|types.ts|*.types.ts|*.config.ts|*.config.mts|*.config.tsx) exit 0 ;;
 esac
 
 # 4) 페이지/라우트·시안·프리뷰는 디자인 영역 → 통과
@@ -92,7 +92,8 @@ if [ -e "$abs" ]; then
 fi
 
 # 신규 파일 — content 에 함수가 있을 때만 차단(순수 데이터/상수 파일은 통과)
-content="$(printf '%s' "$payload" | jq -r '.tool_input.content // ""' 2>/dev/null)"
+# Write 는 .content, MultiEdit 는 .edits[].new_string 으로 새 내용을 담으므로 둘 다 수집한다.
+content="$(printf '%s' "$payload" | jq -r '.tool_input.content // ([.tool_input.edits[]?.new_string] | join("\n"))' 2>/dev/null)"
 if ! printf '%s' "$content" | grep -Eq '(^|[^A-Za-z])function[ (]|=>|(^|[^A-Za-z])class '; then
   exit 0   # 함수가 없는 신규 파일(정적 데이터 등) → 통과
 fi

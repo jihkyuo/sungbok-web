@@ -49,10 +49,17 @@ src/domains/<domain>/components/widgets/<Widget>/_variants/
 
 ### 전용 dev 포트
 
-이 레포는 여러 세션이 동시에 돈다. 3000·3001·3002·3007 등이 점유돼 있으니 **빈 포트**로 띄운다.
+이 레포는 여러 세션이 동시에 돈다. 3000·3001·3002·3007 등이 점유돼 있으니 **빈 포트**로 띄운다. **`pnpm preview`** 가 빈 포트를 자동 탐색해 기동한다(권장).
 
 ```bash
-PORT=<n> pnpm exec next dev -H 0.0.0.0 --turbopack -p <n>
+pnpm preview          # 3010부터 빈 포트 자동 탐색 후 dev 기동
+pnpm preview 3030     # 3030부터 탐색
+```
+
+수동으로 포트를 지정해야 하면:
+
+```bash
+pnpm exec next dev -H 0.0.0.0 --turbopack -p <n>
 ```
 
 `pnpm dev -- -p <n>` 는 `--` 가 next 로 잘못 전달돼 실패하니 쓰지 말 것.

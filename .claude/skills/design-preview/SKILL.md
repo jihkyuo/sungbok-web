@@ -63,9 +63,11 @@ allowed-tools:
   (`scrollTo(0)` 금지). 동적 라우트 `[variant]/page` 는 풀리로드·404 나니 금지.
 - **전역 안 건드림.** `globals.css` 손대지 말고 시안 전용 keyframe/효과는 프리뷰
   `page.tsx` `<style>` 에 `sp-` 프리픽스로 국소 정의. 임시물은 커밋하지 않는다.
-- **빈 포트로 띄움** (여러 세션 동시 사용, 3000·3001·3002·3007 등 점유):
+- **빈 포트로 띄움** (여러 세션 동시 사용, 3000·3001·3002·3007 등 점유) — `pnpm preview` 가
+  빈 포트를 자동 탐색해 기동한다:
   ```bash
-  PORT=<n> pnpm exec next dev -H 0.0.0.0 --turbopack -p <n>
+  pnpm preview          # 빈 포트 자동 탐색 후 dev 기동
+  pnpm preview 3030     # 3030부터 탐색
   ```
   `pnpm dev -- -p <n>` 는 `--` 가 next 로 잘못 전달돼 실패하니 쓰지 말 것.
 

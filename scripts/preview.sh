@@ -10,6 +10,10 @@
 set -uo pipefail
 
 start_port="${1:-3010}"
+if ! [[ "$start_port" =~ ^[0-9]+$ ]]; then
+  echo "❌ 포트는 숫자여야 합니다: '$start_port'  (예: pnpm preview 3030)" >&2
+  exit 1
+fi
 max_port=$((start_port + 90))
 
 # LISTEN 중인 소켓이 없으면 빈 포트(return 0)

@@ -60,11 +60,17 @@ run() {
 }
 
 # 0) 임시 시안 프리뷰 누출 차단 — *-preview/ 라우트·_variants/ 폴더는 커밋 금지
-#    (워크플로 규칙: 승자 이식분만 커밋). 스테이징에 섞여 있으면 차단한다.
-staged="$(git diff --cached --name-only 2>/dev/null || true)"
-leaked="$(printf '%s\n' "$staged" | grep -E '(^|/)src/app/[^/]+-preview/|(^|/)_variants/' || true)"
+#    (워크플로 규칙: 승자 이식분만 커밋).
+#    - --diff-filter=AM: 추가·수정만 검사(삭제 제외) → 임시물 '정리(git rm)' 커밋은 통과
+#    - 인덱스(--cached)+워킹트리 둘 다 검사 → git commit -a/-am 의 인덱스 우회까지 차단
+candidates="$(
+  { git diff --cached --name-only --diff-filter=AM 2>/dev/null
+    git diff --name-only --diff-filter=AM 2>/dev/null
+  } | sort -u || true
+)"
+leaked="$(printf '%s\n' "$candidates" | grep -E '(^|/)src/app/(.*/)?[^/]+-preview/|(^|/)_variants/' || true)"
 if [ -n "$leaked" ]; then
-  emit_block "임시 프리뷰 누출" "다음 시안 임시 파일이 스테이징됐습니다 — 승자 이식분만 커밋하세요.
+  emit_block "임시 프리뷰 누출" "다음 시안 임시 파일이 커밋에 포함됩니다 — 승자 이식분만 커밋하세요.
 unstage 예시:  git restore --staged <파일>
 
 ${leaked}"

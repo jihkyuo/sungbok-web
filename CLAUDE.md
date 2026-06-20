@@ -40,3 +40,4 @@ Next.js 15 (App Router) + TypeScript + Tailwind CSS 4 기반 교회 웹사이트
 - **공유 컴포넌트**: `src/shared/components/`
 - **전역 토큰만 사용**: 컬러·폰트·반경 등은 `src/app/globals.css` 의 `@theme inline` 블록 토큰을 Tailwind 유틸(`bg-b1-accent`, `text-b1-sub` 등)로 참조. 컴포넌트 내 HEX 하드코딩 지양.
 - **단어 줄바꿈**: 한글 가독성을 위해 `globals.css` 에 `word-break: keep-all` 적용됨. 헤딩은 `text-wrap: balance`.
+- **TDD (로직 한정)**: 디자인/UI는 테스트 강제 없음. 다만 **로직 모듈**(camelCase `.ts`·`.tsx`, `use*` 훅 — 순수함수·데이터변환·분기 등)은 RED-first로 작성한다: 실패 테스트 먼저 → `pnpm test` 로 RED 확인 → 구현해서 GREEN. 신규 로직 파일은 형제 테스트가 없으면 `.claude/hooks/tdd-guard.sh` 가 생성을 차단한다(기존 파일 수정은 알림만). 순수 데이터/상수 파일은 대상 아님.

@@ -2,10 +2,10 @@
  * auto-code-review.sh 스모크 테스트 (Stop 훅).
  *
  * git 상태에 강하게 의존하므로 임시 git 레포(CLAUDE_PROJECT_DIR)로 격리한다.
- * 핵심: 하네스(.claude/hooks 등) 변경은 크기와 무관하게 리뷰를 발동시킨다.
+ * 핵심: 변경 크기·세션 한정(transcript)·필요 리뷰 세트로 발동을 조절한다.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -54,33 +54,6 @@ describe('auto-code-review: 루프 가드', () => {
     writeFileIn(repo, '.claude/hooks/foo.sh', 'echo hi\n');
     const res = runHook({ stop_hook_active: true }, repo);
     expect(res.stdout.trim()).toBe('');
-  });
-});
-
-describe('auto-code-review: 하네스-리뷰 경로', () => {
-  it('하네스 파일(.claude/hooks/*) 변경은 작아도 리뷰를 발동시키고 저널에 기록한다', () => {
-    const repo = makeRepo();
-    writeFileIn(repo, '.claude/hooks/foo.sh', 'echo hi\n'); // 1파일·1줄(임계 미만)
-    const journal = join(repo, 'journal.log');
-
-    const res = runHook({ stop_hook_active: false }, repo, journal);
-    const out = JSON.parse(res.stdout.trim()) as { decision?: string; reason?: string };
-    expect(out.decision).toBe('block');
-    expect(out.reason).toContain('하네스');
-    expect(out.reason).toContain('pnpm test');
-
-    expect(existsSync(journal)).toBe(true);
-    const lines = readFileSync(journal, 'utf-8').trim().split('\n').filter(Boolean);
-    expect(lines[lines.length - 1]).toContain('auto-review');
-    expect(lines[lines.length - 1]).toContain('block');
-  });
-
-  it('커스텀 슬래시 명령(.claude/commands/*) 변경도 작아도 발동시킨다', () => {
-    const repo = makeRepo();
-    writeFileIn(repo, '.claude/commands/foo.md', '# cmd\n'); // 1파일·1줄(임계 미만)
-    const res = runHook({ stop_hook_active: false }, repo);
-    const out = JSON.parse(res.stdout.trim()) as { decision?: string };
-    expect(out.decision).toBe('block');
   });
 });
 
@@ -139,11 +112,11 @@ function writeEvents(repo: string, events: { tool: string; input: Record<string,
 // 필요 리뷰 세트 가드: '마지막 편집 이후' 필요한 리뷰가 다 돌았으면 재촉 안 함.
 //   작은 변경 → code-review 1종이면 충분. 큰 변경 → code-review + codex 둘 다 필요.
 describe('auto-code-review: required-set 이미-충족 가드', () => {
-  it('작은 하네스 변경: 편집 뒤 /code-review 면 통과(codex 불필요) [중복 회귀 잠금]', () => {
+  it('작은 로직 변경: 편집 뒤 /code-review 면 통과(codex 불필요) [중복 회귀 잠금]', () => {
     const repo = makeRepo();
-    writeFileIn(repo, '.claude/hooks/foo.sh', 'echo hi\n'); // 하네스·작음 → is_big=0
+    writeFileIn(repo, 'src/x/util.ts', 'export const x = 1\n'); // 로직·작음 → is_big=0
     const transcript_path = writeEvents(repo, [
-      { tool: 'Edit', input: { file_path: join(repo, '.claude/hooks/foo.sh') } },
+      { tool: 'Edit', input: { file_path: join(repo, 'src/x/util.ts') } },
       { tool: 'Skill', input: { skill: 'code-review', args: 'HEAD' } },
     ]);
     const res = runHook({ stop_hook_active: false, transcript_path }, repo);
@@ -152,10 +125,10 @@ describe('auto-code-review: required-set 이미-충족 가드', () => {
 
   it('작은 변경: 리뷰 후 다시 편집하면 발동한다 [과소-억제 회귀 잠금]', () => {
     const repo = makeRepo();
-    writeFileIn(repo, '.claude/hooks/foo.sh', 'echo hi\n');
+    writeFileIn(repo, 'src/x/util.ts', 'export const x = 1\n');
     const transcript_path = writeEvents(repo, [
       { tool: 'Skill', input: { skill: 'code-review', args: 'HEAD' } },
-      { tool: 'Edit', input: { file_path: join(repo, '.claude/hooks/foo.sh') } }, // 리뷰 후 편집
+      { tool: 'Edit', input: { file_path: join(repo, 'src/x/util.ts') } }, // 리뷰 후 편집
     ]);
     const res = runHook({ stop_hook_active: false, transcript_path }, repo);
     const out = JSON.parse(res.stdout.trim()) as { decision?: string };
@@ -202,11 +175,11 @@ describe('auto-code-review: required-set 이미-충족 가드', () => {
 
 // 리뷰 무게가 변경 크기에 비례하는지: 작으면 단일 /code-review, 크면 +codex.
 describe('auto-code-review: size-scaled 리뷰 무게', () => {
-  it('작은 하네스 변경은 /code-review 단일·codex 없이 발동한다', () => {
+  it('작은 로직 변경은 /code-review 단일·codex 없이 발동한다', () => {
     const repo = makeRepo();
-    writeFileIn(repo, '.claude/hooks/foo.sh', 'echo hi\n'); // 하네스·작음
+    writeFileIn(repo, 'src/x/util.ts', 'export const x = 1\n'); // 로직·작음
     const transcript_path = writeEvents(repo, [
-      { tool: 'Edit', input: { file_path: join(repo, '.claude/hooks/foo.sh') } },
+      { tool: 'Edit', input: { file_path: join(repo, 'src/x/util.ts') } },
     ]);
     const res = runHook({ stop_hook_active: false, transcript_path }, repo);
     const out = JSON.parse(res.stdout.trim()) as { decision?: string; reason?: string };

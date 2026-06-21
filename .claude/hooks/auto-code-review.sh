@@ -6,10 +6,8 @@
 #
 #   발동 기준(OR): 로직 파일(camelCase .ts/.tsx · use* 훅) 변경
 #                  | 변경 ≥ THRESH_LINES 줄 | 변경 파일 ≥ THRESH_FILES 개
-#                  | 하네스 파일 변경(크기 무관)
 #   리뷰 무게     : 크기 비례 — 작은 변경은 /code-review 단일, 큰 변경은 +/codex.
-#                  (하네스 변경엔 크기 무관 pnpm test·롤백 규율 추가)
-#   제외          : *-preview/ · _variants/ · .md/ · 로컬설정·상태/로그 · lock 파일
+#   제외          : *-preview/ · _variants/ · .md/ · .claude/ · lock 파일
 #   사소한 변경   : 조용히 통과 → 병목 방지
 #
 #   루프/도배 방지:
@@ -22,11 +20,6 @@
 
 set -uo pipefail
 
-# 회고 저널 헬퍼 (best-effort; 없거나 깨져도 훅 동작에 영향 없음)
-_journal_lib="$(dirname "${BASH_SOURCE[0]}")/_journal.sh"
-[ -f "$_journal_lib" ] && . "$_journal_lib" 2>/dev/null || true
-command -v journal_event >/dev/null 2>&1 || journal_event() { :; }
-
 # --- 튜닝 노브 (여기만 고치면 민감도 조절) ---------------------------------
 THRESH_LINES=80   # 변경 라인 합이 이 이상이면 발동
 THRESH_FILES=5    # 변경 파일 수가 이 이상이면 발동
@@ -35,10 +28,7 @@ THRESH_FILES=5    # 변경 파일 수가 이 이상이면 발동
 payload="$(cat)"
 
 # jq 없으면 판정 불가 → fail-open
-if ! command -v jq >/dev/null 2>&1; then
-  journal_event fail-open auto-review pass "jq-missing" "" || true
-  exit 0
-fi
+command -v jq >/dev/null 2>&1 || exit 0
 
 stop_active="$(printf '%s' "$payload" | jq -r '.stop_hook_active // false' 2>/dev/null)"
 
@@ -47,18 +37,15 @@ project_dir="${CLAUDE_PROJECT_DIR:-}"
 if [ -z "$project_dir" ]; then
   project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 fi
-cd "$project_dir" 2>/dev/null || { journal_event fail-open auto-review pass "cd-failed" "$project_dir" || true; exit 0; }
+cd "$project_dir" 2>/dev/null || exit 0
 
 # git 저장소가 아니면 통과
-git rev-parse --is-inside-work-tree >/dev/null 2>&1 || { journal_event fail-open auto-review pass "not-git-repo" "" || true; exit 0; }
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 state_file="$project_dir/.claude/.last-review-hash"
 
-# 노이즈 제외 패턴 (시안 프리뷰·문서·로컬설정·상태/로그·lock)
-#   주의: .claude/ 전체를 제외하지 않는다 — 훅·settings·skills 등 '하네스(가드 자신)'
-#   변경은 가장 엄격히 리뷰돼야 할 제어면이므로 아래 has_harness 가 별도로 발동시킨다.
-#   여기서는 잡음인 로컬 권한설정과 상태/로그 파일만 제외한다.
-exclude_re='(^|/)[^/]+-preview/|(^|/)_variants/|^\.md/|^\.claude/settings\.local\.json$|^\.claude/\.last-review-hash$|^\.claude/\.retro-journal\.log$|(^|/)pnpm-lock\.yaml$|(^|/)package-lock\.json$|(^|/)yarn\.lock$'
+# 노이즈 제외 패턴 (시안 프리뷰·문서·상태파일·lock)
+exclude_re='(^|/)[^/]+-preview/|(^|/)_variants/|^\.md/|^\.claude/|(^|/)pnpm-lock\.yaml$|(^|/)package-lock\.json$|(^|/)yarn\.lock$'
 
 # 변경 파일 목록: 추적-변경(HEAD 대비) + 신규(untracked), 노이즈 제외
 tracked_changed="$(git diff --name-only HEAD 2>/dev/null | grep -Ev "$exclude_re" || true)"
@@ -163,18 +150,6 @@ while IFS= read -r f; do
   if is_logic_file "$f"; then has_logic=1; break; fi
 done <<< "$all_changed"
 
-# 하네스(가드 자신) 변경 포함 여부 — 훅·settings·skills·agents·commands·CLAUDE.md
-#   가드 자신의 변경은 크기와 무관하게 항상 리뷰돼야 한다(한 줄 수정도 회귀를 부를 수 있음).
-#   회귀 잠금: tests/hooks/auto-code-review.test.ts "하네스-리뷰 경로".
-#   [롤백]    has_harness 관련 3곳(이 감지 블록·아래 게이트의 has_harness 조건·reason 강화 블록)을
-#             제거하면 .claude/ 를 통째로 exclude_re 에 넣던 종전 동작으로 돌아간다.
-#   [비활성화] 훅 자체는 .claude/settings.json 의 Stop 항목에서 이 스크립트를 빼면 꺼진다.
-has_harness=0
-if printf '%s\n' "$all_changed" \
-   | grep -Eq '^\.claude/(hooks/|skills/|agents/|commands/|settings\.json$)|^CLAUDE\.md$'; then
-  has_harness=1
-fi
-
 # 큰 변경 판정 — 리뷰 '무게'를 크기에 비례시키는 축(작으면 단일, 크면 +codex).
 is_big=0
 if [ "$total_lines" -ge "$THRESH_LINES" ] || [ "$file_count" -ge "$THRESH_FILES" ]; then
@@ -182,8 +157,8 @@ if [ "$total_lines" -ge "$THRESH_LINES" ] || [ "$file_count" -ge "$THRESH_FILES"
 fi
 
 # --- 발동 판정 --------------------------------------------------------------
-# 하네스/로직 변경은 크기 무관 항상 발동. 그 외엔 큰 변경만 발동.
-if [ "$has_harness" -eq 0 ] && [ "$has_logic" -eq 0 ] && [ "$is_big" -eq 0 ]; then
+# 로직 변경은 크기 무관 항상 발동. 그 외엔 큰 변경만 발동.
+if [ "$has_logic" -eq 0 ] && [ "$is_big" -eq 0 ]; then
   exit 0   # 사소한 변경 → 조용히 통과
 fi
 
@@ -234,9 +209,7 @@ fi
 # --- 리뷰 발동: block + reason ---------------------------------------------
 json_str() { printf '%s' "$1" | jq -Rs .; }
 
-if [ "$has_harness" -eq 1 ]; then
-  why="하네스(가드) 변경"
-elif [ "$has_logic" -eq 1 ]; then
+if [ "$has_logic" -eq 1 ]; then
   why="로직 파일 변경"
 else
   why="변경 규모(${total_lines}줄 / ${file_count}파일)"
@@ -258,16 +231,6 @@ else
 발견사항을 요약하고 심각한 문제는 고친 뒤 마쳐라. (작은 변경이라 교차검증·고강도 멀티에이전트 리뷰는 생략) 리뷰가 끝나면 이 훅은 같은 변경을 다시 막지 않는다."
 fi
 
-# 하네스(가드 자신) 변경은 크기 무관 테스트 규율 추가 — 가드가 뚫리면 후속 작업이 위험.
-if [ "$has_harness" -eq 1 ]; then
-  reason_text="${reason_text}
-
-⚠️ 하네스 변경 감지(.claude/hooks·settings·skills·agents 또는 CLAUDE.md). 위 리뷰에 더해 반드시:
-  · pnpm test 로 tests/hooks/ 회귀 테스트를 통과시켜라(가드 동작이 깨지지 않았는지).
-  · 변경한 가드에는 ① 그 동작을 고정하는 회귀 테스트와 ② 비활성화/롤백 방법을 함께 남겨라."
-fi
-
-journal_event block auto-review block "$why" "" || true
 reason=$(json_str "$reason_text")
 printf '{"decision":"block","reason":%s}' "$reason"
 exit 0

@@ -1,6 +1,6 @@
 # 스펙: 글로벌 IA·네비 골격 (작업 패키지 A)
 
-**상태**: 승인 대기 → 승인 시 A1 구현 계획 작성 → A1 구현 → A2 시안 라운드 → 승격
+**상태**: **A1 구현 완료 + S1 승격 완료**(2026-10-10, ADR 0004). `siteNav` · 라우트 26 · redirect 7 · `SectionShell`(S1) · 독/모바일 메뉴 연결. 디자인 본문 5페이지 이식. 모바일 메뉴(M1/M2)·모바일 머리 세부는 미확정
 **날짜**: 2026-10-10
 **근거**: [회의록 2026-10-08](../meetings/2026-10-08-pastor-review.md) 결정 D1·D2·D4·D6·D7, 미결 O2
 **후속 ADR**: 0004 (서브페이지 라우팅 구조) — 구현 시 작성
@@ -96,21 +96,31 @@ location/         page.tsx (layout 없음, 페이지가 SectionShell 직접 사�
 - 기존 `src/app/worship-video/page.tsx`와 그 안의 `h-60` 스페이서는 삭제. `PlaylistPagination` 위젯(`domains/worship-video`)은 **삭제하지 않고** `worship/sunday/page.tsx`에서 그대로 렌더(B에서 재설계). 즉 `/worship/sunday`만 placeholder가 아니라 기존 설교 목록을 보여준다.
 - `/nextgen-preview`는 시안 라우트라 이번 범위 밖(별도 정리).
 
-## 4. SectionShell — 서브페이지 공통 틀
+## 4. SectionShell — 서브페이지 공통 머리 (확정: S1, 2026-10-10)
 
-**파일**: `src/shared/components/layout/SectionShell/index.tsx`(서버) + `SiblingTabs.tsx`(클라이언트, `usePathname`).
+**파일**: `src/shared/components/layout/SectionShell/index.tsx` — 단일 클라이언트 컴포넌트(`usePathname` 으로 현재 하위 판정). 서버 layout → SectionShell → 서버 page children(RSC 페이로드) 구조. 시안 원본: `_variants/header/S1.tsx`.
 
-> 아래 "구성"은 **A1의 임시 최소형이 보장할 정보 요소**이자 A2 시안의 출발 가설이다. 배치·형태(탭이 상단 가로인지, 좌측 세로인지, 스티키인지 등)는 A2 시안 라운드에서 결정하고, 확정안을 이 절에 반영한다.
+**원칙 (2라운드에서 확정)**
+- 공통인 것은 **머리(제목 + 형제 이동 + hairline)** 뿐이다. **본문 레이아웃은 섹션(콘텐츠 유형)별로 각각 설계**한다 — 부서 페이지·설교 아카이브·인물 그리드·문서 목록은 구조가 다르다. "공통 셸 + 본문 교체" 전제는 폐기. ([round2-analysis](2026-10-10-subpage-layouts-round2-analysis.md))
+- 요소 하나하나가 정보 기능 또는 명확한 시각 의도를 가져야 한다. 섹션명 eyebrow(11px 모노)는 독이 이미 섹션을 표시하므로 **두지 않는다**.
+- 글자 하한: 본문 16px · 보조 14px · 캡션 13px.
+- 위계: **독 = accent 알약 1개**. 머리 알약은 S1 원안대로 accent 채움을 쓰되, 그 밖의 서브 내비(모바일 메뉴 등)는 먹색(`b1-text`)/bold로 독과 구분한다.
 
-**구성 (위→아래)**
-1. 상단 여백 — fixed 독에 가리지 않는 높이. 현재 `/worship-video`의 `h-60` 역할을 흡수.
-2. 섹션 헤더 — 섹션 label(큰 제목) + 현재 하위 label(작은 제목). 사진 배너 없음.
-3. 형제 탭 — 하위 항목을 가로 알약 탭으로. 활성 = 독과 같은 accent 채움. 좁은 화면은 가로 스크롤(8개 부서 대응). 하위 없는 섹션은 생략.
-4. 본문 컨테이너 — 좌우 패딩·최대 폭은 홈 섹션과 동일 값. `{children}`.
+**S1 구성 (위→아래)** — 20종 비교 시트(`section-header-preview`, S1~S20)에서 선택
+1. 상단 여백: 독 아래 40px (콘텐츠 시작 112px, md 128px). 1라운드의 240px 공백 제거.
+2. 제목: **페이지명**(현재 하위 label) 64px / 1.05 / -0.03em bold. 하위 없는 섹션은 섹션명.
+3. 형제 알약: 15px semibold, `px-4 py-2`, `gap-1.5`, 활성 = `bg-b1-accent text-white` + 그림자, 비활성 = `text-b1-sub`, hover `bg-b1-accent-soft`. 넘치면 줄바꿈(8개도 데스크톱 한 줄). 하위 없으면 행 생략.
+4. hairline: `border-b1-border`, 위 40px / 아래 56px.
+5. 진입 모션: 제목 → 알약 fade-up(100ms 간격, transform/opacity). 스크롤 연동 없음(정적).
+6. 좌우: 본문과 **같은 패딩 래퍼**(`px-[6vw]` → `max-w-[1320px]`) 안에 둔다. 머리와 본문 hairline이 어긋나면 안 된다.
 
-**규율**: 색·반경·폰트는 `b1-*` 토큰만. `prefers-reduced-motion` 외 모션 없음(정적 틀).
+**머리에 들어가지 않는 것**: 섹션 설명문, 사진 배너, 브레드크럼, 숫자 인덱스. 페이지별 사실 정보(설교자·최신 호 날짜·교역자 수 등)는 **본문 첫 줄**에 둔다.
 
-**모바일**: 제목 크기 축소, 탭 가로 스크롤. 별도 레이아웃 없음.
+**모바일**: 제목 40px, 알약은 두 줄로 접힘(가로 스크롤 아님). 세부는 모바일 라운드에서.
+
+**예외**: 홈(`/`)은 이 레이아웃을 안 탐(히어로 풀블리드). `/location`은 하위가 없으니 `app/location/page.tsx`가 직접 `SectionShell`을 쓰고 알약 없이 제목만.
+
+**적용 확인**: `section-shell-preview`의 B·F·G·H·I(담임목사·영어예배부·주일예배·섬기는 이들·주보)에 S1 적용, 본문 각자 구조 유지.
 
 ## 5. 독(DockNav)·모바일 메뉴(SideMenu)
 

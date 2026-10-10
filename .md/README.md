@@ -18,11 +18,14 @@
 ├── meetings/                       # 회의록 (불변 — 회의 시점 기록)
 │   └── 2026-10-08-pastor-review.md
 ├── specs/                          # 작업 패키지 설계 스펙 (구현 전 승인본)
-│   └── 2026-10-10-site-nav-skeleton-design.md
+│   ├── 2026-10-10-site-nav-skeleton-design.md
+│   ├── 2026-10-10-site-nav-skeleton-a1-plan.md
+│   └── 2026-10-10-subpage-layouts-round2-analysis.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
-    └── 0003-hero-v2-bleed-blur-kenburns.md
+    ├── 0003-hero-v2-bleed-blur-kenburns.md
+    └── 0004-subpage-routing.md
 ```
 
 향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
@@ -67,13 +70,15 @@
 
 ### Specs
 
-- [2026-10-10-site-nav-skeleton-design.md](specs/2026-10-10-site-nav-skeleton-design.md) — 작업 패키지 A: 글로벌 IA·네비 골격. `siteNav` 단일 소스, `/{section}/{page}` 영문 슬러그 26개, 상위→첫 하위 redirect, SectionShell 공통 틀. A1(구조) → A2(섹션 셸·모바일 메뉴 시안) 순
+- [2026-10-10-site-nav-skeleton-design.md](specs/2026-10-10-site-nav-skeleton-design.md) — 작업 패키지 A: 글로벌 IA·네비 골격. `siteNav` 단일 소스, `/{section}/{page}` 영문 슬러그 26개, 상위→첫 하위 redirect, 공통 머리 S1. **A1 구현 완료(2026-10-10)**, 모바일 메뉴 미확정. 구현 계획: [-a1-plan.md](specs/2026-10-10-site-nav-skeleton-a1-plan.md)
+- [2026-10-10-subpage-layouts-round2-analysis.md](specs/2026-10-10-subpage-layouts-round2-analysis.md) — 서브페이지 본문 레이아웃 페이지별 분석(영어예배부·주일예배·섬기는 이들·주보) + 머리 20종 비교 결과(S1 확정)
 
 ### Decisions
 
 - [0001-sky-palette.md](decisions/0001-sky-palette.md) — 2026-05-07 — Warm Paper 팔레트에서 Sky Blue 팔레트로 전환한 의사결정 기록
 - [0002-home-ia-and-tone.md](decisions/0002-home-ia-and-tone.md) — 2026-05-07 — 홈 1순위 타깃·카피 톤 원칙·7섹션 IA 결정
 - [0003-hero-v2-bleed-blur-kenburns.md](decisions/0003-hero-v2-bleed-blur-kenburns.md) — 2026-05-24 — 히어로를 사진 4단 Bleed + Blur 페이드 + Ken Burns(sketch 12)로 확정, ADR 0002 미결 종결
+- [0004-subpage-routing.md](decisions/0004-subpage-routing.md) — 2026-10-10 — 서브페이지를 `/{section}/{page}` + 섹션 중첩 레이아웃으로, `siteNav` 단일 소스에서 메뉴·라우트·redirect 파생. 공통은 머리(S1)뿐, 본문은 섹션별
 
 ## 컨벤션
 

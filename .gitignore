@@ -43,5 +43,6 @@ next-env.d.ts
 
 .gstack/
 
-# auto-code-review 훅 상태 파일 (로컬 전용)
+# auto-code-review / auto-design-review 훅 상태 파일 (로컬 전용)
 .claude/.last-review-hash
+.claude/.last-design-review-hash

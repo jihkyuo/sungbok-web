@@ -77,16 +77,17 @@ ${leaked}"
 fi
 
 echo "🔍 프리커밋 검사 시작..." >&2
+run "design-lint" pnpm design:lint --diff
 run "lint" pnpm lint
 run "typecheck" pnpm typecheck
 
-# test — package.json에 test 스크립트가 있을 때만 (현재는 없음 → 건너뜀)
+# test — package.json에 test 스크립트가 있을 때만 실행 (현재 vitest run 존재 → 커밋마다 실행)
 if jq -e '.scripts.test' package.json >/dev/null 2>&1; then
   run "test" pnpm test
-  pass_msg="✅ 프리커밋 검사 통과 — lint·typecheck·test OK"
+  pass_msg="✅ 프리커밋 검사 통과 — design-lint·lint·typecheck·test OK"
 else
   echo "→ test 스크립트 없음 — 건너뜀" >&2
-  pass_msg="✅ 프리커밋 검사 통과 — lint·typecheck OK (test 없음)"
+  pass_msg="✅ 프리커밋 검사 통과 — design-lint·lint·typecheck OK (test 없음)"
 fi
 
 printf '{"systemMessage":%s}' "$(json_str "$pass_msg")"

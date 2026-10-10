@@ -118,7 +118,7 @@ is_logic_file() {
     index.ts|index.tsx|data.ts|types.ts|*.types.ts|*.config.ts|*.config.mts|*.config.tsx) return 1 ;;
   esac
   case "$f" in src/app/*) return 1 ;; esac   # 페이지/라우트 = 디자인 영역
-  case "$name" in [A-Z]*) return 1 ;; esac   # PascalCase = React 컴포넌트
+  case "$name" in [[:upper:]]*) return 1 ;; esac   # PascalCase = React 컴포넌트 ([A-Z] 는 UTF-8 로케일에서 소문자도 매칭)
   return 0                                    # camelCase .ts/.tsx · use* → 로직
 }
 

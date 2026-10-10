@@ -62,8 +62,9 @@ esac
 
 # 5) PascalCase basename = React 컴포넌트(디자인) → 통과
 #    (이 레포 컨벤션: 컴포넌트는 PascalCase, 로직/훅은 camelCase·use*)
+#    [A-Z] 는 UTF-8 로케일에서 소문자도 매칭해 가드가 통째로 꺼진다 → [[:upper:]]
 case "$name" in
-  [A-Z]*) exit 0 ;;
+  [[:upper:]]*) exit 0 ;;
 esac
 
 # 여기까지 왔으면: camelCase .ts/.tsx 로직 모듈 또는 use* 훅 → 가드 대상

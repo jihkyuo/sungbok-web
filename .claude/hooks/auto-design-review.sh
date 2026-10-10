@@ -88,7 +88,7 @@ is_design_file() {
     src/app/*) return 0 ;;        # 페이지/라우트
   esac
   case "$base" in index.tsx) return 0 ;; esac   # 컴포넌트 배럴 = 컴포넌트
-  case "$name" in [A-Z]*) return 0 ;; esac      # PascalCase = 컴포넌트
+  case "$name" in [[:upper:]]*) return 0 ;; esac      # PascalCase = 컴포넌트 ([A-Z] 는 UTF-8 로케일에서 소문자도 매칭)
   return 1
 }
 

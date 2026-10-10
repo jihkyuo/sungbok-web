@@ -17,6 +17,8 @@
 │   └── scroll-autoplay-intro.md
 ├── meetings/                       # 회의록 (불변 — 회의 시점 기록)
 │   └── 2026-10-08-pastor-review.md
+├── specs/                          # 작업 패키지 설계 스펙 (구현 전 승인본)
+│   └── 2026-10-10-site-nav-skeleton-design.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
@@ -36,6 +38,7 @@
 | `workflow/` | **살아있는 문서** — 작업 방식·도구 | 방식 변경 시 기존 파일 업데이트 |
 | `patterns/` | **살아있는 문서** — 재사용 인터랙션 패턴 | 패턴 1개당 파일 1개. 개선 시 기존 파일 업데이트 |
 | `meetings/` | **불변 문서** — 회의 시점의 기록 | 회의 1건당 파일 1개, `YYYY-MM-DD-slug.md`. 결정·미결·액션을 상단에 요약. 여기서 나온 결정은 살아있는 문서/ADR에 반영하고 회의록 자체는 고치지 않음 |
+| `specs/` | **승인본** — 작업 패키지 1개의 설계(목적·성공 기준·구조·검증·범위 밖) | `YYYY-MM-DD-slug-design.md`. 구현 전 사용자 승인. 구현 중 확정되는 세부(시안 승자 등)는 해당 절에 반영하고 상태 필드를 갱신. 되돌리기 어려운 결정은 ADR로 분리 |
 | `decisions/` | **불변 문서** — 결정 시점의 기록 | 새 결정마다 새 파일 생성. 기존 ADR은 수정하지 않음(폐기 시 상태 필드만 변경) |
 | `architecture/` *(향후)* | 살아있는 문서 | 변경 시 기존 파일 업데이트 |
 
@@ -62,6 +65,10 @@
 
 - [2026-10-08-pastor-review.md](meetings/2026-10-08-pastor-review.md) — 2026-10-08 — 담당 목사님과 시안 리뷰. 교회소개·예배·다음세대·교회소식·자료실 IA 확정(공지사항·엘림가족부·악보/서식 제외, 사진첩→교회앨범), 유튜브 연동·모바일 재설계·"수요 청년예배" 표기, 목표 오픈 2027-01. 미결: 히어로 영상·도메인 이관·다음세대 레이아웃
 
+### Specs
+
+- [2026-10-10-site-nav-skeleton-design.md](specs/2026-10-10-site-nav-skeleton-design.md) — 작업 패키지 A: 글로벌 IA·네비 골격. `siteNav` 단일 소스, `/{section}/{page}` 영문 슬러그 26개, 상위→첫 하위 redirect, SectionShell 공통 틀. A1(구조) → A2(섹션 셸·모바일 메뉴 시안) 순
+
 ### Decisions
 
 - [0001-sky-palette.md](decisions/0001-sky-palette.md) — 2026-05-07 — Warm Paper 팔레트에서 Sky Blue 팔레트로 전환한 의사결정 기록
@@ -72,7 +79,7 @@
 
 ### 신규 문서 추가
 
-1. **카테고리 결정**: "현재 상태"인가 "과거 기록"인가? 살아있는 문서면 `design/` `architecture/` `domains/` 중 적합한 폴더, 의사결정이면 `decisions/`, 회의 기록이면 `meetings/`.
+1. **카테고리 결정**: "현재 상태"인가 "과거 기록"인가? 살아있는 문서면 `design/` `architecture/` `domains/` 중 적합한 폴더, 의사결정이면 `decisions/`, 회의 기록이면 `meetings/`, 작업 패키지 설계면 `specs/`.
 2. **빈 폴더 금지**: 첫 문서 생성 시점에 폴더도 함께 생성. 미리 만들지 않음.
 3. **파일명**: `kebab-case.md`. ADR은 `NNNN-short-slug.md` (4자리 번호 + 짧은 설명).
 4. **인덱스 갱신**: 이 README의 "현재 문서 목록" 섹션을 함께 업데이트.

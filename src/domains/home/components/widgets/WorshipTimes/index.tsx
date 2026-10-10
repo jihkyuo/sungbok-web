@@ -14,7 +14,7 @@ export const WorshipTimes = () => {
           title="이번 주 예배"
           action={
             <Link
-              href="/worship-video"
+              href="/worship/guide"
               className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
             >
               ALL SERVICES

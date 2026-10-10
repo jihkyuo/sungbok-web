@@ -1,5 +1,6 @@
 import { Section } from '@/domains/home/components/features/Section';
 import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
+import { ARCHIVE_HREF } from '@/domains/home/components/widgets/RecentSermons/data';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -27,7 +28,7 @@ export const RecentSermons = () => {
           title="최근 설교"
           action={
             <Link
-              href="/worship-video"
+              href={ARCHIVE_HREF}
               className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
             >
               SERMON ARCHIVE
@@ -68,7 +69,7 @@ export const RecentSermons = () => {
                 </div>
               </div>
               <Link
-                href="/worship-video"
+                href={ARCHIVE_HREF}
                 className="text-b1-text inline-flex shrink-0 items-center gap-1.5 text-[13px] font-semibold no-underline"
               >
                 전체 보기

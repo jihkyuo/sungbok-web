@@ -1,31 +1,23 @@
 'use client';
 
 import { HomeLogo } from '@/shared/components/layout/Header/HomeLogo';
-import { menuItems } from '@/shared/components/layout/Header/NavigationMenu';
 import { SideMenu } from '@/shared/components/layout/Header/SideMenu';
+import { childHref, findSection, sectionHref, sections } from '@/shared/config/siteNav';
 import { cn } from '@/shared/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-// 서브메뉴 — IA 미확정으로 잠정. 근거: Footer / home data(worshipTimes·ministries). 확정 시 교체.
-const SUBMENUS: Record<string, string[]> = {
-  '/about': ['교회 소개', '담임목사 인사', '섬기는 사람들', '예배당 안내', '연혁'],
-  '/worship-video': ['주일예배', '수요예배', '새벽기도회', '금요 생수의 강', '설교 영상'],
-  '/next-generation': ['영아·유치부', '유년·초등부', '중·고등부', '청년부', '엘림가족부'],
-  '/news': ['공지사항', '주보', '교회 앨범', '행사 일정'],
-  '/documents': ['설교 자료', '양육 자료', '악보', '서식 다운로드'],
-  '/map': ['오시는 길', '주차 안내', '대중교통', '연락처'],
-};
-
 /**
  * DockNav — 상단 글래스 캡슐 헤더(확정안)
  * 글래스 캡슐 + 스크롤 반응(반투명→솔리드) + 미끄러지는 accent 인디케이터
  * + hover 글래스 드롭다운(라이트 글래스·가독 + 좌측 accent 바 모션) + 모바일 SideMenu 재사용
+ * 메뉴·서브메뉴는 siteNav(단일 소스)에서 파생 — 하위 링크는 각자 페이지로, 상위 링크는 첫 하위로.
  */
 export const DockNav = () => {
   const pathname = usePathname();
-  const activeIdx = menuItems.findIndex((m) => pathname.startsWith(m.href));
+  const activeSlug = findSection(pathname)?.slug;
+  const activeIdx = sections.findIndex(s => s.slug === activeSlug);
 
   const [scrolled, setScrolled] = useState(false);
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
@@ -38,7 +30,7 @@ export const DockNav = () => {
 
   const moveTo = useCallback((idx: number) => {
     if (idx < 0) {
-      setBar((b) => ({ ...b, show: false }));
+      setBar(b => ({ ...b, show: false }));
       return;
     }
     const el = itemRefs.current[idx];
@@ -88,13 +80,13 @@ export const DockNav = () => {
             }}
           />
 
-          {menuItems.map((item, i) => {
-            const subs = SUBMENUS[item.href] ?? [];
+          {sections.map((item, i) => {
+            const subs = item.children ?? [];
             const open = hoverIdx === i;
             return (
               <div
-                key={item.href}
-                ref={(el) => {
+                key={item.slug}
+                ref={el => {
                   itemRefs.current[i] = el;
                 }}
                 className="relative"
@@ -102,13 +94,13 @@ export const DockNav = () => {
                 onMouseLeave={() => setHoverIdx(null)}
               >
                 <Link
-                  href={item.href}
+                  href={sectionHref(item)}
                   className={cn(
                     'relative z-10 block rounded-full px-[14px] py-2 text-[14px] font-semibold transition-colors',
                     i === shown ? 'text-white' : 'text-b1-sub hover:text-b1-text'
                   )}
                 >
-                  {item.children}
+                  {item.label}
                 </Link>
 
                 {subs.length > 0 && (
@@ -120,16 +112,18 @@ export const DockNav = () => {
                         : 'pointer-events-none -translate-y-1 opacity-0'
                     )}
                   >
-                    <div className="border-b1-border w-[200px] rounded-2xl border bg-white/95 p-2 shadow-[0_24px_48px_-16px_rgba(15,23,42,0.30)] backdrop-blur-xl backdrop-saturate-150">
-                      {subs.map((s) => (
+                    <div
+                      className="border-b1-border w-[220px] rounded-2xl border bg-white/95 p-2 shadow-[0_24px_48px_-16px_rgba(15,23,42,0.30)] backdrop-blur-xl backdrop-saturate-150" /* design-lint-ignore: 드롭다운 카드 1회성 그림자 */
+                    >
+                      {subs.map(c => (
                         <Link
-                          key={s}
-                          href={item.href}
-                          className="group text-b1-sub hover:text-b1-accent relative block overflow-hidden rounded-xl py-2 pr-3 pl-4 text-[13px] font-medium transition-colors hover:bg-[#e8f0fe]/80"
+                          key={c.slug}
+                          href={childHref(item, c)}
+                          className="group text-b1-sub hover:text-b1-accent hover:bg-b1-accent-soft/80 relative block overflow-hidden rounded-xl py-2 pr-3 pl-4 text-[14px] font-medium transition-colors"
                         >
                           <span className="bg-b1-accent absolute top-1/2 left-1 h-4 w-[3px] -translate-y-1/2 scale-y-0 rounded-full transition-transform duration-200 group-hover:scale-y-100" />
                           <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">
-                            {s}
+                            {c.label}
                           </span>
                         </Link>
                       ))}

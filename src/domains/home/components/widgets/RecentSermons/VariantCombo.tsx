@@ -28,6 +28,7 @@ export const VariantCombo = () => (
       <Reveal>
         <SectionTitle
           title="최근 설교"
+          eyebrow="● SERMON"
           action={
             <Link
               href={ARCHIVE_HREF}

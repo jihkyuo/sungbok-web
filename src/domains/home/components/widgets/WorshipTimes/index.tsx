@@ -12,6 +12,7 @@ export const WorshipTimes = () => {
       <Reveal>
         <SectionTitle
           title="이번 주 예배"
+          eyebrow="● WORSHIP"
           action={
             <Link
               href="/worship/guide"

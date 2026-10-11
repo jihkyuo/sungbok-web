@@ -15,10 +15,10 @@ export const WorshipTimes = () => {
           action={
             <Link
               href="/worship/guide"
-              className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
+              className="b1-link text-b1-sub text-[16px] font-medium no-underline"
             >
-              ALL SERVICES
-              <ArrowRight size={12} strokeWidth={2} />
+              예배 안내
+              <ArrowRight size={15} strokeWidth={2} />
             </Link>
           }
         />

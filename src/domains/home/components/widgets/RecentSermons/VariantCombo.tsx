@@ -28,14 +28,13 @@ export const VariantCombo = () => (
       <Reveal>
         <SectionTitle
           title="최근 설교"
-          eyebrow="● SERMON · 담임목사"
           action={
             <Link
               href={ARCHIVE_HREF}
-              className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
+              className="b1-link text-b1-sub text-[16px] font-medium no-underline"
             >
-              SERMON ARCHIVE
-              <ArrowRight size={12} strokeWidth={2} />
+              설교 전체 보기
+              <ArrowRight size={15} strokeWidth={2} />
             </Link>
           }
         />

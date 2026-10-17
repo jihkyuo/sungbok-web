@@ -20,7 +20,8 @@
 ├── specs/                          # 작업 패키지 설계 스펙 (구현 전 승인본)
 │   ├── 2026-10-10-site-nav-skeleton-design.md
 │   ├── 2026-10-10-site-nav-skeleton-a1-plan.md
-│   └── 2026-10-10-subpage-layouts-round2-analysis.md
+│   ├── 2026-10-10-subpage-layouts-round2-analysis.md
+│   └── 2026-10-11-home-video-sections-analysis.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
@@ -72,6 +73,7 @@
 
 - [2026-10-10-site-nav-skeleton-design.md](specs/2026-10-10-site-nav-skeleton-design.md) — 작업 패키지 A: 글로벌 IA·네비 골격. `siteNav` 단일 소스, `/{section}/{page}` 영문 슬러그 26개, 상위→첫 하위 redirect, 공통 머리 S1. **A1 구현 완료(2026-10-10)**, 모바일 메뉴 미확정. 구현 계획: [-a1-plan.md](specs/2026-10-10-site-nav-skeleton-a1-plan.md)
 - [2026-10-10-subpage-layouts-round2-analysis.md](specs/2026-10-10-subpage-layouts-round2-analysis.md) — 서브페이지 본문 레이아웃 페이지별 분석(영어예배부·주일예배·섬기는 이들·주보) + 머리 20종 비교 결과(S1 확정)
+- [2026-10-11-home-video-sections-analysis.md](specs/2026-10-11-home-video-sections-analysis.md) — 홈 영상 섹션 분석: 위=라이브 스테이지(라이브 우선·없으면 담임 최신 설교) / 아래=광고 릴(재생목록 로테이션). 유튜브 채널 실데이터(라이브 패턴·제목 규칙·재생목록)·쿼터·자동재생 제약·광고 비율 분석, 확정/미결 목록. 승격 완료, 프리뷰 정리 완료
 
 ### Decisions
 

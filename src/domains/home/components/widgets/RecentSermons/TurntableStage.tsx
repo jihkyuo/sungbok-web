@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 import allLiveLogo from '@/assets/icons/allLive-team-logo.png';
+import { useAudioFocus } from '@/shared/lib/audioFocus';
 
 import { POSTER, YOUTH, YOUTH_CHANNEL_HREF, YOUTH_VIDEO_EMBED } from './data';
 import { useTurntable } from './useTurntable';
@@ -91,13 +92,30 @@ export const TurntableStage = ({
   const [hovered, setHovered] = useState(false);
   const [autoExpanded, setAutoExpanded] = useState(false);
   const expanded = hovered || autoExpanded;
-  const toggleMute = () => {
+  // 홈 단일 소리 규칙: 소리를 켜면 주인을 가져오고(claim), 다른 영상이 켜져 주인을 뺏기면 스스로 음소거.
+  const audio = useAudioFocus('lp');
+  const sendMute = (func: 'mute' | 'unMute') =>
     iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ event: 'command', func: muted ? 'unMute' : 'mute', args: [] }),
+      JSON.stringify({ event: 'command', func, args: [] }),
       'https://www.youtube.com',
     );
+  const toggleMute = () => {
+    if (muted) {
+      audio.claim();
+      sendMute('unMute');
+    } else {
+      audio.release();
+      sendMute('mute');
+    }
     setMuted((m) => !m);
   };
+  useEffect(() => {
+    if (!audio.active && !muted) {
+      sendMute('mute');
+      setMuted(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audio.active]);
 
   let blackD: number;
   if (q < GROW_END) blackD = lerp(28, 56, q / GROW_END);

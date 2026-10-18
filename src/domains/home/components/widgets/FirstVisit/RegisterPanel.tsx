@@ -60,15 +60,8 @@ function Portal({ children }: { children: ReactNode }) {
   return createPortal(children, document.body);
 }
 
-/* ── 플로팅 버튼(홈 전용, 히어로 지난 뒤 등장) ──────────────────── */
+/* ── 플로팅 버튼(홈 전용, 항상 표시 — 패널이 열려 있을 때만 숨김) ─── */
 function Fab({ flow }: { flow: PanelFlow }) {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > window.innerHeight * 0.6);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
   return (
     <button
       type="button"
@@ -76,7 +69,7 @@ function Fab({ flow }: { flow: PanelFlow }) {
       aria-label={SECTION.ctaLabel}
       className={cn(
         'bg-b1-accent shadow-b1-accent/30 fixed right-6 bottom-6 z-[60] flex items-center gap-2 rounded-full px-5 py-3.5 text-[14px] font-semibold text-white shadow-lg transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-xl',
-        show && !flow.open ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'
+        flow.open ? 'pointer-events-none translate-y-3 opacity-0' : 'translate-y-0 opacity-100'
       )}
     >
       <UserPlus size={17} strokeWidth={2} />

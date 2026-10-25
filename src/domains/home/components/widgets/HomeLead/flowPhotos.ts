@@ -8,6 +8,21 @@ import dep06 from '@/assets/images/main/department/dep06.jpg';
 import dep07 from '@/assets/images/main/department/dep07.jpg';
 import dep08 from '@/assets/images/main/department/dep08.jpg';
 import dep09 from '@/assets/images/main/department/dep09.jpg';
+import worship from '@/assets/images/main/worship.jpg';
 
 /** 찬양·유아·야외·단체·풍선·청년·유치부·예배·초등 */
 export const FLOW_PHOTOS = [dep05, dep01, dep09, dep03, dep02, dep06, dep07, dep04, dep08];
+
+/** 셋째 줄 — 예배 전경 1장 추가, 위 두 줄과 다른 순서 */
+export const THIRD_PHOTOS = [
+  worship,
+  dep04,
+  dep08,
+  dep05,
+  dep02,
+  dep07,
+  dep01,
+  dep09,
+  dep06,
+  dep03,
+];

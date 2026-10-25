@@ -9,7 +9,7 @@ import pastorImg from '@/assets/images/main/pastor.jpg';
 import { Reveal } from '@/shared/components/features/Reveal';
 
 export const PastorStatic = () => (
-  <section className="bg-b1-bg relative z-0 px-[6vw] py-[12vh]">
+  <section className="bg-b1-bg relative z-0 px-[6vw] pt-[18vh] pb-[12vh]">
     <div className="mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-8">
       <Reveal className="min-w-0 flex-1">
         <p className="b1-brush text-b1-accent text-[clamp(24px,2.6vw,36px)] leading-[1.15]">

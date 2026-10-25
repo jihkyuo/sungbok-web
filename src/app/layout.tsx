@@ -54,11 +54,12 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${jetbrainsMono.variable} ${geistSans.variable} ${geistMono.variable} bg-b1-bg text-b1-text font-sans antialiased`}
+        className={`${jetbrainsMono.variable} ${geistSans.variable} ${geistMono.variable} bg-b1-bg text-b1-text flex min-h-dvh flex-col font-sans antialiased`}
       >
         <AppProvider>
           <Header />
-          {children}
+          {/* 본문이 짧아도 푸터가 바닥에 붙도록 남는 높이를 main 이 차지한다(body = flex-col min-h-dvh) */}
+          <main className="flex-1">{children}</main>
           <Footer />
         </AppProvider>
       </body>

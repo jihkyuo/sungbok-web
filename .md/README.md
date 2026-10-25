@@ -26,7 +26,8 @@
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
     ├── 0003-hero-v2-bleed-blur-kenburns.md
-    └── 0004-subpage-routing.md
+    ├── 0004-subpage-routing.md
+    └── 0005-dock-toss-bar.md
 ```
 
 향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
@@ -81,6 +82,7 @@
 - [0002-home-ia-and-tone.md](decisions/0002-home-ia-and-tone.md) — 2026-05-07 — 홈 1순위 타깃·카피 톤 원칙·7섹션 IA 결정
 - [0003-hero-v2-bleed-blur-kenburns.md](decisions/0003-hero-v2-bleed-blur-kenburns.md) — 2026-05-24 — 히어로를 사진 4단 Bleed + Blur 페이드 + Ken Burns(sketch 12)로 확정, ADR 0002 미결 종결
 - [0004-subpage-routing.md](decisions/0004-subpage-routing.md) — 2026-10-10 — 서브페이지를 `/{section}/{page}` + 섹션 중첩 레이아웃으로, `siteNav` 단일 소스에서 메뉴·라우트·redirect 파생. 공통은 머리(S1)뿐, 본문은 섹션별
+- [0005-dock-toss-bar.md](decisions/0005-dock-toss-bar.md) — 2026-10-18 — 글로벌 헤더를 글래스 캡슐에서 토스식 전폭 바 + 흰 안개 패널로 교체(hover 섹션 하위만 한 열, 스크롤 숨김 없음). "독=accent 알약" 위계 폐기
 
 ## 컨벤션
 

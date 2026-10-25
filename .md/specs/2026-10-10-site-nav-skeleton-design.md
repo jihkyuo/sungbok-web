@@ -111,7 +111,7 @@ location/         page.tsx (layout 없음, 페이지가 SectionShell 직접 사�
 2. 제목: **페이지명**(현재 하위 label) 64px / 1.05 / -0.03em bold. 하위 없는 섹션은 섹션명.
 3. 형제 알약: 15px semibold, `px-4 py-2`, `gap-1.5`, 활성 = `bg-b1-accent text-white` + 그림자, 비활성 = `text-b1-sub`, hover `bg-b1-accent-soft`. 넘치면 줄바꿈(8개도 데스크톱 한 줄). 하위 없으면 행 생략.
 4. hairline: `border-b1-border`, 위 40px / 아래 56px.
-5. 진입 모션: 제목 → 알약 fade-up(100ms 간격, transform/opacity). 스크롤 연동 없음(정적).
+5. 진입 모션: 제목은 blur 12→0 + X −32→0(1500ms, EXPO, 형제 페이지 전환마다 `key={title}` 로 재생) → 알약은 Y 16→0 fade-up(블러 없음, 700ms, 제목 시작 300ms 뒤 50ms 간격, 마운트 1회). transform/opacity/filter 만. 스크롤 연동 없음(정적). reduced-motion 은 최종 상태. (2026-10-25 갱신)
 6. 좌우: 본문과 **같은 패딩 래퍼**(`px-[6vw]` → `max-w-[1320px]`) 안에 둔다. 머리와 본문 hairline이 어긋나면 안 된다.
 
 **머리에 들어가지 않는 것**: 섹션 설명문, 사진 배너, 브레드크럼, 숫자 인덱스. 페이지별 사실 정보(설교자·최신 호 날짜·교역자 수 등)는 **본문 첫 줄**에 둔다.

@@ -1,6 +1,5 @@
 import { ChurchNews } from '@/domains/home/components/widgets/ChurchNews';
 import { FirstVisit } from '@/domains/home/components/widgets/FirstVisit';
-import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
 import { HomeLead } from '@/domains/home/components/widgets/HomeLead';
 import { LiveStage } from '@/domains/home/components/widgets/LiveStage';
 import { LocationMap } from '@/domains/home/components/widgets/LocationMap';
@@ -12,11 +11,9 @@ import { WorshipTimes } from '@/domains/home/components/widgets/WorshipTimes';
 export default function Home() {
   return (
     <>
-      {/* 히어로 (HomeHero: 정적 — 카피 좌측 정렬 + 우측 전경, 스크롤 트랙 없음) */}
-      <HomeHero />
-      {/* 히어로 다음 섹션 묶음 — HomeLead(표어·담임목사) + 기존 섹션 */}
+      {/* 히어로 → 사진 띠 → 표어 → 담임 (HomeLead 가 HomeHero 를 품고 변형 무대로 잇는다) */}
+      <HomeLead />
       <div className="bg-b1-bg relative z-0">
-        <HomeLead />
         <WorshipTimes />
         {/* 라이브 스테이지 — 라이브면 무음 자동재생, 아니면 담임목사 최신 설교 */}
         <LiveStage />

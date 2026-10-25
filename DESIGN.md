@@ -15,7 +15,7 @@
 
 - 색·폰트·반경은 [src/app/globals.css](src/app/globals.css) `@theme inline` 의 토큰을 Tailwind 유틸로 참조한다: `bg-b1-accent`, `text-b1-sub`, `border-b1-border` 등.
 - **arbitrary 색 하드코딩 금지** — `text-[#…]`·`bg-[#…]`·`border-[#…]`·`fill-/stroke-/from-/to-/via-/ring-[#…]` 는 🔴. 정적 체크(`pnpm design:lint`)가 신규분을 잡는다.
-- b1 팔레트(12토큰, 값은 color-palette.md): `bg`·`surface`·`text`·`sub`·`muted`·`border`·`accent`·`accent2`·`accent-soft`·`sunday`·`placeholder`·`placeholder-tone`. `sunday`(#dc2626)는 **주일 강조 포인트(워드마크·도트) 전용** — 일반 빨강으로 쓰면 🔴.
+- b1 팔레트(13토큰, 값은 color-palette.md): `bg`·`surface`·`text`·`sub`·`muted`·`border`·`accent`·`accent2`·`accent-soft`·`sunday`·`placeholder`·`placeholder-tone`·`glow`(서브페이지 머리 글로우 배경 장식 전용, 텍스트·UI 색 ❌). `sunday`(#dc2626)는 **주일 강조 포인트(워드마크·도트) 전용** — 일반 빨강으로 쓰면 🔴.
 - 예외: 토큰이 없는 1회성 그림자/그라데이션 alpha(`shadow-[…rgba…]` 등)는 허용하되 `/* design-lint-ignore: 사유 */` 로 의도를 남긴다(🟡 경고 대상이지 차단 아님). 색을 토큰으로 표현할 수 있으면 토큰을 쓴다.
 
 ## 2. 카피 톤

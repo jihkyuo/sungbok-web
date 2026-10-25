@@ -20,6 +20,7 @@
   --color-b1-accent: #2563eb;
   --color-b1-accent2: #5b7fe0;
   --color-b1-accent-soft: #e8f0fe;
+  --color-b1-glow: #d2ebff; /* 서브페이지 머리 글로우 고리 최고점(하늘색). 배경 장식 전용 */
   --color-b1-sunday: #dc2626; /* 주일 강조 포인트 (워드마크·도트 전용) */
   --color-b1-placeholder: #ecf0f7;
   --color-b1-placeholder-tone: #c2cddc;

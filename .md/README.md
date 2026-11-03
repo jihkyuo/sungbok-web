@@ -27,7 +27,9 @@
     ├── 0002-home-ia-and-tone.md
     ├── 0003-hero-v2-bleed-blur-kenburns.md
     ├── 0004-subpage-routing.md
-    └── 0005-dock-toss-bar.md
+    ├── 0005-dock-toss-bar.md
+    ├── 0006-home-lead-flow-stage.md
+    └── 0007-department-page-template.md
 ```
 
 향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
@@ -83,6 +85,8 @@
 - [0003-hero-v2-bleed-blur-kenburns.md](decisions/0003-hero-v2-bleed-blur-kenburns.md) — 2026-05-24 — 히어로를 사진 4단 Bleed + Blur 페이드 + Ken Burns(sketch 12)로 확정, ADR 0002 미결 종결
 - [0004-subpage-routing.md](decisions/0004-subpage-routing.md) — 2026-10-10 — 서브페이지를 `/{section}/{page}` + 섹션 중첩 레이아웃으로, `siteNav` 단일 소스에서 메뉴·라우트·redirect 파생. 공통은 머리(S1)뿐, 본문은 섹션별
 - [0005-dock-toss-bar.md](decisions/0005-dock-toss-bar.md) — 2026-10-18 — 글로벌 헤더를 글래스 캡슐에서 토스식 전폭 바 + 흰 안개 패널로 교체(hover 섹션 하위만 한 열, 스크롤 숨김 없음). "독=accent 알약" 위계 폐기
+- [0006-home-lead-flow-stage.md](decisions/0006-home-lead-flow-stage.md) — 2026-10-19 — 홈 상단을 변형 무대(HomeLead)로 재설계: 히어로가 사진 띠로 내려앉아 표어·담임으로 잇는다(시안 P 승격)
+- [0007-department-page-template.md](decisions/0007-department-page-template.md) — 2026-11-04 — 다음세대 부서 페이지 템플릿 확정: 도입부(정보 한 덩어리) + 사진 쇼케이스(데스크톱 «놓기»·모바일 «부채»), 영아부 승격·8부서는 데이터만 교체
 
 ## 컨벤션
 

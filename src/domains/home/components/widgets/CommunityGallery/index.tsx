@@ -21,7 +21,7 @@ export const CommunityGallery = () => {
             </>
           }
           action={
-            <p className="text-b1-sub m-0 max-w-[360px] text-[15px] leading-[1.8]">
+            <p className="text-b1-sub m-0 max-w-[360px] text-body-sm leading-[1.8]">
               세대와 자리를 가리지 않고 서로의 이야기를 듣는 작은 공동체들. 각 부서는 일년 내내
               열려 있습니다.
             </p>
@@ -47,11 +47,11 @@ export const CommunityGallery = () => {
               </div>
               <div className="flex items-start justify-between gap-3 px-5 pt-[18px] pb-[22px]">
                 <div>
-                  <div className="b1-mono text-b1-muted mb-1.5 text-[10px] tracking-[0.08em]">
+                  <div className="b1-mono text-b1-muted mb-1.5 text-eyebrow tracking-[0.08em]">
                     {String(i + 1).padStart(2, '0')} · {m.age}
                   </div>
                   <div className="text-[19px] font-bold tracking-[-0.01em]">{m.name}</div>
-                  <div className="text-b1-sub mt-1 text-[13px]">{m.tone}</div>
+                  <div className="text-b1-sub mt-1 text-caption">{m.tone}</div>
                 </div>
                 <div className="bg-b1-text text-b1-bg flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
                   <ArrowRight size={14} strokeWidth={2} />

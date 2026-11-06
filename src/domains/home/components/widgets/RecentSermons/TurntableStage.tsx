@@ -321,7 +321,7 @@ export const TurntableStage = ({
             style={{ backgroundImage: `url(${POSTER.src})`, opacity: posterFaded ? 0 : 1 }}
           />
           <div className="absolute right-5 bottom-5 left-5 text-white" style={{ opacity: caption ? 0 : labelOp }}>
-            <div className="b1-mono text-[10px] tracking-[0.16em] opacity-85">● 청년 예배 · YOUTH WORSHIP</div>
+            <div className="b1-mono text-caption tracking-[0.16em] opacity-85">● 청년 예배 · YOUTH WORSHIP</div>
             <div className="mt-1 text-[22px] font-bold md:text-[30px]">청년 예배</div>
           </div>
         </div>
@@ -358,7 +358,7 @@ export const TurntableStage = ({
               <Image src={allLiveLogo} alt="AllLive 올리브워십" fill sizes="44px" className="object-contain" />
             </span>
             <span
-              className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-[13px] font-semibold tracking-[-0.01em] transition-all duration-500 ease-out"
+              className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-caption font-semibold tracking-[-0.01em] transition-all duration-500 ease-out"
               style={{
                 maxWidth: expanded ? '13rem' : 0,
                 opacity: expanded ? 1 : 0,
@@ -378,16 +378,16 @@ export const TurntableStage = ({
             className="pointer-events-none absolute top-1/2 right-[8vw] z-20 max-w-[36vmin] -translate-y-1/2 text-white"
             style={{ opacity: cl((expand - 0.45) / 0.55) }}
           >
-            <div className="b1-mono text-b1-accent2 text-[11px] font-semibold tracking-[0.18em]">YOUTH WORSHIP</div>
+            <div className="b1-mono text-b1-accent2 text-eyebrow font-semibold tracking-[0.18em]">YOUTH WORSHIP</div>
             <div className="mt-2 text-[28px] font-bold tracking-[-0.02em] md:text-[40px]">청년 예배</div>
-            <div className="mt-2 text-[13px] text-white/70">
+            <div className="mt-2 text-caption text-white/70">
               {YOUTH.schedule} · {YOUTH.place}
             </div>
             <Link
               href={YOUTH_CHANNEL_HREF}
               target="_blank"
               rel="noopener noreferrer"
-              className="pointer-events-auto mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#FF0000] px-4 py-2 text-[12px] font-semibold text-white no-underline"
+              className="pointer-events-auto mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#FF0000] px-4 py-2 text-caption font-semibold text-white no-underline"
             >
               <Youtube size={15} /> 청년부 유튜브 채널
             </Link>
@@ -395,7 +395,7 @@ export const TurntableStage = ({
         )}
 
         <div
-          className="b1-mono text-b1-muted absolute bottom-6 left-1/2 z-20 -translate-x-1/2 text-[10px] tracking-[0.16em]"
+          className="b1-mono text-b1-muted absolute bottom-6 left-1/2 z-20 -translate-x-1/2 text-eyebrow tracking-[0.16em]"
           style={{ opacity: 1 - cl(q / 0.12) }}
         >
           SCROLL

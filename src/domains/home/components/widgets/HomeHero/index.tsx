@@ -81,7 +81,7 @@ const Mesh = () => (
 );
 
 const Affiliation = ({ className }: { className?: string }) => (
-  <p className={`text-b1-sub text-[14px] leading-[1.7] text-pretty ${className ?? ''}`}>
+  <p className={`text-b1-sub text-body-sm leading-[1.7] text-pretty ${className ?? ''}`}>
     {AFFILIATION}
   </p>
 );
@@ -131,14 +131,14 @@ export const HomeHero = ({ copyClassName }: { copyClassName?: string } = {}) => 
         <div className="hh-in-cta mt-8 flex flex-wrap items-center justify-start gap-3">
           <Link
             href="#worship"
-            className="bg-b1-accent text-b1-bg inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[14px] font-bold shadow-[0_14px_30px_-10px_rgba(37,99,235,0.5)] transition-transform duration-300 ease-out hover:-translate-y-0.5"
+            className="bg-b1-accent text-b1-bg inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-label font-bold shadow-[0_14px_30px_-10px_rgba(37,99,235,0.5)] transition-transform duration-300 ease-out hover:-translate-y-0.5"
           >
             이번 주 예배 시간
             <ArrowRight size={14} strokeWidth={2.5} />
           </Link>
           <Link
             href="#location"
-            className="text-b1-text hover:border-b-b1-text inline-flex items-center border-b-2 border-transparent px-2 py-3 text-[14px] font-semibold transition-colors"
+            className="text-b1-text hover:border-b-b1-text inline-flex items-center border-b-2 border-transparent px-2 py-3 text-label font-semibold transition-colors"
           >
             오시는 길
           </Link>

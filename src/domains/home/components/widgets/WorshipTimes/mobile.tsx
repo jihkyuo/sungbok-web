@@ -8,7 +8,7 @@ export const WorshipTimesMobile = () => (
     {WORSHIP_GROUPS.map((group, gi) => (
       <div key={group.label} className={cn(gi !== 0 && 'border-b1-border border-t')}>
         <Reveal className="bg-b1-bg border-b1-border border-b px-5 py-2.5">
-          <h3 className="b1-mono text-b1-sub m-0 text-[11px] font-semibold tracking-[0.08em]">
+          <h3 className="b1-mono text-b1-sub m-0 text-caption font-semibold tracking-[0.08em]">
             {group.label}
           </h3>
         </Reveal>
@@ -24,18 +24,18 @@ export const WorshipTimesMobile = () => (
                 i !== group.services.length - 1 && 'border-b1-border border-b'
               )}
             >
-              <span className="b1-mono text-b1-accent text-[13px] font-bold tracking-[-0.01em]">
+              <span className="b1-mono text-b1-accent text-caption font-bold tracking-[-0.01em]">
                 {service.time}
               </span>
-              <span className="text-b1-text text-[14px] font-medium">
+              <span className="text-b1-text text-label font-medium">
                 {service.name}
                 {service.note && (
-                  <span className="text-b1-muted ml-1.5 text-[11px] font-normal">
+                  <span className="text-b1-muted ml-1.5 text-caption font-normal">
                     {service.note}
                   </span>
                 )}
               </span>
-              <span className="b1-mono text-b1-muted text-right text-[11px] tracking-[0.02em]">
+              <span className="b1-mono text-b1-muted text-right text-caption tracking-[0.02em]">
                 {service.place}
               </span>
             </Reveal>

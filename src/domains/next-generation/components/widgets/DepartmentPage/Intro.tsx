@@ -12,6 +12,10 @@ const MAXW = 1200;
 const GUTTER = 32;
 const CARD = 0.46;
 const GAP = 64;
+/** 고정 헤더(DockNav) 높이 — 휴대폰에서 사진을 그 아래에 세운다 */
+const HEADER_H = 64;
+/** 휴대폰에서 시트가 처음 보이는 최소 높이(화면 비율) */
+const MIN_PEEK = 0.14;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 /** p 가 [a,b] 를 지나는 동안 0→1 (smoothstep) */
@@ -42,14 +46,23 @@ export default function Intro({ dept, door, children }: IntroProps) {
     let raf = 0;
 
     const measure = () => {
-      const vw = window.innerWidth;
+      const vw = document.documentElement.clientWidth; // 스크롤바 제외 폭 — CSS 의 calc(100vw - var(--sbw)) 와 맞춘다
       const vh = window.innerHeight;
       const mobile = vw < 900;
       const w0 = Math.min(vw, door?.src.width ?? vw);
-      const h0 = Math.min(vh, door?.src.height ?? vh);
+      // 휴대폰·세로 화면: 화면 높이로 꽉 채우면(cover) 가로 사진의 양옆이 크게 잘린다(사용자 지적 2026-11-06).
+      // 사진 비율 그대로 헤더 아래에 통째로 세우고, 시트는 사진 바로 아래에서 올라오게 한다(--en-peek).
+      const ratio = door ? door.src.height / door.src.width : vh / vw;
+      const h0 = mobile
+        ? Math.min(vh - HEADER_H - vh * MIN_PEEK, Math.round(w0 * ratio))
+        : Math.min(vh, door?.src.height ?? vh);
       const x0 = (vw - w0) / 2;
       // 데스크톱: 가운데 두되 독(64px) 아래까지만 — 머리 바로 아래에서 바로 들어선다
-      const y0 = mobile ? 0 : Math.min((vh - h0) / 2, 64);
+      const y0 = mobile ? HEADER_H : Math.min((vh - h0) / 2, 64);
+      const root = stage.closest<HTMLElement>('.en-root');
+      // svh 기준으로 둔다 — 휴대폰 주소창이 접히며 innerHeight 가 바뀌어도 시트 위치(무대 높이)가 흔들리지 않게
+      if (mobile) root?.style.setProperty('--en-peek', `calc(100svh - ${y0 + h0}px)`);
+      else root?.style.removeProperty('--en-peek');
       const cw = Math.min(vw - GUTTER * 2, MAXW);
       const s = (cw * CARD) / w0;
       const set = (k: string, v: string) => stage.style.setProperty(k, v);
@@ -149,7 +162,7 @@ export default function Intro({ dept, door, children }: IntroProps) {
           --en-e: 0; --en-i1: 0; --en-i2: 0; --en-i3: 0; --en-i4: 0;
           --en-s: 0.4; --en-tx: 0px; --en-ty: 0px; --en-cw: 1200px;
           --en-x0: 0px; --en-y0: 0px; --en-w0: 100%; --en-h0: 100%; --en-cl: 0px;
-          position: relative; width: 100vw; margin-left: calc(50% - 50vw); height: 240svh;
+          position: relative; width: calc(100vw - var(--sbw, 0px)); margin-left: calc(50% - (50vw - var(--sbw, 0px) / 2)); height: 240svh;
         }
         .en-pin { position: sticky; top: 0; height: 100svh; }
         .en-photo {
@@ -202,7 +215,7 @@ export default function Intro({ dept, door, children }: IntroProps) {
         .en-extra { margin-top: 24px; padding-top: 20px; border-top: 1px solid; font-size: 15px; line-height: 1.65; }
         .en-extra-note { margin-top: 4px; font-size: 14px; }
 
-        .en-sheet { position: relative; width: 100vw; margin-left: calc(50% - 50vw); }
+        .en-sheet { position: relative; width: calc(100vw - var(--sbw, 0px)); margin-left: calc(50% - (50vw - var(--sbw, 0px) / 2)); }
 
         @keyframes en-open { from { opacity: 0; transform: scale(1.06); } to { opacity: 1; transform: none; } }
         @keyframes en-blur { from { opacity: 0; filter: blur(12px); transform: translateY(10px); } to { opacity: 1; filter: blur(0); transform: none; } }
@@ -261,7 +274,8 @@ export default function Intro({ dept, door, children }: IntroProps) {
                   fill
                   priority
                   quality={90}
-                  sizes="100vw"
+                  // 휴대폰은 사진을 비율대로 폭에 맞춰 세운다(100vw). PC 는 화면 높이로 채우므로(cover) 높이 × 비율만큼 큰 원본이 필요하다.
+                  sizes={`(max-width: 899px) 100vw, max(100vw, ${Math.round((door.src.width / door.src.height) * 100)}vh)`}
                   className="object-cover"
                   style={{ objectPosition: 'center 40%' }}
                 />

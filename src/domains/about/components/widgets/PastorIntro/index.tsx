@@ -28,7 +28,7 @@ export const PastorIntro = ({ pastor }: { pastor: PastorProfile }) => (
         <h2 className="text-b1-text mt-5 text-[clamp(25px,2.4vw,34px)] leading-[1.3] font-bold tracking-[-0.025em]">
           {pastor.greeting.headline}
         </h2>
-        <div className="text-b1-text mt-9 space-y-7 text-[17px] leading-[2] md:mt-12 md:text-[19px]">
+        <div className="text-b1-text mt-9 space-y-7 text-title font-normal leading-[2] md:mt-12 md:text-[19px]">
           {pastor.greeting.paragraphs.map(lines => (
             <p key={lines[0]}>
               {lines.map(line => (

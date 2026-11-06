@@ -28,7 +28,7 @@ export const SermonArchive = () => (
   <>
     <Reveal>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-b1-sub text-[15px]">{PREACHER} · 매주 주일</p>
+        <p className="text-b1-sub text-body-sm">{PREACHER} · 매주 주일</p>
       </div>
     </Reveal>
 
@@ -64,10 +64,10 @@ export const SermonArchive = () => (
           </span>
         </div>
         <div className="flex flex-col justify-center md:col-span-4">
-          <div className="text-b1-accent text-[14px] font-semibold">최근 설교</div>
+          <div className="text-b1-accent text-label font-semibold">최근 설교</div>
           <time
             dateTime={LATEST_SERMON.date.replaceAll('.', '-')}
-            className="text-b1-sub mt-3 block text-[15px] tabular-nums"
+            className="text-b1-sub mt-3 block text-body-sm tabular-nums"
           >
             {LATEST_SERMON.date}
           </time>
@@ -77,9 +77,9 @@ export const SermonArchive = () => (
           >
             {LATEST_SERMON.title}
           </h2>
-          <p className="text-b1-sub mt-3 text-[16px]">{LATEST_SERMON.scripture}</p>
-          <p className="text-b1-text mt-1 text-[15px] font-medium">{LATEST_SERMON.preacher}</p>
-          <span className="border-b1-border text-b1-sub mt-5 inline-flex w-fit items-center rounded-full border px-3 py-1 text-[14px]">
+          <p className="text-b1-sub mt-3 text-body">{LATEST_SERMON.scripture}</p>
+          <p className="text-b1-text mt-1 text-body-sm font-medium">{LATEST_SERMON.preacher}</p>
+          <span className="border-b1-border text-b1-sub mt-5 inline-flex w-fit items-center rounded-full border px-3 py-1 text-body-sm">
             시리즈 · {LATEST_SERMON.series}
           </span>
         </div>
@@ -92,7 +92,7 @@ export const SermonArchive = () => (
           <h2 id="archive" className="text-b1-text text-[22px] font-bold tracking-[-0.02em]">
             지난 설교
           </h2>
-          <span className="text-b1-sub text-[14px]">최신순</span>
+          <span className="text-b1-sub text-body-sm">최신순</span>
         </div>
       </Reveal>
       <ul className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3">
@@ -111,12 +111,12 @@ export const SermonArchive = () => (
                 </div>
                 <time
                   dateTime={s.date.replaceAll('.', '-')}
-                  className="text-b1-sub mt-3 block text-[14px] tabular-nums"
+                  className="text-b1-sub mt-3 block text-body-sm tabular-nums"
                 >
                   {s.date}
                 </time>
-                <h3 className="text-b1-text mt-1 text-[17px] leading-snug font-bold">{s.title}</h3>
-                <p className="text-b1-sub mt-1 text-[14px]">
+                <h3 className="text-b1-text mt-1 text-title leading-snug font-bold">{s.title}</h3>
+                <p className="text-b1-sub mt-1 text-body-sm">
                   {s.scripture} · {PREACHER}
                 </p>
               </article>

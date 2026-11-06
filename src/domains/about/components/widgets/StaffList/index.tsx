@@ -69,7 +69,7 @@ export const StaffList = () => (
               {LEAD_PASTOR.role}
             </span>
           </h2>
-          <ul className="text-b1-text mt-5 space-y-2.5 text-[17px] md:text-[20px]">
+          <ul className="text-b1-text mt-5 space-y-2.5 text-title font-normal md:text-[20px]">
             <li className="flex">
               <Dot />
               {LEAD_PASTOR.church} 담임목사
@@ -91,11 +91,11 @@ export const StaffList = () => (
             />
             <h3 className="text-b1-text border-b1-border mt-8 border-b pb-4 text-[26px] font-semibold tracking-[-0.02em] md:text-[30px]">
               {p.name}
-              <span className="text-b1-accent ml-2.5 text-[17px] font-bold md:text-[20px]">
+              <span className="text-b1-accent ml-2.5 text-title font-bold md:text-[20px]">
                 {p.role}
               </span>
             </h3>
-            <ul className="text-b1-text mt-4 space-y-2 text-[16px] font-medium md:text-[17px]">
+            <ul className="text-b1-text mt-4 space-y-2 text-body font-medium md:text-title">
               {p.duties.map(d => (
                 <li key={d} className="flex">
                   <Dot />

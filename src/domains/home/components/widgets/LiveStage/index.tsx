@@ -86,7 +86,7 @@ export const LiveStage = () => {
             {feed.status === 'loading' && <div className="bg-b1-border/40 absolute inset-0 motion-safe:animate-pulse" aria-hidden />}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/45 via-transparent to-transparent" />
             {video && (
-              <div className="absolute top-6 left-6 flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-[13px] font-medium text-white backdrop-blur">
+              <div className="absolute top-6 left-6 flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-caption font-medium text-white backdrop-blur">
                 {isLive && <span className="bg-b1-sunday h-2 w-2 rounded-full" aria-hidden />}
                 {isLive ? meta : LABELS.latestSermon}
               </div>
@@ -97,7 +97,7 @@ export const LiveStage = () => {
                 onClick={toggleMute}
                 aria-label={muted ? LABELS.unmute : LABELS.mute}
                 aria-pressed={!muted}
-                className="absolute top-6 right-6 flex h-11 items-center gap-2 rounded-full border border-white/25 bg-black/35 px-4 text-[13px] font-medium text-white backdrop-blur-md transition-colors hover:bg-black/55 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                className="absolute top-6 right-6 flex h-11 items-center gap-2 rounded-full border border-white/25 bg-black/35 px-4 text-caption font-medium text-white backdrop-blur-md transition-colors hover:bg-black/55 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
               >
                 {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                 {muted ? LABELS.unmute : LABELS.mute}
@@ -118,12 +118,12 @@ export const LiveStage = () => {
                   <Image src={channelLogo} alt={LABELS.channel} fill sizes="48px" className="object-cover" />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-b1-sub text-[13px]">{isLive ? LABELS.channel : meta}</div>
-                  <div className="text-b1-text truncate text-[16px] font-bold tracking-[-0.01em]">{title}</div>
-                  {sub && <div className="text-b1-sub truncate text-[13px]">{sub}</div>}
+                  <div className="text-b1-sub text-caption">{isLive ? LABELS.channel : meta}</div>
+                  <div className="text-b1-text truncate text-body font-bold tracking-[-0.01em]">{title}</div>
+                  {sub && <div className="text-b1-sub truncate text-caption">{sub}</div>}
                 </div>
               </div>
-              <span className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-b1-text px-4 text-[13px] font-semibold text-white">
+              <span className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-b1-text px-4 text-caption font-semibold text-white">
                 <Youtube size={16} />
                 {LABELS.watchOnYoutube}
                 <ArrowUpRight size={15} />

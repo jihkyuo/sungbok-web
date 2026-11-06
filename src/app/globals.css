@@ -1,14 +1,12 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans:
-    'Pretendard Variable', Pretendard, var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
+    'Pretendard Variable', Pretendard, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* B1 Sky palette — bright, modern, trustworthy (blue-undertone neutrals) */
   --color-b1-bg: #f6fafe;
@@ -25,19 +23,14 @@
   --color-b1-placeholder: #ecf0f7;
   --color-b1-placeholder-tone: #c2cddc;
 
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+  /* 상태 색 — 관리자 화면의 저장 완료·경고·오류. 글자색은 흰 배경 4.5:1 이상(tests/design/tokens.test.ts) */
+  --color-b1-success: #15803d;
+  --color-b1-success-soft: #e8f6ed;
+  --color-b1-warning: #b45309;
+  --color-b1-warning-soft: #fdf3e2;
+  --color-b1-danger: #c81e1e;
+  --color-b1-danger-soft: #fdecec;
+
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -58,78 +51,93 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* 글자 크기 단계 — .md/design/design-system.md. 한글 최소 caption(13px), label 은 버튼·탭·배지 전용 */
+  --text-display: clamp(36px, 7vw, 54px);
+  --text-display--line-height: 1.15;
+  --text-display--font-weight: 700;
+  --text-h1: clamp(30px, 5vw, 40px);
+  --text-h1--line-height: 1.2;
+  --text-h1--font-weight: 700;
+  --text-h2: clamp(24px, 4vw, 36px);
+  --text-h2--line-height: 1.25;
+  --text-h2--font-weight: 700;
+  --text-h3: 20px;
+  --text-h3--line-height: 1.4;
+  --text-h3--font-weight: 600;
+  --text-title: 17px;
+  --text-title--line-height: 1.5;
+  --text-title--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: 1.8;
+  --text-body-sm: 15px;
+  --text-body-sm--line-height: 1.7;
+  --text-label: 14px;
+  --text-label--line-height: 1.4;
+  --text-label--font-weight: 500;
+  --text-caption: 13px;
+  --text-caption--line-height: 1.5;
+  --text-eyebrow: 12px;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.08em;
+
+  /* 그림자 3단계 — 슬레이트(b1-text) 기반. 연출 고유 그림자는 design-lint-ignore 로 남긴다 */
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.08);
+  --shadow-md: 0 12px 28px -10px rgb(15 23 42 / 0.28);
+  --shadow-lg: 0 24px 60px -20px rgb(15 23 42 / 0.35);
+
+  /* 모션 — 부품의 hover·열고 닫기. 연출 위젯의 긴 모션은 DESIGN.md §3 기준으로 자유 */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* duration 은 Tailwind 테마 이름공간이 없어 유틸을 직접 만든다(duration-fast/base/slow) */
+@utility duration-fast {
+  transition-duration: --theme(--duration-fast);
+}
+@utility duration-base {
+  transition-duration: --theme(--duration-base);
+}
+@utility duration-slow {
+  transition-duration: --theme(--duration-slow);
 }
 
 :root {
+  /* shadcn 의미 토큰 — 값을 갖지 않고 B1 원시 토큰을 가리킨다(.md/design/color-palette.md 연결표).
+     부품(src/shared/components/ui)은 의미 토큰을, 화면 연출은 B1 토큰을 쓴다. 다크 모드는 지원하지 않는다. */
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: var(--color-b1-bg);
+  --foreground: var(--color-b1-text);
+  --card: var(--color-b1-surface);
+  --card-foreground: var(--color-b1-text);
+  --popover: var(--color-b1-surface);
+  --popover-foreground: var(--color-b1-text);
+  --primary: var(--color-b1-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-b1-accent-soft);
+  --secondary-foreground: var(--color-b1-accent);
+  --muted: var(--color-b1-placeholder);
+  --muted-foreground: var(--color-b1-sub);
+  --accent: var(--color-b1-accent-soft);
+  --accent-foreground: var(--color-b1-text);
+  --destructive: var(--color-b1-danger);
+  --border: var(--color-b1-border);
+  --input: var(--color-b1-border);
+  --ring: var(--color-b1-accent);
 }
 
 @layer base {
+  /* Tailwind 4 기본값은 버튼 커서가 default 다 — 누를 수 있는 것은 손가락 커서로(부품마다 cursor-pointer 를 달지 않게) */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='tab'],
+  label[for],
+  summary {
+    cursor: pointer;
+  }
+
   html {
     /* 스무스 스크롤은 Lenis(_provider.tsx)가 관리. CSS scroll-behavior:smooth 는 Lenis 와
        충돌하므로 두지 않는다(Lenis 가 .lenis-smooth 로 scroll-behavior:auto 강제). */
@@ -167,7 +175,7 @@
 }
 
 .b1-mono {
-  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+  font-family: --theme(--font-mono);
   font-feature-settings: 'tnum';
   letter-spacing: 0;
 }
@@ -188,6 +196,12 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+.b1-link::before {
+  /* 누르는 영역을 위아래로 넓혀 44px 터치 기준을 맞춘다(보이는 모양은 그대로) */
+  content: '';
+  position: absolute;
+  inset: -13px -4px;
 }
 .b1-link::after {
   content: '';
@@ -263,7 +277,7 @@
   );
 }
 
-/* 표어 — 붓글씨 서예체 (layout.tsx 에서 폰트 로드) */
+/* 표어 — 붓글씨 서예체 (layout.tsx 에서 @fontsource/nanum-brush-script 로드) */
 .b1-brush {
   font-family: 'Nanum Brush Script', cursive;
 }
@@ -280,4 +294,18 @@
 .b1-hero-scroll-drop {
   background: linear-gradient(to bottom, transparent, var(--color-b1-accent));
   animation: b1-hero-scroll-drop 1.8s ease-in-out infinite;
+}
+
+/* 겹침 부품(Dialog·Sheet·DropdownMenu 등 Radix data-state) — 움직임 줄이기 설정이면 즉시 열고 닫는다(DESIGN.md §3) */
+@media (prefers-reduced-motion: reduce) {
+  [data-state='open'],
+  [data-state='closed'] {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 떠 있는 새가족 버튼이 있는 페이지는 푸터 아래에 버튼 높이만큼 여백 — 마지막 콘텐츠가 가려지지 않게 */
+body:has([data-floating-cta]) footer[data-site-footer] {
+  padding-bottom: 96px;
 }

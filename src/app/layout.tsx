@@ -2,24 +2,15 @@ import { AppProvider } from '@/app/_provider';
 import { Footer } from '@/shared/components/layout/Footer';
 import { Header } from '@/shared/components/layout/Header';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
+// 폰트는 외부 CDN 없이 우리 도메인에서 제공한다(ADR 0009). 둘 다 unicode-range 조각이라 쓰인 글자만 받는다.
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+import '@fontsource/nanum-brush-script/400.css'; // 표어용 붓글씨 서예체(.b1-brush)
+// 숫자·날짜·머리표(.b1-mono, 29개 파일) — 라틴 글자만 쓰므로 latin 조각만 넣는다
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-600.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
 import './globals.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: '--font-jetbrains-mono',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-});
 
 export const metadata: Metadata = {
   title: '성복교회',
@@ -37,24 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        <link
-          rel="stylesheet"
-          as="style"
-          crossOrigin="anonymous"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
-        />
-        {/* 표어용 붓글씨 서예체 */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body
         suppressHydrationWarning
-        className={`${jetbrainsMono.variable} ${geistSans.variable} ${geistMono.variable} bg-b1-bg text-b1-text flex min-h-dvh flex-col font-sans antialiased`}
+        className="bg-b1-bg text-b1-text flex min-h-dvh flex-col font-sans antialiased"
       >
         <AppProvider>
           <Header />

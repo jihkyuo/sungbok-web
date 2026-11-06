@@ -48,7 +48,7 @@ export const DepartmentDetail = ({ dept }: { dept: Department }) => (
             <Image src={dept.staff.photo} alt="" fill className="object-cover" sizes="56px" />
           </div>
           <div>
-            <div className="text-b1-sub text-[14px]">{dept.staff.role}</div>
+            <div className="text-b1-sub text-body-sm">{dept.staff.role}</div>
             <div className="text-b1-text text-[18px] font-bold">{dept.staff.name}</div>
           </div>
         </div>
@@ -63,7 +63,7 @@ export const DepartmentDetail = ({ dept }: { dept: Department }) => (
           ['대상', dept.ages],
         ].map(([k, v]) => (
           <div key={k} className="px-6 py-5">
-            <dt className="text-b1-sub text-[14px]">{k}</dt>
+            <dt className="text-b1-sub text-body-sm">{k}</dt>
             <dd className="text-b1-text mt-1.5 text-[20px] font-bold tracking-[-0.01em]">{v}</dd>
           </div>
         ))}
@@ -79,7 +79,7 @@ export const DepartmentDetail = ({ dept }: { dept: Department }) => (
     <div className="mt-14 grid grid-cols-1 gap-10 md:mt-20 md:grid-cols-12 md:gap-12">
       <Reveal className="md:col-span-7">
         <h2 className="text-b1-text text-[24px] font-bold tracking-[-0.02em]">소개</h2>
-        <p className="text-b1-sub mt-4 text-[16px] leading-[1.85] md:text-[17px]">{dept.intro}</p>
+        <p className="text-b1-sub mt-4 text-body leading-[1.85] md:text-title font-normal">{dept.intro}</p>
       </Reveal>
       <Reveal delay={80} className="md:col-span-5">
         <div className="grid grid-cols-2 gap-3">

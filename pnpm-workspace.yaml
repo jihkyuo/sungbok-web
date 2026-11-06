@@ -1,0 +1,7 @@
+# pnpm 11 은 의존성의 postinstall 빌드 스크립트를 기본 차단하고, 허용/거부가
+# 명시되지 않은 패키지가 있으면 install 자체를 실패시킨다(대화형 `pnpm approve-builds`
+# 가 쓰는 설정과 동일). 셋 다 네이티브 바이너리를 쓰는 빌드 의존성이라 허용.
+allowBuilds:
+  '@tailwindcss/oxide': true
+  sharp: true
+  unrs-resolver: true

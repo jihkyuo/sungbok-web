@@ -1,0 +1,9 @@
+{
+  "name": "sungbok-precommit",
+  "version": "0.1.0",
+  "description": "git commit 직전 staged diff를 헤드리스 claude로 리뷰해 must-fix 발견 시 커밋을 차단하는 PreToolUse 훅.",
+  "author": {
+    "name": "지오현"
+  },
+  "keywords": ["pre-commit", "hook", "code-review", "gate"]
+}

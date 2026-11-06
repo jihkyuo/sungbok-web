@@ -21,7 +21,7 @@ export const YOUTH_VIDEO_EMBED =
   'https://www.youtube.com/embed/HYruCseVKZo?autoplay=1&mute=1&controls=0&loop=1&playlist=HYruCseVKZo&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1';
 
 /** 설교 아카이브 라우트 */
-export const ARCHIVE_HREF = '/worship-video';
+export const ARCHIVE_HREF = '/worship/sunday';
 
 /** 청년부 유튜브 채널 (외부 링크) — AllLive 올리브워십 */
 export const YOUTH_CHANNEL_HREF = 'https://www.youtube.com/@allliveworship';

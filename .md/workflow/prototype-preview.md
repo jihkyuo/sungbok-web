@@ -49,10 +49,17 @@ src/domains/<domain>/components/widgets/<Widget>/_variants/
 
 ### 전용 dev 포트
 
-이 레포는 여러 세션이 동시에 돈다. 3000·3001·3002·3007 등이 점유돼 있으니 **빈 포트**로 띄운다.
+이 레포는 여러 세션이 동시에 돈다. 3000·3001·3002·3007 등이 점유돼 있으니 **빈 포트**로 띄운다. **`pnpm preview`** 가 빈 포트를 자동 탐색해 기동한다(권장).
 
 ```bash
-PORT=<n> pnpm exec next dev -H 0.0.0.0 --turbopack -p <n>
+pnpm preview          # 3010부터 빈 포트 자동 탐색 후 dev 기동
+pnpm preview 3030     # 3030부터 탐색
+```
+
+수동으로 포트를 지정해야 하면:
+
+```bash
+pnpm exec next dev -H 0.0.0.0 --turbopack -p <n>
 ```
 
 `pnpm dev -- -p <n>` 는 `--` 가 next 로 잘못 전달돼 실패하니 쓰지 말 것.
@@ -106,6 +113,7 @@ B=~/.claude/skills/gstack/browse/dist/browse
 ## E. 확정 후
 
 - 승자 1안을 본 위젯(`<Widget>/index.tsx`)에 이식.
+- **승격 마일스톤 — 라이브 디자인 감사**: 이식 직후 루트 [DESIGN.md](../../DESIGN.md) 를 기준으로 gstack `/design-review` 를 **수동** 실행해 정식 위젯의 런타임 모션·대비·반응형을 점검한다. (clean-tree 요구·자가커밋 때문에 Stop 자동화엔 못 들어가므로 이 시점에 수동으로. 소스 기반 `/design-qa` 로는 못 잡는 런타임 결함 확정용.)
 - `src/app/<name>-preview/` 라우트와 `_variants/` 폴더를 **통째로 삭제**. 임시 자산·stand-in도 함께 제거.
 - 임시물은 레포에 커밋하지 않는다(승자 이식분만 커밋).
 

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "sungbok-code-review",
+  "description": "성복교회 웹 프로젝트의 코드 리뷰 자동화 묶음 — 리뷰 스킬, 리뷰 서브에이전트, 프리커밋 리뷰 게이트.",
+  "owner": {
+    "name": "지오현"
+  },
+  "plugins": [
+    {
+      "name": "sungbok-review-skill",
+      "source": "./plugins/sungbok-review-skill",
+      "category": "development",
+      "description": "변경분(diff)을 정확성·재사용·프로젝트 컨벤션 관점에서 리뷰하는 diff-review 스킬. 커밋·PR 전 자가검증용."
+    },
+    {
+      "name": "sungbok-review-agent",
+      "source": "./plugins/sungbok-review-agent",
+      "category": "development",
+      "description": "diff-review 방법론을 따르는 읽기 전용 code-reviewer 서브에이전트. 구현 직후 자가검증을 위임할 때 사용."
+    },
+    {
+      "name": "sungbok-precommit",
+      "source": "./plugins/sungbok-precommit",
+      "category": "development",
+      "description": "git commit 직전 staged diff를 헤드리스 claude로 리뷰해 must-fix 발견 시 커밋을 차단하는 PreToolUse 훅."
+    }
+  ]
+}

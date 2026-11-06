@@ -12,23 +12,24 @@ export const WorshipTimes = () => {
       <Reveal>
         <SectionTitle
           title="이번 주 예배"
+          eyebrow="● WORSHIP"
           action={
             <Link
-              href="/worship-video"
-              className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
+              href="/worship/guide"
+              className="b1-link text-b1-sub text-body font-medium no-underline"
             >
-              ALL SERVICES
-              <ArrowRight size={12} strokeWidth={2} />
+              예배 안내
+              <ArrowRight size={15} strokeWidth={2} />
             </Link>
           }
         />
       </Reveal>
 
-      {/* 모바일: 그룹 리스트 / 데스크톱: T3 정류장 타임라인 (별도 디자인) */}
-      <div className="md:hidden">
+      {/* 휴대폰·태블릿: 그룹 리스트 / PC(lg 이상): T3 정류장 타임라인 — 타임라인은 1024 미만에서 열이 좁아 줄이 깨진다 */}
+      <div className="lg:hidden">
         <WorshipTimesMobile />
       </div>
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <WorshipTimesDesktop />
       </div>
     </Section>

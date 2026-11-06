@@ -103,10 +103,10 @@ export const NextGeneration = () => {
       {/* ① 밤하늘 무대 — 별 인터랙션. 단일 배경 위에 얹혀 sticky 없이 자연 스크롤. */}
       <div ref={ref} onClick={() => router.push(a.href)} onPointerEnter={() => setEngaged(true)} onPointerLeave={() => setEngaged(false)} className="relative h-screen min-h-[560px] w-full cursor-pointer select-none" style={{ touchAction: 'none' }}>
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto w-full max-w-[1320px] px-[6vw] pt-24 md:pt-28">
-          <div className="b1-mono mb-3 text-[11px] font-semibold tracking-[0.16em] text-[#9fb6ff]">{EYEBROW}</div>
+          <div className="b1-mono mb-3 text-eyebrow font-semibold tracking-[0.16em] text-[#9fb6ff]">{EYEBROW}</div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="m-0 text-[36px] leading-[1.05] font-bold tracking-[-0.03em] text-balance text-white md:text-[54px]">{TITLE}</h2>
-            <p className="m-0 max-w-[330px] text-[15px] leading-[1.8] text-white/65">밤하늘을 훑으면 가장 가까운 별이 깨어나고, 정보 카드가 커서를 따라옵니다. 누르면 바로 이동합니다.</p>
+            <p className="m-0 max-w-[330px] text-body-sm leading-[1.8] text-white/65">밤하늘을 훑으면 가장 가까운 별이 깨어나고, 정보 카드가 커서를 따라옵니다. 누르면 바로 이동합니다.</p>
           </div>
         </div>
 
@@ -132,7 +132,7 @@ export const NextGeneration = () => {
                 <span className="absolute top-1/2 left-1/2 h-[170px] w-[170px] -translate-x-1/2 -translate-y-1/2 rounded-full transition-opacity duration-300" style={{ background: 'radial-gradient(circle, rgba(159,182,255,0.34), transparent 66%)', opacity: on && engaged ? 1 : 0 }} />
                 <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-all duration-300" style={{ width: on ? '44px' : '0', height: on ? '44px' : '0', borderColor: 'rgba(176,196,255,0.95)', opacity: on && engaged ? 1 : 0 }} />
                 <span className="ng-twinkle block rounded-full transition-all duration-300" style={{ width: on ? '20px' : '15px', height: on ? '20px' : '15px', background: '#fff', boxShadow: on ? '0 0 16px 4px #fff, 0 0 30px 10px rgba(159,182,255,0.95)' : '0 0 12px 3px rgba(150,170,235,0.7)' }} />
-                <span className="b1-mono absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] transition-all duration-300" style={{ color: on ? '#fff' : 'rgba(255,255,255,0.62)', fontWeight: on ? 700 : 400 }}>{m.name}</span>
+                <span className="b1-mono absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-caption transition-all duration-300" style={{ color: on ? '#fff' : 'rgba(255,255,255,0.62)', fontWeight: on ? 700 : 400 }}>{m.name}</span>
               </span>
             );
           })}
@@ -147,15 +147,15 @@ export const NextGeneration = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
             </div>
             <div className="p-4">
-              <div className="b1-mono text-[10px] tracking-[0.1em] text-[#9fb6ff]">NG · {String(active + 1).padStart(2, '0')} · {STAGE_OF[a.name]} · {a.age}</div>
+              <div className="b1-mono text-caption tracking-[0.1em] text-[#9fb6ff]">NG · {String(active + 1).padStart(2, '0')} · {STAGE_OF[a.name]} · {a.age}</div>
               <div className="mt-1 text-[20px] font-bold tracking-[-0.01em] text-white">{a.name}</div>
-              <div className="mt-0.5 text-[13px] leading-[1.6] text-white/70">{a.tone}</div>
-              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-black">{a.name} 바로가기 <ArrowUpRight size={14} /></span>
+              <div className="mt-0.5 text-caption leading-[1.6] text-white/70">{a.tone}</div>
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-caption font-semibold text-black">{a.name} 바로가기 <ArrowUpRight size={14} /></span>
             </div>
           </div>
         </div>
 
-        {!engaged && <div className="b1-mono pointer-events-none absolute right-[6vw] bottom-6 z-30 text-[10px] tracking-[0.14em] text-white/35">밤하늘을 훑어 보세요 · 누르면 이동</div>}
+        {!engaged && <div className="b1-mono pointer-events-none absolute right-[6vw] bottom-6 z-30 text-caption tracking-[0.14em] text-white/35">밤하늘을 훑어 보세요 · 누르면 이동</div>}
       </div>
 
       {/* 여명 꼬리 — 무대 별이 마저 지고(상단) 별 없는 여명 색면(하단)으로 동틈이 호흡한다. 여명~흰·콘텐츠는 교회소식이 흡수. */}

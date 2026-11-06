@@ -23,7 +23,7 @@ export const VisitorAndNews = () => {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
         <Reveal className="md:col-span-6">
           <div className="bg-b1-accent text-b1-bg flex h-full flex-col rounded-2xl px-6 py-8 md:px-9 md:py-11">
-            <div className="b1-mono mb-4 text-[11px] tracking-[0.05em] text-white/60">
+            <div className="b1-mono mb-4 text-eyebrow tracking-[0.05em] text-white/60">
               FOR FIRST-TIME VISITORS
             </div>
             <h2 className="m-0 text-[28px] leading-[1.2] font-bold tracking-[-0.02em] md:text-[36px]">
@@ -31,16 +31,16 @@ export const VisitorAndNews = () => {
               <br />
               부담 없이 오세요.
             </h2>
-            <p className="mt-5 flex-1 text-[15px] leading-[1.75] text-white/[0.78]">
+            <p className="mt-5 flex-1 text-body-sm leading-[1.75] text-white/[0.78]">
               예배 30분 전 도착하시면 안내 위원이 자리를 안내해 드립니다.
             </p>
             <div className="mt-6 grid grid-cols-2 gap-3">
               {VISITOR_INFO.map(c => (
                 <div key={c.label} className="rounded-lg bg-white/[0.08] px-3.5 py-3.5">
-                  <div className="b1-mono mb-1 text-[10px] tracking-[0.06em] text-white/55">
+                  <div className="b1-mono mb-1 text-eyebrow tracking-[0.06em] text-white/55">
                     {c.label.toUpperCase()}
                   </div>
-                  <div className="text-[13px] font-medium">{c.value}</div>
+                  <div className="text-caption font-medium">{c.value}</div>
                 </div>
               ))}
             </div>
@@ -52,7 +52,7 @@ export const VisitorAndNews = () => {
             <h2 className="text-b1-text m-0 text-[22px] font-bold tracking-[-0.02em] md:text-[28px]">
               교회 소식
             </h2>
-            <Link href="/news" className="b1-mono b1-link text-b1-sub text-[12px] no-underline">
+            <Link href="/news" className="b1-mono b1-link text-b1-sub text-caption no-underline">
               ALL
               <ArrowRight size={12} strokeWidth={2} />
             </Link>
@@ -66,13 +66,13 @@ export const VisitorAndNews = () => {
                   i < NEWS_ITEMS.length - 1 ? 'border-b1-border border-b' : ''
                 }`}
               >
-                <span className="bg-b1-accent text-b1-bg rounded-full px-2 py-[3px] text-[10px] font-bold tracking-[0.06em]">
+                <span className="bg-b1-accent text-b1-bg rounded-full px-2 py-[3px] text-caption font-bold tracking-[0.06em]">
                   {n.tag}
                 </span>
-                <span className="b1-mono text-b1-muted w-[44px] shrink-0 text-[12px]">
+                <span className="b1-mono text-b1-muted w-[44px] shrink-0 text-caption">
                   {n.date}
                 </span>
-                <span className="flex-1 text-[15px] font-semibold tracking-[-0.01em]">
+                <span className="flex-1 text-body-sm font-semibold tracking-[-0.01em]">
                   {n.title}
                 </span>
                 <ArrowRight size={13} strokeWidth={2} className="text-b1-muted shrink-0" />

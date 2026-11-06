@@ -1,7 +1,7 @@
 'use client';
 
 import menuIcon from '@/assets/icons/menu-black.svg';
-import { menuItems } from '@/shared/components/layout/Header/NavigationMenu';
+import { sectionHref, siteNav } from '@/shared/config/siteNav';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -27,8 +27,8 @@ export const SideMenu = () => {
       {/* 오버레이 */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/40 z-[60] md:hidden transition-opacity duration-300',
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          'fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300 lg:hidden',
+          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         )}
         onClick={() => setIsOpen(false)}
       />
@@ -36,17 +36,17 @@ export const SideMenu = () => {
       {/* 사이드 메뉴 패널 */}
       <div
         className={cn(
-          'fixed top-0 right-0 h-full w-full bg-white z-[70] md:hidden transition-transform duration-300 ease-in-out shadow-2xl',
+          'fixed top-0 right-0 z-[70] h-full w-full bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:hidden',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           {/* 헤더 */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-6 py-5">
             <h2 className="text-xl font-bold text-gray-900">메뉴</h2>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-2 rounded-full hover:bg-gray-200 transition-colors text-gray-600 hover:text-gray-900"
+              className="rounded-full p-2 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900"
               aria-label="메뉴 닫기"
             >
               <svg
@@ -65,18 +65,16 @@ export const SideMenu = () => {
           {/* 메뉴 항목들 */}
           <nav className="flex-1 overflow-y-auto py-4">
             <ul className="flex flex-col">
-              {menuItems.map((item, index) => (
-                <li key={item.href}>
+              {siteNav.map((item, index) => (
+                <li key={item.slug}>
                   <Link
-                    href={item.href}
+                    href={sectionHref(item)}
                     onClick={handleLinkClick}
-                    className="block px-6 py-4 text-base font-semibold text-gray-800 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200 border-l-4 border-transparent hover:border-gray-900"
+                    className="block border-l-4 border-transparent px-6 py-4 text-base font-semibold text-gray-800 transition-all duration-200 hover:border-gray-900 hover:bg-gray-100 hover:text-gray-900"
                   >
-                    {item.children}
+                    {item.label}
                   </Link>
-                  {index < menuItems.length - 1 && (
-                    <div className="mx-6 border-b border-gray-100" />
-                  )}
+                  {index < siteNav.length - 1 && <div className="mx-6 border-b border-gray-100" />}
                 </li>
               ))}
             </ul>
@@ -93,7 +91,7 @@ export const SideMenu = () => {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="cursor-pointer md:hidden"
+        className="-mr-[11px] flex size-11 cursor-pointer items-center justify-center lg:hidden"
         aria-label="메뉴 열기"
       >
         <Image src={menuIcon} alt="menu" width={22} height={22} />

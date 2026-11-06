@@ -1,168 +1,220 @@
 /**
- * HomeLead — v8. 전경 히어로 다음, 위로 차오르는 두 섹션(예배·담임목사).
+ * HomeLead — 히어로 → 사진 띠 → 표어 → 담임 (시안 P 승격, 2026-10-19). HomeHero 를 안에 품는다.
  *
- * 배경은 루트 한 장에 깔린 전면(full-bleed) 그라데이션이다(섹션 오버레이 없음 → 경계선 없음).
- * 거의 수평이라 세로 위치와 무관하게 색이 일정하고, 스크롤(sp 0→1)에 따라 좌/우 스톱이 각각
- * 보간되며 예배(앰버, 문구 쪽 밝음)→담임(네이비)로 매끄럽게 어두워진다. 좌우 반전 레이아웃은
- * 스톱 배정으로 흡수(예배 사진 좌·문구 우 / 담임 문구 좌·사진 우; 모바일은 세로 스택).
- * 그 위로 따뜻한 강조 글로우가 좌상(예배 사진)→우하(담임 사진)으로 이동한다.
- * 담임 섹션은 네이비 위 흰 텍스트(강한 대비), 예배는 밝은 쪽 위 검은 텍스트.
- * 고정된 HomeHero 위로 차고 올라와 덮는다(page.tsx 의 불투명 래퍼가 스택 보장).
+ * 170svh 트랙 + 100svh sticky 무대. 무대에는 상단 왼쪽 표어(정적)와 항상 흐르는 세 줄 사진 띠(아래로 갈수록 얇아지고,
+ * 줄마다 방향·속도·위상을 달리해 세로 정렬을 피함)가 깔려 있고,
+ * 첫 화면에서는 전체화면 히어로(MorphFrame)가 그 위를 덮고 있다. 스크롤하면 히어로가 줄어들며 윗줄의 빈 칸에
+ * 전경 사진 그대로 내려앉고(사진 교체 없음), 안착 순간 실제 타일에 핸드오프한 뒤 핀이 풀려 PastorStatic 으로 이어진다.
  *
- * 표어/담임목사 카피는 placeholder — 사무국 검수 필요.
+ * 역스크롤 보정: 윗줄 표시 오프셋 = 자유 흐름 + (1-q)·(화면 중앙까지 최단 거리). 히어로가 전체화면이면 빈 칸이 중앙에
+ * 대기하고, 올라올 땐 카드가 어디까지 떠내려갔든 중앙으로 되감겨 히어로가 그 위에서 커진다(화면 밖에서 튀지 않음).
+ * 시계는 무대가 화면에 있을 때만 돈다. 프레임당 레이아웃 읽기는 트랙 rect 1회(칸 기하는 리사이즈 때만 측정).
+ * reduced-motion: 띠 자율 흐름만 정지(정지 띠), 스크롤 연동은 유지. 셋째 줄은 모바일(<768px)에서 숨김(표어가 길게 꺾여 100svh 초과).
+ *
+ * 표어 카피는 placeholder — 사무국 검수 필요.
  */
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 
-import pastorSign from '@/assets/images/pastor-sign.png';
-import pastorImg from '@/assets/images/main/pastor.jpg';
-import worshipImg from '@/assets/images/main/worship.jpg';
+import mainExterior from '@/assets/images/main/main01.jpg';
 
-// 예배(앰버) → 담임목사(네이비). 전면 수평 그라데이션의 양 끝 스톱을 각각 보간한다.
-const AMBER = [222, 146, 72]; // 예배 사진 쪽
-const CREAM = [243, 210, 164]; // 예배 문구 쪽 — 살짝 더 밝은 라이트 앰버
-const NAVY = [40, 52, 100]; // 담임 문구 쪽 (흰 텍스트 가독)
-const DKNAVY = [14, 20, 46]; // 담임 사진 쪽 (가장 어두움)
-const INITIAL_BG =
-  'radial-gradient(54% 60% at 26.0% 38.0%, rgba(240,162,82,0.95) 0%, rgba(236,150,68,0.42) 40%, rgba(236,150,68,0) 70%),' +
-  'linear-gradient(94deg, rgb(222,146,72) 0%, rgb(243,210,164) 100%)';
+import { FLOW_PHOTOS, THIRD_PHOTOS } from './flowPhotos';
+import { EXT_G, MorphFrame, type MorphFrameHandle } from './MorphFrame';
+import { fullRect, mixRect, seg, shortest, smooth, wrap } from './morphMath';
+import { PastorStatic } from './PastorStatic';
+
+/** 줄별 높이(svh 비율)·흐름 방향·속도(px/s)·시작 오프셋(한 벌 너비 비율, 윗줄은 착지 칸 중앙이 우선). 간격·모서리(px), 가장자리 페이드(%), 히어로가 내려앉는 윗줄 칸 */
+const ROWS = [
+  { h: 0.18, dir: -1, speed: 30, offset: 0 },
+  { h: 0.16, dir: 1, speed: 24, offset: 0.37 },
+  { h: 0.14, dir: -1, speed: 36, offset: 0.71 },
+];
+const GAP = 14;
+const RADIUS = 16;
+const EDGE = 6;
+const HERO_AT = 2;
+const ASPECT = 1.6;
+/** 트랙당 벌 수 — 끊김 없는 조건은 (벌 수 - 1) × 한 벌 폭 ≥ 뷰포트 폭. 얇은 셋째 줄은 21:9·낮은 창에서 2벌로 모자람 */
+const COPIES = 3;
+
+const CSS = `
+  .hl-hero .hl-land{opacity:0}
+  .is-landed .hl-hero .hl-land{opacity:1}
+`;
+
+type Tile = { src?: (typeof FLOW_PHOTOS)[number]; hero?: boolean };
+const TOP: Tile[] = [
+  ...FLOW_PHOTOS.slice(0, HERO_AT).map((src): Tile => ({ src })),
+  { hero: true },
+  ...FLOW_PHOTOS.slice(HERO_AT).map((src): Tile => ({ src })),
+];
+const BOTTOM: Tile[] = [...FLOW_PHOTOS.slice(5), ...FLOW_PHOTOS.slice(0, 5)].map(src => ({ src }));
+const THIRD: Tile[] = THIRD_PHOTOS.map(src => ({ src }));
+const TILES = [TOP, BOTTOM, THIRD];
+const MASK = `linear-gradient(to right, transparent, #000 ${EDGE}%, #000 ${100 - EDGE}%, transparent)`;
 
 export const HomeLead = () => {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const frame = useRef<MorphFrameHandle>(null);
 
   useEffect(() => {
-    const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-    const mix = (c1: number[], c2: number[], t: number) =>
-      `rgb(${Math.round(lerp(c1[0], c2[0], t))},${Math.round(lerp(c1[1], c2[1], t))},${Math.round(lerp(c1[2], c2[2], t))})`;
-    const leadBg = (sp: number) => {
-      // 무빙 강조 글로우 — 좌상(예배 사진)→우하(담임 사진)으로 이동.
-      const gx = 26 + sp * 48;
-      const gy = 38 + sp * 42;
-      const glow = `radial-gradient(54% 60% at ${gx.toFixed(1)}% ${gy.toFixed(1)}%, rgba(240,162,82,0.95) 0%, rgba(236,150,68,0.42) 40%, rgba(236,150,68,0) 70%)`;
-      // 전면 그라데이션 — 거의 수평이라 세로 위치와 무관하게 "문구 쪽이 밝다"가 유지된다.
-      // 좌우 반전 레이아웃을 스톱 배정으로 흡수: 데스크톱은 가로, 모바일(세로 스택)은 세로.
-      const base =
-        window.innerWidth < 860
-          ? `linear-gradient(180deg, ${mix(CREAM, NAVY, sp)} 0%, ${mix(AMBER, DKNAVY, sp)} 100%)`
-          : `linear-gradient(94deg, ${mix(AMBER, NAVY, sp)} 0%, ${mix(CREAM, DKNAVY, sp)} 100%)`;
-      return `${glow}, ${base}`;
+    const track = trackRef.current;
+    const stage = stageRef.current;
+    if (!track || !stage) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const rows = Array.from(stage.querySelectorAll<HTMLElement>('.hl-row'));
+    const tracks = rows.map(r => r.querySelector<HTMLElement>('.hl-track')!);
+    const slot = rows[0].querySelector<HTMLElement>('.hl-hero')!;
+    let period = rows.map(() => 0);
+    let slotLeft = 0;
+    let slotW = 0;
+    let slotTop = 0;
+    let slotH = 0;
+    let centerOff = 0;
+    const measure = () => {
+      period = rows.map(r => r.querySelector<HTMLElement>('.hl-copy')!.offsetWidth);
+      slotLeft = slot.offsetLeft;
+      slotW = slot.offsetWidth;
+      slotH = slot.offsetHeight;
+      slotTop = rows[0].getBoundingClientRect().top - stage.getBoundingClientRect().top;
+      centerOff = wrap(slotLeft + slotW / 2 - window.innerWidth / 2, period[0]);
     };
+    measure();
+    // 줄마다 시작 오프셋을 어긋나게(세로 정렬 회피). 윗줄은 착지 칸 중앙.
+    const flow = ROWS.map((r, i) => (i === 0 ? centerOff : period[i] * r.offset));
 
-    let ticking = false;
-    const update = () => {
-      const el = rootRef.current;
-      if (el) {
-        const vh = window.innerHeight;
-        const r = el.getBoundingClientRect();
-        const sp = clamp(-r.top / Math.max(1, el.offsetHeight - vh), 0, 1);
-        el.style.background = leadBg(sp);
+    let last = performance.now();
+    let raf = 0;
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const r = track.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) return;
+      const p = seg(-r.top / Math.max(1, track.offsetHeight - vh), [0, 1]);
+      const q = smooth(seg(p, [0.05, 0.8]));
+      for (let i = 0; i < rows.length; i++) {
+        if (!period[i]) continue; // 숨겨진 줄(모바일)
+        const v = reduce ? 0 : ROWS[i].speed;
+        flow[i] = wrap(flow[i] - ROWS[i].dir * v * dt, period[i]);
       }
-      ticking = false;
-    };
-    const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(update);
-        ticking = true;
+      if (q === 0) flow[0] = centerOff;
+      const display0 = flow[0] + (1 - q) * shortest(flow[0], centerOff, period[0]);
+      tracks[0].style.transform = `translate3d(${(-display0).toFixed(2)}px,0,0)`;
+      for (let i = 1; i < rows.length; i++) {
+        tracks[i].style.transform = `translate3d(${(-flow[i]).toFixed(2)}px,0,0)`;
       }
+
+      // 안착 목표 — 여러 벌의 빈 칸 중 화면 중앙에 가까운 것
+      const cx0 = slotLeft + slotW / 2 - display0;
+      let cx = cx0;
+      for (let k = 1; k < COPIES; k++) {
+        const c = cx0 + k * period[0];
+        if (Math.abs(c - vw / 2) < Math.abs(cx - vw / 2)) cx = c;
+      }
+      const target = { w: slotW, h: slotH, cx, cy: slotTop + slotH / 2 };
+      const landed = q >= 1;
+      frame.current?.update({
+        rect: mixRect(fullRect(vw, vh), target, q),
+        q,
+        f1: seg(p, [0.05, 0.3]),
+        copy: 1 - seg(p, [0.04, 0.12]),
+        visible: !landed,
+      });
+      stage.classList.toggle('is-landed', landed);
     };
-    document.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    update();
+    raf = requestAnimationFrame(loop);
+    window.addEventListener('resize', measure);
     return () => {
-      document.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', measure);
     };
   }, []);
 
+  const row = (items: Tile[], i: number) => {
+    const h = ROWS[i].h;
+    // 셋째 줄은 모바일 숨김 — 줄과 앞 간격을 함께 숨긴다
+    const hide = i === 2 ? 'max-md:hidden' : '';
+    const copy = (k: number) => (
+      <div key={k} className="hl-copy flex shrink-0" style={{ gap: GAP, paddingRight: GAP }}>
+        {items.map((it, j) => (
+          <div
+            key={j}
+            className={`relative shrink-0 overflow-hidden ${it.hero ? 'hl-hero' : ''}`}
+            style={{
+              height: `${h * 100}svh`,
+              width: `calc(${h * 100}svh * ${ASPECT})`,
+              borderRadius: RADIUS,
+            }}
+          >
+            {it.hero ? (
+              <div
+                className="hl-land absolute inset-y-0 right-0"
+                style={{ left: `${-EXT_G * 100}%` }}
+              >
+                <Image
+                  src={mainExterior}
+                  alt="성복교회 전경"
+                  fill
+                  sizes="60vw"
+                  className="object-cover object-[55%_50%]"
+                />
+              </div>
+            ) : (
+              it.src && <Image src={it.src} alt="" fill sizes="40vw" className="object-cover" />
+            )}
+          </div>
+        ))}
+      </div>
+    );
+    return (
+      <Fragment key={i}>
+        {i > 0 && <div className={hide} style={{ height: GAP }} />}
+        <div
+          aria-hidden
+          className={`hl-row w-full overflow-hidden ${hide}`}
+          style={{ WebkitMaskImage: MASK, maskImage: MASK }}
+        >
+          <div className="hl-track flex w-max will-change-transform">
+            {Array.from({ length: COPIES }, (_, k) => copy(k))}
+          </div>
+        </div>
+      </Fragment>
+    );
+  };
+
   return (
-    <div
-      ref={rootRef}
-      className="relative z-0 text-white [box-shadow:0_-28px_64px_-8px_rgba(0,0,0,0.5)]"
-      style={{ background: INITIAL_BG }}
-    >
-      {/* 예배 · 표어 — 사진 좌 / 문구 우 */}
-      <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
-        <div className="mx-auto flex w-full max-w-[1320px] flex-row-reverse items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
-          <div className="min-w-0 flex-1">
-            <span className="b1-mono mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.16em] text-[#7c3f12] uppercase">
-              <span className="block h-1.5 w-1.5 rounded-full bg-[#7c3f12]" />
-              예배 · 2026 표어
+    <>
+      <div ref={trackRef} className="bg-b1-bg relative h-[170svh]">
+        <style>{CSS}</style>
+        <div
+          ref={stageRef}
+          className="sticky top-0 flex h-[100svh] w-full flex-col justify-center overflow-hidden pt-16"
+        >
+          {/* 표어 — 정적. 히어로가 걷히며 드러난다. 무대 pt-16 = 헤더 높이(낮은 뷰포트에서 세 줄이 헤더 밑으로 밀리지 않게) */}
+          <div className="mx-auto w-full max-w-[1320px] px-[6vw] pb-[4vh]">
+            <span className="text-b1-sub inline-flex items-center gap-2 text-label font-semibold">
+              <span className="bg-b1-accent block h-1.5 w-1.5 rounded-full" />
+              2026년 표어
             </span>
-            <h2 className="b1-brush text-[clamp(40px,5.4vw,76px)] leading-[1.15] text-[#2a1a0c] text-balance">
+            <h2 className="text-b1-text mt-3 text-[clamp(34px,5vw,76px)] leading-[1.08] font-extrabold tracking-[-0.04em] text-balance">
               새 사람을 입고
               <br />
-              <span className="text-[#b5611a]">묵은 땅</span>을 기경하라
+              <span className="text-b1-accent">묵은 땅</span>을 기경하라
             </h2>
-            <div className="b1-mono mt-[18px] text-[13px] tracking-[0.04em] text-[#3a2713]/65">
-              엡 4:22–24 · 호 10:12
-            </div>
+            <p className="b1-mono text-b1-sub mt-4 text-body-sm">에베소서 4:22–24 · 호세아 10:12</p>
           </div>
-          <div className="min-w-0 flex-[1.35]">
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[18px] shadow-[0_40px_80px_-28px_rgba(0,0,0,0.6)]">
-              <Image
-                src={worshipImg}
-                alt="성복교회 예배"
-                fill
-                sizes="(min-width:860px) 50vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-          </div>
+          {TILES.map(row)}
+          {/* 히어로 — 전체화면에서 윗줄 빈 칸으로 변형 */}
+          <MorphFrame ref={frame} className="absolute inset-0 z-10" radius={RADIUS} />
         </div>
-      </section>
-
-      {/* 담임목사 — 문구 좌 / 사진 우 */}
-      <section className="flex min-h-screen items-center px-[6vw] py-[9vh]">
-        <div className="mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-7">
-          <div className="min-w-0 flex-1">
-            <p className="b1-brush text-[clamp(28px,3.2vw,44px)] leading-[1.15] text-[#ffcf96]">
-              할렐루야!
-            </p>
-            <h2 className="mt-4 text-[clamp(30px,4vw,54px)] leading-[1.2] font-extrabold tracking-[-0.025em] text-white text-balance">
-              예수님의 이름으로 환영합니다.
-            </h2>
-            <p className="mt-8 max-w-[560px] text-[clamp(15px,1.45vw,18px)] leading-[1.9] text-white/75 text-balance">
-              언제나{' '}
-              <span className="font-semibold whitespace-nowrap text-[#ffcf96]">
-                하나님의 축복
-              </span>
-              과{' '}
-              <span className="font-semibold whitespace-nowrap text-[#ffcf96]">
-                예수님의 은혜
-              </span>
-              와{' '}
-              <span className="font-semibold whitespace-nowrap text-[#ffcf96]">
-                성령님의 평강
-              </span>
-              이 여러분들의 인생 가운데 온전히 임하시길 진심으로 기원합니다.
-            </p>
-            <div className="mt-10 flex items-center gap-3.5">
-              <span className="b1-mono text-[15px] font-semibold tracking-[0.04em] text-white/95">
-                성복교회 담임목사
-              </span>
-              <Image
-                src={pastorSign}
-                alt="이요셉"
-                className="h-12 w-auto mix-blend-screen brightness-110 invert sepia saturate-150"
-              />
-            </div>
-          </div>
-          <div className="min-w-0 flex-[0.9]">
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[18px] shadow-[0_40px_80px_-28px_rgba(0,0,0,0.6)]">
-              <Image
-                src={pastorImg}
-                alt="담임목사"
-                fill
-                sizes="(min-width:860px) 45vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+      </div>
+      <PastorStatic />
+    </>
   );
 };

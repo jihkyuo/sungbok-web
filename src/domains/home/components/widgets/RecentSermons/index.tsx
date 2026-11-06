@@ -1,5 +1,6 @@
 import { Section } from '@/domains/home/components/features/Section';
 import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
+import { ARCHIVE_HREF } from '@/domains/home/components/widgets/RecentSermons/data';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -27,11 +28,11 @@ export const RecentSermons = () => {
           title="최근 설교"
           action={
             <Link
-              href="/worship-video"
-              className="b1-mono b1-link text-b1-sub text-[12px] no-underline"
+              href={ARCHIVE_HREF}
+              className="b1-link text-b1-sub text-body font-medium no-underline"
             >
-              SERMON ARCHIVE
-              <ArrowRight size={12} strokeWidth={2} />
+              설교 전체 보기
+              <ArrowRight size={15} strokeWidth={2} />
             </Link>
           }
         />
@@ -49,27 +50,27 @@ export const RecentSermons = () => {
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
               <div className="pointer-events-none absolute right-6 bottom-6 left-6 text-white">
-                <div className="b1-mono mb-1.5 text-[11px] tracking-[0.05em] opacity-85">
+                <div className="b1-mono mb-1.5 text-caption tracking-[0.05em] opacity-85">
                   {SERMON_FEATURED.date} · {SERMON_FEATURED.preacher}
                 </div>
                 <div className="text-[22px] font-bold tracking-[-0.01em]">
                   {SERMON_FEATURED.title}
                 </div>
-                <div className="mt-1 text-[13px] opacity-85">{SERMON_FEATURED.scripture}</div>
+                <div className="mt-1 text-caption opacity-85">{SERMON_FEATURED.scripture}</div>
               </div>
             </div>
             <div className="flex items-center justify-between gap-4 px-5 py-5 md:px-[22px]">
               <div>
-                <div className="b1-mono text-b1-muted text-[11px] tracking-[0.05em]">
+                <div className="b1-mono text-b1-muted text-caption tracking-[0.05em]">
                   {SERMON_FEATURED.series} · {SERMON_FEATURED.scripture}
                 </div>
-                <div className="mt-1 text-[17px] font-bold tracking-[-0.01em]">
+                <div className="mt-1 text-title font-bold tracking-[-0.01em]">
                   {SERMON_FEATURED.title}
                 </div>
               </div>
               <Link
-                href="/worship-video"
-                className="text-b1-text inline-flex shrink-0 items-center gap-1.5 text-[13px] font-semibold no-underline"
+                href={ARCHIVE_HREF}
+                className="text-b1-text inline-flex shrink-0 items-center gap-1.5 text-caption font-semibold no-underline"
               >
                 전체 보기
                 <ArrowRight size={12} strokeWidth={2} />
@@ -92,19 +93,19 @@ export const RecentSermons = () => {
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="pointer-events-none absolute right-5 bottom-5 left-5 text-white">
-                <div className="b1-mono text-[10px] tracking-[0.05em] opacity-75">
+                <div className="b1-mono text-eyebrow tracking-[0.05em] opacity-75">
                   YOUTH · {SERMON_YOUTH.date}
                 </div>
-                <div className="mt-1 text-[17px] font-bold tracking-[-0.01em]">
+                <div className="mt-1 text-title font-bold tracking-[-0.01em]">
                   {SERMON_YOUTH.title}
                 </div>
               </div>
             </div>
             <div className="px-[18px] py-[18px]">
-              <div className="b1-mono text-[10px] tracking-[0.05em] text-white/60">
+              <div className="b1-mono text-eyebrow tracking-[0.05em] text-white/60">
                 {SERMON_YOUTH.team}
               </div>
-              <div className="mt-1 text-[15px] font-bold">{SERMON_YOUTH.title}</div>
+              <div className="mt-1 text-body-sm font-bold">{SERMON_YOUTH.title}</div>
             </div>
           </div>
         </Reveal>

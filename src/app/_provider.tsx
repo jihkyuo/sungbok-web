@@ -3,7 +3,8 @@
 import { YoutubeInitialize } from '@/shared/api/YoutubeInitialize';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactLenis } from 'lenis/react';
-import { useState, type PropsWithChildren } from 'react';
+import { scrollbarWidth } from '@/shared/lib/scrollbarWidth';
+import { useEffect, useState, type PropsWithChildren } from 'react';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,22 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
   const [reduced] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
+
+  // 화면 끝까지 꽉 채우는 연출(calc(100vw - var(--sbw)))이 스크롤바 폭만큼 넘치지 않게 --sbw 를 둔다.
+  // 스크롤바는 페이지 길이에 따라 생기고 없어지므로 크기 변화마다 다시 잰다.
+  useEffect(() => {
+    const root = document.documentElement;
+    const sync = () =>
+      root.style.setProperty('--sbw', `${scrollbarWidth(window.innerWidth, root.clientWidth)}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(document.body);
+    window.addEventListener('resize', sync);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', sync);
+    };
+  }, []);
 
   return (
     <ReactLenis

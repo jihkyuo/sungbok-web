@@ -5,7 +5,7 @@ interface Props {
   title: ReactNode;
   /** 상단 작은 라벨 (예: '● COMMUNITY') */
   eyebrow?: ReactNode;
-  /** 우측 슬롯 (예: 'ALL SERVICES →' 링크, 설명 문단) */
+  /** 우측 슬롯 (예: '예배 안내 →' 링크, 설명 문단) */
   action?: ReactNode;
   /** standard: 일반 섹션 / editorial: 대형 타이포 섹션 */
   tier?: 'standard' | 'editorial';
@@ -25,11 +25,16 @@ export const SectionTitle = ({
   return (
     <div className={cn('mb-8 md:mb-10', className)}>
       {eyebrow && (
-        <div className="b1-mono text-b1-accent mb-3 text-[11px] font-semibold tracking-[0.16em]">
+        <div className="b1-mono text-b1-accent mb-3 text-caption font-semibold tracking-[0.16em]">
           {eyebrow}
         </div>
       )}
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <div
+        className={cn(
+          'flex flex-wrap justify-between gap-4',
+          tier === 'editorial' ? 'items-end' : 'items-baseline'
+        )}
+      >
         <h2
           className={cn(
             'text-b1-text m-0 font-bold text-balance',
@@ -40,7 +45,8 @@ export const SectionTitle = ({
         >
           {title}
         </h2>
-        {action && <div className="shrink-0">{action}</div>}
+        {/* max-w-full: 줄바꿈돼 혼자 한 줄이 될 때 화면 폭을 넘지 않게(375 가로 넘침 원인) */}
+        {action && <div className="max-w-full shrink-0">{action}</div>}
       </div>
     </div>
   );

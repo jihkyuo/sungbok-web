@@ -42,7 +42,9 @@ export const ChurchNews = () => {
                 <span className="b1-mono rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-white backdrop-blur-sm">
                   헤드라인
                 </span>
-                <span className={`rounded-full px-2 py-[3px] text-[10px] font-bold ${tagColor[headline.tag]}`}>
+                <span
+                  className={`rounded-full px-2 py-[3px] text-[10px] font-bold ${tagColor[headline.tag]}`}
+                >
                   {headline.tag}
                 </span>
               </div>
@@ -85,7 +87,9 @@ export const ChurchNews = () => {
                   )}
                   <div className="flex min-w-0 flex-1 flex-col justify-center py-3.5 pr-1 pl-1">
                     <div className="mb-1 flex items-center gap-2">
-                      <span className={`rounded-full px-2 py-[2px] text-[10px] font-bold ${tagColor[p.tag]}`}>
+                      <span
+                        className={`rounded-full px-2 py-[2px] text-[10px] font-bold ${tagColor[p.tag]}`}
+                      >
                         {p.tag}
                       </span>
                       <span className="b1-mono text-b1-muted text-[11px]">{p.date}</span>
@@ -94,7 +98,9 @@ export const ChurchNews = () => {
                       {p.title}
                     </div>
                     {p.excerpt && (
-                      <p className="text-b1-sub mt-1 line-clamp-1 text-[13px] leading-[1.5]">{p.excerpt}</p>
+                      <p className="text-b1-sub mt-1 line-clamp-1 text-[13px] leading-[1.5]">
+                        {p.excerpt}
+                      </p>
                     )}
                   </div>
                   <ArrowRight

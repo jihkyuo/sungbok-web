@@ -40,7 +40,7 @@ export function bandField(
   seed: number,
   slope = 0.42,
   base = 16,
-  thickness = 22,
+  thickness = 22
 ): Star[] {
   return Array.from({ length: count }, (_, i) => {
     const x = rnd(i, seed) * 100;

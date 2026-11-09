@@ -29,7 +29,8 @@
     ├── 0004-subpage-routing.md
     ├── 0005-dock-toss-bar.md
     ├── 0006-home-lead-flow-stage.md
-    └── 0007-department-page-template.md
+    ├── 0007-department-page-template.md
+    └── 0010-next16-node26-perf-baseline.md
 ```
 
 향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
@@ -87,6 +88,7 @@
 - [0005-dock-toss-bar.md](decisions/0005-dock-toss-bar.md) — 2026-10-18 — 글로벌 헤더를 글래스 캡슐에서 토스식 전폭 바 + 흰 안개 패널로 교체(hover 섹션 하위만 한 열, 스크롤 숨김 없음). "독=accent 알약" 위계 폐기
 - [0006-home-lead-flow-stage.md](decisions/0006-home-lead-flow-stage.md) — 2026-10-19 — 홈 상단을 변형 무대(HomeLead)로 재설계: 히어로가 사진 띠로 내려앉아 표어·담임으로 잇는다(시안 P 승격)
 - [0007-department-page-template.md](decisions/0007-department-page-template.md) — 2026-11-04 — 다음세대 부서 페이지 템플릿 확정: 도입부(정보 한 덩어리) + 사진 쇼케이스(데스크톱 «놓기»·모바일 «부채»), 영아부 승격·8부서는 데이터만 교체
+- [0010-next16-node26-perf-baseline.md](decisions/0010-next16-node26-perf-baseline.md) — 2026-11-09 — Next 16·Node 26 업그레이드 + 성능 기준선: 유튜브는 서버 fetch 하나로(gapi·googleapis·axios 제거), 사진은 WebP 사전 변환(17.8MB→3.1MB), 폰트는 같은 출처, 무거운 임베드는 화면 근처에서, Vercel 서울 리전. (0008·0009 는 develop 쪽 ADR 이 쓰고 있어 건너뜀)
 
 ## 컨벤션
 

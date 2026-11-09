@@ -2,14 +2,14 @@
 // 소리는 한 번에 하나만 난다 — 어디서 소리를 켜면(claim) 나머지는 구독으로 알림을 받아 스스로 음소거한다.
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useSyncExternalStore } from 'react';
 
 type Listener = (owner: string | null) => void;
 
 let owner: string | null = null;
 const listeners = new Set<Listener>();
 
-const emit = () => listeners.forEach((l) => l(owner));
+const emit = () => listeners.forEach(l => l(owner));
 
 export const getAudioOwner = () => owner;
 
@@ -40,15 +40,13 @@ export const subscribeAudio = (l: Listener) => {
  * 언마운트 시 내가 주인이면 비운다.
  */
 export const useAudioFocus = (id: string) => {
-  const [active, setActive] = useState(() => owner === id);
-  useEffect(() => {
-    setActive(owner === id);
-    const off = subscribeAudio((o) => setActive(o === id));
-    return () => {
-      off();
-      releaseAudio(id);
-    };
-  }, [id]);
+  // 주인은 모듈 바깥 저장소 — useSyncExternalStore 로 읽어 구독·id 변경을 React 가 맞춘다(effect 안 setState 없음).
+  const active = useSyncExternalStore(
+    subscribeAudio,
+    () => owner === id,
+    () => false
+  );
+  useEffect(() => () => releaseAudio(id), [id]);
   const claim = useCallback(() => claimAudio(id), [id]);
   const release = useCallback(() => releaseAudio(id), [id]);
   return { active, claim, release };

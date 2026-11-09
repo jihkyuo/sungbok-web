@@ -119,17 +119,26 @@ export default function Intro({ dept, door, children }: IntroProps) {
       </p>
       <p className="en-intro text-b1-text">{dept.intro}</p>
       <ul className="en-staff border-b1-border">
-        {dept.staff.map((s) => (
+        {dept.staff.map(s => (
           <li key={s.name} className="en-staff-row">
             <span className="en-staff-photo bg-b1-placeholder">
-              <Image src={s.photo} alt={`${s.name} ${s.role}`} fill sizes="56px" quality={90} className="object-cover" />
+              <Image
+                src={s.photo}
+                alt={`${s.name} ${s.role}`}
+                fill
+                sizes="56px"
+                quality={90}
+                className="object-cover"
+              />
             </span>
             <span className="en-staff-text">
               <span className="en-staff-name text-b1-text">
                 {s.name}
                 <span className="en-staff-role text-b1-accent">{s.role}</span>
               </span>
-              {s.greeting ? <span className="en-staff-greeting text-b1-sub">{s.greeting}</span> : null}
+              {s.greeting ? (
+                <span className="en-staff-greeting text-b1-sub">{s.greeting}</span>
+              ) : null}
             </span>
           </li>
         ))}
@@ -259,7 +268,7 @@ export default function Intro({ dept, door, children }: IntroProps) {
                   src={door.src}
                   alt={door.alt}
                   fill
-                  priority
+                  preload
                   quality={90}
                   sizes="100vw"
                   className="object-cover"

@@ -22,8 +22,8 @@ export const CommunityGallery = () => {
           }
           action={
             <p className="text-b1-sub m-0 max-w-[360px] text-[15px] leading-[1.8]">
-              세대와 자리를 가리지 않고 서로의 이야기를 듣는 작은 공동체들. 각 부서는 일년 내내
-              열려 있습니다.
+              세대와 자리를 가리지 않고 서로의 이야기를 듣는 작은 공동체들. 각 부서는 일년 내내 열려
+              있습니다.
             </p>
           }
         />

@@ -33,7 +33,7 @@ const Box = ({
       src={photo}
       alt={alt}
       fill
-      priority={priority}
+      preload={priority}
       sizes={sizes}
       quality={90}
       className="object-cover object-top"

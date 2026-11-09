@@ -14,7 +14,7 @@
 import Image from 'next/image';
 
 import pastorSign from '@/assets/images/pastor-sign.png';
-import pastorImg from '@/assets/images/main/pastor.jpg';
+import pastorImg from '@/assets/images/main/pastor.webp';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { useScrollFadeIn } from '@/shared/lib/hooks/useScrollFadeIn';
 
@@ -42,7 +42,9 @@ const Signature = () => {
     <div ref={ref} className="mt-10 flex items-center gap-4">
       <span className="text-b1-text text-[15px] font-semibold">성복교회 담임목사</span>
       <span className="block overflow-hidden">
-        <span className={`block overflow-hidden ${WIPE} ${on ? 'translate-x-0' : '-translate-x-full'}`}>
+        <span
+          className={`block overflow-hidden ${WIPE} ${on ? 'translate-x-0' : '-translate-x-full'}`}
+        >
           <Image
             src={pastorSign}
             alt="이요셉"
@@ -76,7 +78,9 @@ export const PastorStatic = () => {
 
       <div className="relative mx-auto flex w-full max-w-[1320px] items-center gap-[6%] max-[860px]:flex-col max-[860px]:gap-8">
         <Reveal className="min-w-0 flex-1">
-          <p className="b1-brush text-b1-accent text-[clamp(40px,4.2vw,60px)] leading-none">할렐루야!</p>
+          <p className="b1-brush text-b1-accent text-[clamp(40px,4.2vw,60px)] leading-none">
+            할렐루야!
+          </p>
           <h2 className="text-b1-text mt-4 text-[clamp(26px,3.2vw,46px)] leading-[1.22] font-extrabold tracking-[-0.025em] text-balance">
             예수님의 이름으로 환영합니다.
           </h2>

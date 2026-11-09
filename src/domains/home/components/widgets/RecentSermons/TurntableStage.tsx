@@ -1,12 +1,15 @@
 'use client';
 
-import { ArrowUpRight, Volume2, VolumeX, Youtube } from 'lucide-react';
+import { ArrowUpRight, Volume2, VolumeX } from 'lucide-react';
+import { YoutubeIcon } from '@/shared/components/brand/YoutubeIcon';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import allLiveLogo from '@/assets/icons/allLive-team-logo.png';
 import { useAudioFocus } from '@/shared/lib/audioFocus';
+import { useNearViewport } from '@/shared/lib/hooks/useNearViewport';
+import { usePrefersReducedMotion } from '@/shared/lib/hooks/usePrefersReducedMotion';
 
 import { POSTER, YOUTH, YOUTH_CHANNEL_HREF, YOUTH_VIDEO_EMBED } from './data';
 import { useTurntable } from './useTurntable';
@@ -78,26 +81,48 @@ export const TurntableStage = ({
   reflect = 'soft',
 }: Props) => {
   const { ref, q } = useTurntable();
+  // 유튜브 임베드(플레이어 JS 수백 KB·요청 수십 개)는 첫 로딩에서 빼고, 섹션이 1.5화면 앞까지 오면 붙인다.
+  // 회전 rAF 도 그때부터 돈다 — 화면 밖에서 메인 스레드를 쓰지 않게.
+  const near = useNearViewport(ref, '150% 0px');
+  // 동작 줄이기면 임베드를 붙이지 않고 포스터만 둔다(자동재생 금지 — DESIGN.md §3). 영상은 채널 칩 링크로 본다.
+  // (LiveStage·광고 릴은 대신 네이티브 컨트롤로 재생하게 한다 — 실제 청년 예배 영상으로 바꿀 때 같은 방식 검토)
+  const reduced = usePrefersReducedMotion();
+  const playing = near && !reduced;
   const hasReflect = disc === 'vinyl' || disc === 'cd';
   // 임베드 로드 직후 잠깐 노출되는 YouTube 재생 컨트롤을 가리는 포스터.
-  // 페이지 진입(마운트) 시점부터 영상은 자동재생되고, 컨트롤이 사라질 즈음 페이드아웃 →
+  // 섹션이 가까워져 임베드가 붙는 시점부터 영상은 자동재생되고, 컨트롤이 사라질 즈음 페이드아웃 →
   // 사용자가 스크롤로 턴테이블에 도달할 땐 이미 깨끗한 재생 상태.
   const [posterFaded, setPosterFaded] = useState(false);
+  // 유튜브 플레이어가 명령(mute/unMute)을 받을 준비가 됐는지 — iframe 이 보내는 onReady 메시지로 안다.
+  const [playerReady, setPlayerReady] = useState(false);
+  // 8초 안에 준비 신호가 없으면(느린 망·확장 프로그램 등) 기다리지 않고 예전처럼 그대로 띄운다 — 포스터 걷고 버튼도 켠다.
+  const [gaveUp, setGaveUp] = useState(false);
+  const embedUsable = playerReady || gaveUp;
+  // 재생이 멈추면(페이지를 연 채 동작 줄이기 전환) 포스터·준비 상태를 처음으로 — 다음에 붙는 iframe 은 새 플레이어다.
+  const [wasPlaying, setWasPlaying] = useState(playing);
+  if (playing !== wasPlaying) {
+    setWasPlaying(playing);
+    if (!playing) {
+      setPosterFaded(false);
+      setPlayerReady(false);
+      setGaveUp(false);
+    }
+  }
 
   // 무음 자동재생이 기본 — 버튼(=사용자 제스처)으로만 소리 토글. enablejsapi 임베드에
   // postMessage 명령을 보내 mute/unMute. (클릭 시점이라 unMute 가 정책상 허용됨)
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [muted, setMuted] = useState(true);
   // 채널 칩: 호버 또는 자동 펄스로 펼침 (호버 우선)
   const [hovered, setHovered] = useState(false);
   const [autoExpanded, setAutoExpanded] = useState(false);
   const expanded = hovered || autoExpanded;
   // 홈 단일 소리 규칙: 소리를 켜면 주인을 가져오고(claim), 다른 영상이 켜져 주인을 뺏기면 스스로 음소거.
   const audio = useAudioFocus('lp');
+  const muted = !audio.active; // 음소거 상태 = 소리 주인 아님
   const sendMute = (func: 'mute' | 'unMute') =>
     iframeRef.current?.contentWindow?.postMessage(
       JSON.stringify({ event: 'command', func, args: [] }),
-      'https://www.youtube.com',
+      'https://www.youtube.com'
     );
   const toggleMute = () => {
     if (muted) {
@@ -107,15 +132,46 @@ export const TurntableStage = ({
       audio.release();
       sendMute('mute');
     }
-    setMuted((m) => !m);
   };
+  // 다른 영상이 소리를 가져가면 임베드를 음소거한다(외부 시스템 동기화).
   useEffect(() => {
-    if (!audio.active && !muted) {
-      sendMute('mute');
-      setMuted(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!audio.active) sendMute('mute');
   }, [audio.active]);
+  // 임베드가 빠지면 소리 주인 자리도 내놓는다 — 새 iframe 은 음소거로 시작하므로 «켜짐» 표시가 남지 않게.
+  const releaseAudio = audio.release;
+  useEffect(() => {
+    if (!playing) releaseAudio();
+  }, [playing, releaseAudio]);
+  // 플레이어 준비 신호 — 공식 IFrame API 와 같은 규약: 응답이 올 때까지 250ms 마다 'listening' 을 보내고,
+  // 처음 붙으면 onReady·initialDelivery, 이미 초기화된 뒤 다시 물으면 alreadyInitialized 가 온다. 셋 다 «준비됨».
+  // 리스너를 먼저 걸고 보내므로 응답을 놓치지 않는다. 버튼은 준비 전 disabled 라 그 사이 소리 명령은 없다.
+  // 끝내 답이 없으면 8초에 묻기를 멈추고 대체 표시로 넘어간다(gaveUp).
+  useEffect(() => {
+    if (!playing || embedUsable) return;
+    const READY = new Set(['onReady', 'initialDelivery', 'alreadyInitialized']);
+    const onMessage = (e: MessageEvent) => {
+      if (e.source !== iframeRef.current?.contentWindow || typeof e.data !== 'string') return;
+      try {
+        if (READY.has(JSON.parse(e.data)?.event)) setPlayerReady(true);
+      } catch {
+        // 유튜브가 아닌 문자열 메시지
+      }
+    };
+    window.addEventListener('message', onMessage);
+    const listen = () =>
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'listening', id: 'lp', channel: 'widget' }),
+        'https://www.youtube.com'
+      );
+    listen();
+    const retry = setInterval(listen, 250);
+    const giveUp = setTimeout(() => setGaveUp(true), 8000);
+    return () => {
+      window.removeEventListener('message', onMessage);
+      clearInterval(retry);
+      clearTimeout(giveUp);
+    };
+  }, [playing, embedUsable]);
 
   let blackD: number;
   if (q < GROW_END) blackD = lerp(28, 56, q / GROW_END);
@@ -152,32 +208,40 @@ export const TurntableStage = ({
   const chipVisibleRef = useRef(false);
   const hoveredEverRef = useRef(false);
   const boxRef = useRef({ hw: 0, hh: 0, cr: 0 });
-  targetVelRef.current = targetVelOf(q);
-  tiltRef.current = tiltDeg;
-  qRef.current = q;
-  chipVisibleRef.current = layeredOp > 0.9;
-  const vminPx = typeof window !== 'undefined' ? Math.min(window.innerWidth, window.innerHeight) / 100 : 8;
-  const gapPx = 1.4 * vminPx;
-  boxRef.current = {
-    hw: (vw / 2) * vminPx + gapPx,
-    hh: (vh / 2) * vminPx + gapPx,
-    cr: Math.max(endRadiusPx, (1 - expand) * 0.5 * Math.min(vw, vh) * vminPx) + gapPx,
-  };
+  // rAF 루프(회전·파동)·칩 타이머가 읽을 최신 스크롤 값 — 렌더 중이 아니라 커밋 직후(페인트 전)에 넘긴다.
+  useLayoutEffect(() => {
+    targetVelRef.current = targetVelOf(q);
+    tiltRef.current = tiltDeg;
+    qRef.current = q;
+    chipVisibleRef.current = layeredOp > 0.9;
+    const vminPx = Math.min(window.innerWidth, window.innerHeight) / 100;
+    const gapPx = 1.4 * vminPx;
+    boxRef.current = {
+      hw: (vw / 2) * vminPx + gapPx,
+      hh: (vh / 2) * vminPx + gapPx,
+      cr: Math.max(endRadiusPx, (1 - expand) * 0.5 * Math.min(vw, vh) * vminPx) + gapPx,
+    };
+  });
 
   useEffect(() => {
+    // 모션 줄이기면 연속 회전을 돌리지 않는다(정지 디스크) — DESIGN.md §3 reduced-motion 가드.
+    if (!near || reduced) return;
     let raf = 0;
     let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       // 스핀업/다운 관성(이징)
-      curVelRef.current += (targetVelRef.current - curVelRef.current) * (1 - Math.pow(0.5, dt * 3.2));
+      curVelRef.current +=
+        (targetVelRef.current - curVelRef.current) * (1 - Math.pow(0.5, dt * 3.2));
       const v = curVelRef.current;
       const drift = 1 + 0.004 * Math.sin(now * 0.0006);
       angleRef.current = (angleRef.current + v * drift * dt) % 360;
       reflAngleRef.current = (reflAngleRef.current + (14 + v * 0.3) * dt) % 360;
-      if (discRef.current) discRef.current.style.transform = `rotateX(${tiltRef.current}deg) rotate(${angleRef.current}deg)`;
-      if (wedgeRef.current) wedgeRef.current.style.transform = `translate(-50%,-50%) rotate(${reflAngleRef.current}deg)`;
+      if (discRef.current)
+        discRef.current.style.transform = `rotateX(${tiltRef.current}deg) rotate(${angleRef.current}deg)`;
+      if (wedgeRef.current)
+        wedgeRef.current.style.transform = `translate(-50%,-50%) rotate(${reflAngleRef.current}deg)`;
       // 고속 시 그루브 모션블러(물리감)
       if (groovesRef.current) {
         const sb = Math.min(3.6, Math.max(0, (v - 180) / 240) * 3.6);
@@ -187,12 +251,15 @@ export const TurntableStage = ({
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [near, reduced]);
 
+  // 포스터는 플레이어가 준비된 뒤 재생 컨트롤이 사라질 즈음 걷는다 — 느린 망에서 로딩 화면이 드러나지 않게.
+  // 준비 신호를 포기했으면(이미 8초 지남) 바로 걷는다.
   useEffect(() => {
-    const t = setTimeout(() => setPosterFaded(true), 2500);
+    if (!embedUsable) return;
+    const t = setTimeout(() => setPosterFaded(true), playerReady ? 2500 : 0);
     return () => clearTimeout(t);
-  }, []);
+  }, [embedUsable, playerReady]);
 
   // 채널 칩 1회 자동 열림 — 칩 첫 등장 후 3초간 호버가 없으면 열고, 열린 뒤 4초 후 닫음(반복 없음).
   // 3초 내 호버한 적 있으면 자동열림 취소 → 호버/타이머 액션 충돌 방지.
@@ -235,15 +302,25 @@ export const TurntableStage = ({
         >
           {decoOp > 0.02 && disc === 'vinyl' && (
             <>
-              <div ref={groovesRef} className="absolute inset-0 rounded-full" style={{ opacity: decoOp, background: GROOVE_BG }} />
+              <div
+                ref={groovesRef}
+                className="absolute inset-0 rounded-full"
+                style={{ opacity: decoOp, background: GROOVE_BG }}
+              />
               {/* 다크 라벨(파란 UI 원 ❌) — 미세 동심 링 */}
               <div
                 className="absolute top-1/2 left-1/2 aspect-square w-[40%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full"
-                style={{ opacity: decoOp, background: 'radial-gradient(circle at 38% 34%, #20202a, #101016 72%)' }}
+                style={{
+                  opacity: decoOp,
+                  background: 'radial-gradient(circle at 38% 34%, #20202a, #101016 72%)',
+                }}
               >
                 <div
                   className="absolute inset-0 rounded-full"
-                  style={{ background: 'conic-gradient(from 0deg, rgba(255,255,255,0.05) 0 9%, transparent 9%)' }}
+                  style={{
+                    background:
+                      'conic-gradient(from 0deg, rgba(255,255,255,0.05) 0 9%, transparent 9%)',
+                  }}
                 />
                 <div className="absolute inset-[16%] rounded-full border border-white/10" />
                 <div className="absolute inset-[42%] rounded-full border border-white/12" />
@@ -253,13 +330,21 @@ export const TurntableStage = ({
           {decoOp > 0.02 && disc === 'cd' && (
             <div
               className="absolute inset-0 rounded-full"
-              style={{ opacity: decoOp, background: 'conic-gradient(from 0deg, #ff5fa2, #5fb0ff, #5fffc2, #ffe65f, #ff8a5f, #ff5fa2)' }}
+              style={{
+                opacity: decoOp,
+                background:
+                  'conic-gradient(from 0deg, #ff5fa2, #5fb0ff, #5fffc2, #ffe65f, #ff8a5f, #ff5fa2)',
+              }}
             />
           )}
           {decoOp > 0.02 && disc === 'orb' && (
             <div
               className="absolute inset-0 rounded-full"
-              style={{ opacity: decoOp, background: 'radial-gradient(circle at 38% 30%, #8fb6ff, #2a4fae 50%, #0a1733 100%)' }}
+              style={{
+                opacity: decoOp,
+                background:
+                  'radial-gradient(circle at 38% 30%, #8fb6ff, #2a4fae 50%, #0a1733 100%)',
+              }}
             />
           )}
         </div>
@@ -270,6 +355,9 @@ export const TurntableStage = ({
             ref={wedgeRef}
             className="pointer-events-none absolute top-1/2 left-1/2 overflow-hidden rounded-full will-change-transform"
             style={{
+              // 가운데 맞춤은 마크업이 책임진다 — 모션 줄이기면 rAF 가 돌지 않아 회전 transform 이 안 들어온다.
+              // 값이 렌더마다 같아 React 가 다시 쓰지 않으므로, rAF 가 넣는 회전을 덮지 않는다.
+              transform: 'translate(-50%,-50%)',
               width: `${blackD}vmin`,
               height: `${blackD}vmin`,
               opacity: decoOp * Math.min(1, reflBoost),
@@ -285,13 +373,18 @@ export const TurntableStage = ({
         {decoOp > 0.02 && hasReflect && (
           <div
             className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ width: `${blackD}vmin`, height: `${blackD}vmin`, opacity: decoOp, background: reflFixed(reflect === 'gloss') }}
+            style={{
+              width: `${blackD}vmin`,
+              height: `${blackD}vmin`,
+              opacity: decoOp,
+              background: reflFixed(reflect === 'gloss'),
+            }}
             aria-hidden
           />
         )}
 
         {/* 재생 파동 — 영상 모양(원→카드) 추종 */}
-        <WaveRing qRef={qRef} boxRef={boxRef} mode={wave} />
+        {!reduced && <WaveRing qRef={qRef} boxRef={boxRef} mode={wave} running={near} />}
 
         {/* 중앙 영상 — 원형 → 카드 */}
         <div
@@ -304,24 +397,34 @@ export const TurntableStage = ({
             boxShadow: expand > 0.05 ? '0 40px 100px -30px rgba(0,0,0,0.75)' : 'none',
           }}
         >
-          <iframe
-            ref={iframeRef}
-            src={`${YOUTH_VIDEO_EMBED}&enablejsapi=1`}
-            title="청년 예배"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0"
-            style={{ width: `${coverW}vmin`, height: `${coverH}vmin` }}
-            tabIndex={-1}
-            aria-hidden
-          />
+          {playing && (
+            <iframe
+              ref={iframeRef}
+              src={`${YOUTH_VIDEO_EMBED}&enablejsapi=1`}
+              title="청년 예배"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0"
+              style={{ width: `${coverW}vmin`, height: `${coverH}vmin` }}
+              tabIndex={-1}
+              aria-hidden
+            />
+          )}
           {/* 로드 직후 컨트롤 노출 구간을 가리는 포스터 — 자동재생 안정화 후 페이드아웃 */}
+          {/* next/image 지연 로딩 — 첫 로딩에서 빠지고, 브라우저가 화면 근처에서 폭에 맞는 크기로 먼저 받아 임베드보다 앞선다 */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 bg-cover bg-center transition-opacity duration-700"
-            style={{ backgroundImage: `url(${POSTER.src})`, opacity: posterFaded ? 0 : 1 }}
-          />
-          <div className="absolute right-5 bottom-5 left-5 text-white" style={{ opacity: caption ? 0 : labelOp }}>
-            <div className="b1-mono text-[10px] tracking-[0.16em] opacity-85">● 청년 예배 · YOUTH WORSHIP</div>
+            className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+            style={{ opacity: playing && posterFaded ? 0 : 1 }}
+          >
+            <Image src={POSTER} alt="" fill sizes="80vmin" className="object-cover" />
+          </div>
+          <div
+            className="absolute right-5 bottom-5 left-5 text-white"
+            style={{ opacity: caption ? 0 : labelOp }}
+          >
+            <div className="b1-mono text-[10px] tracking-[0.16em] opacity-85">
+              ● 청년 예배 · YOUTH WORSHIP
+            </div>
             <div className="mt-1 text-[22px] font-bold md:text-[30px]">청년 예배</div>
           </div>
         </div>
@@ -355,10 +458,16 @@ export const TurntableStage = ({
             }}
           >
             <span className="relative flex h-11 w-11 shrink-0 overflow-hidden rounded-full bg-white">
-              <Image src={allLiveLogo} alt="AllLive 올리브워십" fill sizes="44px" className="object-contain" />
+              <Image
+                src={allLiveLogo}
+                alt="AllLive 올리브워십"
+                fill
+                sizes="44px"
+                className="object-contain"
+              />
             </span>
             <span
-              className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-[13px] font-semibold tracking-[-0.01em] transition-all duration-500 ease-out"
+              className="flex items-center gap-1.5 overflow-hidden text-[13px] font-semibold tracking-[-0.01em] whitespace-nowrap transition-all duration-500 ease-out"
               style={{
                 maxWidth: expanded ? '13rem' : 0,
                 opacity: expanded ? 1 : 0,
@@ -378,8 +487,12 @@ export const TurntableStage = ({
             className="pointer-events-none absolute top-1/2 right-[8vw] z-20 max-w-[36vmin] -translate-y-1/2 text-white"
             style={{ opacity: cl((expand - 0.45) / 0.55) }}
           >
-            <div className="b1-mono text-b1-accent2 text-[11px] font-semibold tracking-[0.18em]">YOUTH WORSHIP</div>
-            <div className="mt-2 text-[28px] font-bold tracking-[-0.02em] md:text-[40px]">청년 예배</div>
+            <div className="b1-mono text-b1-accent2 text-[11px] font-semibold tracking-[0.18em]">
+              YOUTH WORSHIP
+            </div>
+            <div className="mt-2 text-[28px] font-bold tracking-[-0.02em] md:text-[40px]">
+              청년 예배
+            </div>
             <div className="mt-2 text-[13px] text-white/70">
               {YOUTH.schedule} · {YOUTH.place}
             </div>
@@ -389,7 +502,7 @@ export const TurntableStage = ({
               rel="noopener noreferrer"
               className="pointer-events-auto mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#FF0000] px-4 py-2 text-[12px] font-semibold text-white no-underline"
             >
-              <Youtube size={15} /> 청년부 유튜브 채널
+              <YoutubeIcon size={15} /> 청년부 유튜브 채널
             </Link>
           </div>
         )}
@@ -401,16 +514,20 @@ export const TurntableStage = ({
           SCROLL
         </div>
 
-        {/* 음소거 토글 — 클릭(제스처)으로만 소리 on/off. 위치/디자인 임시(우하단). */}
-        <button
-          type="button"
-          onClick={toggleMute}
-          aria-label={muted ? '소리 켜기' : '소리 끄기'}
-          aria-pressed={!muted}
-          className="pointer-events-auto absolute right-6 bottom-6 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60"
-        >
-          {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-        </button>
+        {/* 음소거 토글 — 클릭(제스처)으로만 소리 on/off. 위치/디자인 임시(우하단).
+            영상이 붙어 있을 때만 두고, 플레이어가 준비된 뒤(onReady, 또는 8초 대기 포기 뒤)부터 누를 수 있다 —
+            준비 전 명령은 유튜브가 버려 «켜짐» 표시만 남는다. */}
+        {playing && (
+          <button
+            type="button"
+            onClick={toggleMute}
+            disabled={!embedUsable}
+            aria-label={muted ? '소리 켜기' : '소리 끄기'}
+            className="pointer-events-auto absolute right-6 bottom-6 z-30 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition hover:bg-black/60 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/60 focus-visible:outline-none disabled:opacity-40 disabled:hover:bg-black/40"
+          >
+            {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          </button>
+        )}
       </div>
     </section>
   );

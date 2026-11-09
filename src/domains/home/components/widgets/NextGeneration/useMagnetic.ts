@@ -37,7 +37,8 @@ export function useMagnetic(
       const h = el.clientHeight || 1;
       el.style.setProperty('--px', (cx / w - 0.5).toFixed(4));
       el.style.setProperty('--py', (cy / h - 0.5).toFixed(4));
-      if (glowRef.current) glowRef.current.style.transform = `translate(${cx - 90}px, ${cy - 90}px)`;
+      if (glowRef.current)
+        glowRef.current.style.transform = `translate(${cx - 90}px, ${cy - 90}px)`;
       const ln = opts?.lineRef?.current;
       if (ln) {
         // 별 끝점은 별 레이어 시차(px(lineFactor))만큼 보정해 별 중심과 정확히 연결

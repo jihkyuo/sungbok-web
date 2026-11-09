@@ -68,24 +68,22 @@ export const GEN_SERVICES = WORSHIP_GROUPS[1].services;
 const SUNDAY_ALL = [...SUNDAY_PARTS, ...GEN_SERVICES];
 
 /** 주일 시각(중복 제거 후 정렬) */
-export const SUNDAY_TIMES = [...new Set(SUNDAY_ALL.map((s) => s.time))].sort(
+export const SUNDAY_TIMES = [...new Set(SUNDAY_ALL.map(s => s.time))].sort(
   (a, b) => toMinutes(a) - toMinutes(b)
 );
 
 /** 해당 시각의 주일 예배들 */
-export const sundayAt = (t: string) => SUNDAY_ALL.filter((s) => s.time === t);
+export const sundayAt = (t: string) => SUNDAY_ALL.filter(s => s.time === t);
 
 /** 다음세대 예배 여부 (참조 동일성 기반) */
 export const isGenService = (s: WorshipServiceSummary) => GEN_SERVICES.includes(s);
 
 /** 주중·새벽 예배 요일 묶음 */
 export const WEEKDAY_SECTIONS: { day: string; services: WorshipServiceSummary[] }[] = [
-  { day: '매일 새벽', services: WEEKDAY_SERVICES.filter((s) => s.name === '새벽예배') },
+  { day: '매일 새벽', services: WEEKDAY_SERVICES.filter(s => s.name === '새벽예배') },
   {
     day: '수요일',
-    services: WEEKDAY_SERVICES.filter(
-      (s) => s.name === '수요예배' || s.name === '청년수요예배'
-    ),
+    services: WEEKDAY_SERVICES.filter(s => s.name === '수요예배' || s.name === '청년수요예배'),
   },
-  { day: '금요일', services: WEEKDAY_SERVICES.filter((s) => s.name === '금요생수의강') },
+  { day: '금요일', services: WEEKDAY_SERVICES.filter(s => s.name === '금요생수의강') },
 ];

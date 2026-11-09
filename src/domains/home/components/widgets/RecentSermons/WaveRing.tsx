@@ -14,6 +14,8 @@ interface Props {
   qRef: MutableRefObject<number>;
   boxRef: MutableRefObject<Box>;
   mode?: Mode;
+  /** false 면 그리지 않는다 — 섹션이 화면 근처에 올 때만 rAF 를 돌린다 */
+  running?: boolean;
 }
 
 const PIN = 0.04;
@@ -30,11 +32,12 @@ function energyOf(q: number) {
  * 원형 오디오 파동(LP 턴테이블 BB 전용·이퀄 막대). 영상 외곽을 **타원으로 부드럽게 추종**(사각 모서리 수직
  * 스파이크=벌레 느낌 회피). 에너지는 심박 단조로움 ❌ → 지속 강도 + 킥/오프비트 + 고조 시 지글거리는 sizzle.
  */
-export function WaveRing({ qRef, boxRef, mode = 'bars' }: Props) {
+export function WaveRing({ qRef, boxRef, mode = 'bars', running = true }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const seedRef = useRef<{ w: number; p: number; f: number; r: number }[]>([]);
 
   useEffect(() => {
+    if (!running) return;
     const cv = canvasRef.current;
     const ctx = cv?.getContext('2d');
     if (!cv || !ctx) return;
@@ -89,7 +92,8 @@ export function WaveRing({ qRef, boxRef, mode = 'bars' }: Props) {
       };
 
       const sizzleOf = (s: { p: number; f: number }) =>
-        (0.5 + 0.5 * Math.sin(t * 0.021 * s.f + s.p)) * (0.5 + 0.5 * Math.sin(t * 0.033 * s.f + s.p * 1.7));
+        (0.5 + 0.5 * Math.sin(t * 0.021 * s.f + s.p)) *
+        (0.5 + 0.5 * Math.sin(t * 0.033 * s.f + s.p * 1.7));
 
       // 레벨: 지속 shape + 비트 accent + 지글 sizzle(고조 시)
       const level = (idx: number, ang: number) => {
@@ -103,8 +107,12 @@ export function WaveRing({ qRef, boxRef, mode = 'bars' }: Props) {
         const travel = 0.5 + 0.5 * Math.sin(ang * 3 - t * 0.0019 + s.p);
         return Math.max(
           0,
-          E * dyn *
-            (0.18 + shape * 0.6 + beat * (0.4 + 0.6 * bass) * travel * 0.6 * E + sz * 0.62 * Math.pow(E, 1.45))
+          E *
+            dyn *
+            (0.18 +
+              shape * 0.6 +
+              beat * (0.4 + 0.6 * bass) * travel * 0.6 * E +
+              sz * 0.62 * Math.pow(E, 1.45))
         );
       };
 
@@ -121,7 +129,8 @@ export function WaveRing({ qRef, boxRef, mode = 'bars' }: Props) {
 
       ctx.globalCompositeOperation = 'lighter';
       ctx.lineCap = 'round';
-      const hueAt = (frac: number, ang: number) => 224 + 104 * frac + 14 * Math.sin(t * 0.0008 + ang);
+      const hueAt = (frac: number, ang: number) =>
+        224 + 104 * frac + 14 * Math.sin(t * 0.0008 + ang);
 
       if (mode === 'bars') {
         const count = 170;
@@ -162,9 +171,13 @@ export function WaveRing({ qRef, boxRef, mode = 'bars' }: Props) {
 
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, [qRef, boxRef, mode]);
+  }, [qRef, boxRef, mode, running]);
 
   return (
-    <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-10 h-full w-full" aria-hidden />
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none absolute inset-0 z-10 h-full w-full"
+      aria-hidden
+    />
   );
 }

@@ -2,10 +2,10 @@
 // 대상 한 줄 + 담당자 → 시간·장소·대상 스트립 → 와이드 사진 → 소개 + 활동 사진.
 // 현재는 영어예배부 1개(샘플). 다른 부서는 자료 수신 후 데이터만 추가.
 // TODO(콘텐츠): 영어예배부 정보는 전부 스탠드인 — 부서 자료 수신 후 교체.
-import dep03 from '@/assets/images/main/department/dep03.jpg';
-import dep06 from '@/assets/images/main/department/dep06.jpg';
-import dep08 from '@/assets/images/main/department/dep08.jpg';
-import depManager08 from '@/assets/images/main/department/dep_manager08.jpg';
+import dep03 from '@/assets/images/main/department/dep03.webp';
+import dep06 from '@/assets/images/main/department/dep06.webp';
+import dep08 from '@/assets/images/main/department/dep08.webp';
+import depManager08 from '@/assets/images/main/department/dep_manager08.webp';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { SampleNotice } from '@/shared/components/layout/SampleNotice';
 import Image, { type StaticImageData } from 'next/image';

@@ -121,4 +121,4 @@ B=~/.claude/skills/gstack/browse/dist/browse
 
 ## 자산 참고
 
-[src/assets/images/main/](../../src/assets/images/main/) — `main01.jpg`(외관)·`worship.jpg`(예배)·`pastor.jpg`(담임목사)·`department/dep01~09`(부서/활동컷). 시안의 포스터·썸네일·stand-in poster 로 재사용.
+[src/assets/images/main/](../../src/assets/images/main/) — `main01.webp`(외관)·`worship.webp`(예배)·`pastor.webp`(담임목사)·`department/dep01~09`(부서/활동컷). 시안의 포스터·썸네일·stand-in poster 로 재사용.

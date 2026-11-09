@@ -5,17 +5,14 @@ import { sectionHref, siteNav } from '@/shared/config/siteNav';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useIsClient } from '@/shared/lib/hooks/useIsClient';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
 export const SideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // 클라이언트에서만 마운트되었는지 확인
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // 포털 대상(document.body)은 브라우저에만 있다
+  const mounted = useIsClient();
 
   // 링크 클릭 시 메뉴 닫기
   const handleLinkClick = () => {

@@ -1,10 +1,18 @@
 import react from '@vitejs/plugin-react';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
   // Vite 네이티브 기능으로 tsconfig.json 의 `@/*` 별칭을 단일 출처에서 미러링한다(별칭 중복 정의 금지).
-  resolve: { tsconfigPaths: true },
+  resolve: {
+    tsconfigPaths: true,
+    // 'server-only' 는 react-server 조건이 아니면 import 하자마자 던진다 — 테스트(jsdom)에서는 빈 모듈로 바꾼다.
+    // fileURLToPath — 경로에 한글·공백이 있어도 깨지지 않게(URL.pathname 은 퍼센트 인코딩된다).
+    alias: {
+      'server-only': fileURLToPath(new URL('./vitest.server-only-stub.ts', import.meta.url)),
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,

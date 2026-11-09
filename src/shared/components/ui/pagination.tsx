@@ -61,7 +61,8 @@ function PaginationLink({ className, isActive, size = 'icon', ...props }: Pagina
           size,
         }),
         FOCUS_RING,
-        'cursor-pointer',
+        // 휴대폰은 칸이 간격 없이 붙는다 — 포커스 받은 칸을 위에 그려 링이 옆 칸에 덮이지 않게
+        'relative cursor-pointer focus-visible:z-10',
         // 비활성은 글자색을 흐린 토큰으로(아이콘은 currentColor 를 따라감) — 버튼째 opacity 를 낮추면 포커스 링까지 흐려진다.
         'aria-disabled:text-b1-muted aria-disabled:hover:text-b1-muted aria-disabled:cursor-default aria-disabled:hover:bg-transparent',
         className
@@ -117,7 +118,8 @@ function PaginationJump({ className, ...props }: React.ComponentProps<'button'>)
       className={cn(
         buttonVariants({ variant: 'ghost', size: 'icon' }),
         FOCUS_RING,
-        'cursor-pointer',
+        // 휴대폰은 칸이 간격 없이 붙는다 — 포커스 받은 칸을 위에 그려 링이 옆 칸에 덮이지 않게
+        'relative cursor-pointer focus-visible:z-10',
         className
       )}
       {...props}

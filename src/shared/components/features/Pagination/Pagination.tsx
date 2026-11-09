@@ -6,6 +6,8 @@ import * as OriginPagination from '@/shared/components/ui/pagination';
 import { useLayoutEffect, useRef } from 'react';
 
 const DEFAULT_PAGE_SIZE = 5;
+// 휴대폰에서 이전·다음은 글자 없이 화살표만 — 쪽 번호 칸과 같은 44px 정사각형
+const ARROW_MOBILE = 'max-sm:w-11 max-sm:has-[>svg]:px-0'; // 버튼 기본 has-[>svg]:px-4 보다 세게
 
 export interface PaginationProps {
   total: number;
@@ -77,14 +79,23 @@ export const Pagination = ({
 
   return (
     <OriginPagination.Pagination ref={navRef} className={className}>
-      {/* 이전·다음은 양 끝에 고정, 쪽 번호만 좁은 화면에서 줄을 넘긴다 — 줄 수가 바뀌어도 화살표 자리가 그대로 */}
-      <div className="flex items-center justify-center gap-1">
+      {/* 이전·다음은 양 끝에 고정, 쪽 번호만 좁은 화면에서 줄을 넘긴다 — 줄 수가 바뀌어도 화살표 자리가 그대로.
+          휴대폰은 칸(44px, 터치 기준)을 간격 없이 붙인다 — 화살표 포함 7칸 = 308px 라 360px 폰에서도 한 줄 */}
+      <div className="flex items-center justify-center sm:gap-1">
         {/* disabled 대신 aria-disabled — 키보드로 끝에 닿아도 포커스가 버튼에 남는다(무시는 부품이 한다) */}
-        <OriginPagination.PaginationPrevious onClick={() => go(page - 1)} aria-disabled={isFirst} />
-        <OriginPagination.PaginationContent className="min-w-0">
+        <OriginPagination.PaginationPrevious
+          onClick={() => go(page - 1)}
+          aria-disabled={isFirst}
+          className={ARROW_MOBILE}
+        />
+        <OriginPagination.PaginationContent className="min-w-0 max-sm:gap-x-0">
           <PageNumbers totalPageCount={totalPageCount} page={page} navToPage={go} />
         </OriginPagination.PaginationContent>
-        <OriginPagination.PaginationNext onClick={() => go(page + 1)} aria-disabled={isLast} />
+        <OriginPagination.PaginationNext
+          onClick={() => go(page + 1)}
+          aria-disabled={isLast}
+          className={ARROW_MOBILE}
+        />
       </div>
       <p ref={statusRef} role="status" className="sr-only" />
     </OriginPagination.Pagination>

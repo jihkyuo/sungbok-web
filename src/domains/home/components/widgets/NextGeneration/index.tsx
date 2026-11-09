@@ -3,7 +3,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type KeyboardEvent } from 'react';
 
 import { EYEBROW, ORDERED, STAGE_OF, TITLE } from './data';
 import { bandField, nebula, px, q, starField, type Star } from './sky';
@@ -28,6 +28,7 @@ const FAR = starField(56, 13, 0.6, 1.5);
 const MID = starField(30, 27, 1.1, 2.3);
 const NEAR = starField(12, 53, 2.2, 3.6);
 const NEB = nebula(9, ['rgba(70,95,205,0.28)', 'rgba(120,90,210,0.24)', 'rgba(70,150,190,0.2)']);
+// 부서 별 자리 — ORDERED(8부서)와 같은 순서·같은 개수여야 한다(가장 가까운 별의 번호로 부서를 고른다).
 const POS = [
   { x: 15, y: 34 },
   { x: 29, y: 60 },
@@ -37,7 +38,6 @@ const POS = [
   { x: 49, y: 28 },
   { x: 67, y: 52 },
   { x: 81, y: 38 },
-  { x: 88, y: 70 },
 ];
 
 const starColor = (i: number) => (i % 6 === 0 ? '#cfe0ff' : i % 11 === 0 ? '#ffe7c4' : '#ffffff');
@@ -66,16 +66,25 @@ export const NextGeneration = () => {
   const { ref, glowRef, active, set } = useMagnetic(POS, { lineRef, lineFactor: 32 });
   const a = ORDERED[active];
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-        setEngaged(true);
-        set((active + (e.key === 'ArrowRight' ? 1 : ORDERED.length - 1)) % ORDERED.length);
-      } else if (e.key === 'Enter') router.push(a.href);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [active, a.href, set, router]);
+  // 키보드는 별자리 무대에 포커스가 있을 때만 받는다 — 예전엔 window 에서 받아 페이지 어디서 Enter 를 눌러도
+  // (다른 링크·버튼 위에서도) 이 부서 페이지로 넘어갔다.
+  // 카드는 원래 커서를 따라간다 — 키보드로 고를 땐 커서가 없으니 고른 별 옆에 둔다(안 그러면 왼쪽 위에 떠 제목을 덮는다).
+  // 커서 자리 대신 별 자리를 넣는다 — 오프셋(-90px)은 useMagnetic 이 커서를 놓는 방식과 같다.
+  const placeAt = (i: number) => {
+    const el = ref.current;
+    const glow = glowRef.current;
+    if (!el || !glow) return;
+    glow.style.transform = `translate(${(POS[i].x / 100) * el.clientWidth - 90}px, ${(POS[i].y / 100) * el.clientHeight - 90}px)`;
+  };
+  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const next = (active + (e.key === 'ArrowRight' ? 1 : ORDERED.length - 1)) % ORDERED.length;
+      setEngaged(true);
+      set(next);
+      placeAt(next);
+    } else if (e.key === 'Enter') router.push(a.href);
+  };
 
   const backdrop = useMemo(
     () => (
@@ -164,9 +173,19 @@ export const NextGeneration = () => {
       <div
         ref={ref}
         onClick={() => router.push(a.href)}
+        onKeyDown={onKeyDown}
         onPointerEnter={() => setEngaged(true)}
         onPointerLeave={() => setEngaged(false)}
-        className="relative h-screen min-h-[560px] w-full cursor-pointer select-none"
+        // 키보드로도 고를 수 있게 포커스를 받는다 — 좌우 화살표로 부서, Enter 로 이동
+        tabIndex={0}
+        role="link"
+        aria-label={`${a.name} 바로가기 — 좌우 화살표로 다른 부서를 고릅니다`}
+        onFocus={() => {
+          setEngaged(true);
+          placeAt(active);
+        }}
+        onBlur={() => setEngaged(false)}
+        className="focus-visible:ring-b1-accent relative h-screen min-h-[560px] w-full cursor-pointer outline-none select-none focus-visible:ring-2 focus-visible:ring-inset"
         style={{ touchAction: 'none' }}
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto w-full max-w-[1320px] px-[6vw] pt-24 md:pt-28">

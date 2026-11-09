@@ -11,6 +11,7 @@ import type { HomeVideo } from '@/domains/home/api/homeVideoFeed';
 import { useHomeVideoFeed } from '@/domains/home/api/useHomeVideoFeed';
 import { LABELS } from '@/domains/home/data/homeVideo';
 import { useAudioFocus } from '@/shared/lib/audioFocus';
+import { useNearViewport } from '@/shared/lib/hooks/useNearViewport';
 import { cn } from '@/shared/lib/utils';
 import { createPlayer, type YTPlayer } from '@/shared/lib/youtubePlayer';
 
@@ -132,11 +133,14 @@ const Shell = ({ wall, children }: { wall?: ReactNode; children: ReactNode }) =>
 );
 
 const SECTION_CLASS = 'relative w-full overflow-hidden pt-12 pb-14 md:pt-16 md:pb-20';
-const HEAD_CLASS = 'mb-3 flex min-h-12 items-end justify-between gap-4 px-2 md:mb-4 md:gap-8 md:px-2.5';
+const HEAD_CLASS =
+  'mb-3 flex min-h-12 items-end justify-between gap-4 px-2 md:mb-4 md:gap-8 md:px-2.5';
 const BOARD_CLASS =
   'relative rounded-[26px] border border-white/70 bg-white/45 p-2 shadow-2xl shadow-b1-text/15 backdrop-blur-xl md:rounded-[32px] md:p-2.5';
-const SCREEN_CLASS = 'relative aspect-video w-full overflow-hidden rounded-[18px] md:rounded-[22px]';
-const THUMB_CLASS = 'sp-b-thumb relative block aspect-video shrink-0 overflow-hidden rounded-[10px] md:rounded-xl';
+const SCREEN_CLASS =
+  'relative aspect-video w-full overflow-hidden rounded-[18px] md:rounded-[22px]';
+const THUMB_CLASS =
+  'sp-b-thumb relative block aspect-video shrink-0 overflow-hidden rounded-[10px] md:rounded-xl';
 
 const Skeleton = () => (
   <section aria-label={SECTION_LABEL} aria-busy className={SECTION_CLASS}>
@@ -152,7 +156,13 @@ const Skeleton = () => (
         <div className="sp-b-scroll overflow-hidden">
           <div className="sp-b-row mx-auto flex w-max">
             {Array.from({ length: SKELETON_THUMBS }, (_, i) => (
-              <div key={i} className={cn(THUMB_CLASS, 'bg-b1-border ring-1 ring-white/80 motion-safe:animate-pulse')} />
+              <div
+                key={i}
+                className={cn(
+                  THUMB_CLASS,
+                  'bg-b1-border ring-1 ring-white/80 motion-safe:animate-pulse'
+                )}
+              />
             ))}
           </div>
         </div>
@@ -163,7 +173,17 @@ const Skeleton = () => (
 
 /* ───────────── 본체 ───────────── */
 
-type Bloom = { k: number; src: string; x: number; y: number; w: number; h: number; dx: number; dy: number; s: number };
+type Bloom = {
+  k: number;
+  src: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  dx: number;
+  dy: number;
+  s: number;
+};
 
 const Wall = ({ video, entering }: { video: HomeVideo; entering?: boolean }) => (
   <div className={cn('absolute inset-0', entering && 'sp-b-wall-in')}>
@@ -198,7 +218,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
   const playing = notices[mounted];
   const upcoming = notices[(index + 1) % n];
   const prev = prevIndex !== null && prevIndex !== index ? notices[prevIndex] : undefined;
-  const warm = notices.find((v) => v.id === warmId && v.id !== current.id && v.id !== upcoming.id);
+  const warm = notices.find(v => v.id === warmId && v.id !== current.id && v.id !== upcoming.id);
   const settled = index === mounted;
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -208,6 +228,8 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
   const barRef = useRef<HTMLSpanElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
   const swapTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // 유튜브 플레이어(IFrame API 스크립트 + iframe)는 릴이 한 화면 앞까지 왔을 때 만든다 — 첫 로딩에서 뺀다.
+  const near = useNearViewport(sectionRef, '100% 0px');
   const bloomSeq = useRef(0);
   const live = useRef({ index, mounted, soundOn: false, next: () => {} });
 
@@ -262,7 +284,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
   const single = n === 1;
   useEffect(() => {
     const el = screenRef.current;
-    if (!el) return;
+    if (!el || !near) return;
     let fallback: ReturnType<typeof setTimeout> | undefined;
     let watch: ReturnType<typeof setInterval> | undefined;
     const reveal = () => {
@@ -283,7 +305,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
       autoplay: !reduced,
       controls: reduced,
       loop: single,
-      onReady: (p) => {
+      onReady: p => {
         playerRef.current = p;
         const frame = p.getIframe();
         frame.title = playingTitle;
@@ -306,7 +328,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
       playerRef.current = null;
       destroy();
     };
-  }, [playingId, playingTitle, single]);
+  }, [playingId, playingTitle, single, near]);
 
   // 홈 단일 소리 규칙 — 다른 영상이 소리를 가져가면 내 것은 스스로 꺼진다
   useEffect(() => {
@@ -363,7 +385,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
     const read = () => {
       const l = sc.scrollLeft > 4;
       const r = sc.scrollLeft + sc.clientWidth < sc.scrollWidth - 4;
-      setEdge((e) => (e.l === l && e.r === r ? e : { l, r }));
+      setEdge(e => (e.l === l && e.r === r ? e : { l, r }));
     };
     const ro = new ResizeObserver(read);
     ro.observe(sc);
@@ -400,7 +422,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                     '--sp-b-s': bloom.s,
                   } as CSSProperties
                 }
-                onAnimationEnd={(e) => e.animationName === 'sp-b-bloom-move' && setBloom(null)}
+                onAnimationEnd={e => e.animationName === 'sp-b-bloom-move' && setBloom(null)}
               >
                 <Image src={bloom.src} alt="" fill sizes={THUMB_SIZES} className="object-cover" />
               </div>
@@ -429,12 +451,11 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
             type="button"
             onClick={toggleSound}
             aria-label={soundLabel}
-            aria-pressed={audio.active}
             className={cn(
               'focus-visible:ring-b1-accent focus-visible:ring-offset-b1-bg inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border text-[14px] font-medium transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 max-sm:w-11 sm:px-4',
               audio.active
                 ? 'border-b1-text bg-b1-text text-white'
-                : 'border-b1-border bg-b1-surface/80 text-b1-text hover:border-b1-sub',
+                : 'border-b1-border bg-b1-surface/80 text-b1-text hover:border-b1-sub'
             )}
           >
             {audio.active ? <Volume2 size={17} aria-hidden /> : <VolumeX size={17} aria-hidden />}
@@ -444,14 +465,35 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
 
         <div className={cn(BOARD_CLASS, hasQueue && 'sp-b-ledge')}>
           <div className={cn(SCREEN_CLASS, 'bg-b1-text')}>
-            <div ref={screenRef} className="sp-b-screen absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full" />
+            <div
+              ref={screenRef}
+              className="sp-b-screen absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full"
+            />
             <div
               aria-hidden
-              className={cn('sp-b-cover pointer-events-none absolute inset-0', cover ? 'opacity-100' : 'opacity-0')}
+              className={cn(
+                'sp-b-cover pointer-events-none absolute inset-0',
+                cover ? 'opacity-100' : 'opacity-0'
+              )}
             >
               {/* 띠에서 이미 받아 둔 작은 판이 먼저 깔리고, 큰 판이 도착하면 그 위에 얹힌다 — 덮는 순간에 빈 화면·이전 그림이 없다 */}
-              <Image key={`lo-${current.id}`} src={current.thumbnail} alt="" fill sizes={THUMB_SIZES} loading="eager" className="object-cover" />
-              <Image key={`hi-${current.id}`} src={current.thumbnail} alt="" fill sizes={SCREEN_SIZES} priority className="object-cover" />
+              <Image
+                key={`lo-${current.id}`}
+                src={current.thumbnail}
+                alt=""
+                fill
+                sizes={THUMB_SIZES}
+                loading="eager"
+                className="object-cover"
+              />
+              <Image
+                key={`hi-${current.id}`}
+                src={current.thumbnail}
+                alt=""
+                fill
+                sizes={SCREEN_SIZES}
+                className="object-cover"
+              />
               {hasQueue && (
                 <Image
                   key={`next-${upcoming.id}`}
@@ -492,7 +534,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                     <li key={v.id} className="flex">
                       <button
                         type="button"
-                        ref={(el) => {
+                        ref={el => {
                           thumbRefs.current[i] = el;
                         }}
                         onClick={() => go(i)}
@@ -506,20 +548,32 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                           'group bg-b1-border focus-visible:ring-b1-accent cursor-pointer ring-1 ring-white/80 outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
                           active
                             ? 'shadow-b1-text/40 -translate-y-2 shadow-xl'
-                            : 'shadow-b1-text/25 shadow-lg hover:-translate-y-1',
+                            : 'shadow-b1-text/25 shadow-lg hover:-translate-y-1'
                         )}
                       >
-                        <Image src={v.thumbnail} alt="" fill sizes={THUMB_SIZES} className="object-cover" />
+                        <Image
+                          src={v.thumbnail}
+                          alt=""
+                          fill
+                          sizes={THUMB_SIZES}
+                          className="object-cover"
+                        />
                         <span
                           aria-hidden
                           className={cn(
                             'sp-b-veil bg-b1-bg/25 absolute inset-0 group-hover:opacity-0 group-focus-visible:opacity-0',
-                            active && 'opacity-0',
+                            active && 'opacity-0'
                           )}
                         />
                         {active && (
-                          <span aria-hidden className="absolute inset-x-0 bottom-0 h-[3px] bg-white/40">
-                            <span ref={barRef} className="sp-b-bar bg-b1-accent block h-full origin-left" />
+                          <span
+                            aria-hidden
+                            className="absolute inset-x-0 bottom-0 h-[3px] bg-white/40"
+                          >
+                            <span
+                              ref={barRef}
+                              className="sp-b-bar bg-b1-accent block h-full origin-left"
+                            />
                           </span>
                         )}
                       </button>

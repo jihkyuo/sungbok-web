@@ -70,7 +70,8 @@ export default function Fan({ photos }: { photos: Photo[] }) {
         const y = T + d * C + (E - C) * spread(d);
         const w = bell(d);
         const rot = TILT * d * w;
-        cards[i].style.transform = `translate3d(0, ${y.toFixed(2)}px, 0) rotate(${rot.toFixed(3)}deg)`;
+        cards[i].style.transform =
+          `translate3d(0, ${y.toFixed(2)}px, 0) rotate(${rot.toFixed(3)}deg)`;
         cards[i].classList.toggle('fa-near', Math.abs(d) < R + 1.5);
       }
     };
@@ -91,7 +92,7 @@ export default function Fan({ photos }: { photos: Photo[] }) {
     const apply = () => {
       if (mq.matches) {
         stage.dataset.reduced = 'true';
-        cards.forEach((el) => {
+        cards.forEach(el => {
           el.style.transform = '';
           el.classList.remove('fa-near');
         });

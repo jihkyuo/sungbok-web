@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowRight, ArrowUpRight, Youtube } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { YoutubeIcon } from '@/shared/components/brand/YoutubeIcon';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,13 +10,7 @@ import { SectionTitle } from '@/domains/home/components/features/SectionTitle';
 import { Reveal } from '@/shared/components/features/Reveal';
 
 import { AmbientVideo } from './AmbientVideo';
-import {
-  ARCHIVE_HREF,
-  LATEST_SERMON,
-  SERMON_STILLS,
-  YOUTH,
-  YOUTH_CHANNEL_HREF,
-} from './data';
+import { ARCHIVE_HREF, LATEST_SERMON, SERMON_STILLS, YOUTH, YOUTH_CHANNEL_HREF } from './data';
 
 /**
  * 조합 시안 — 위: 설교(C 벤토 구조) / 아래: 청년 영상(J 레이어드 구조).
@@ -90,7 +85,7 @@ export const VariantCombo = () => (
             href={ARCHIVE_HREF}
             className="b1-card-hover bg-b1-text text-b1-bg flex h-full flex-col justify-between rounded-2xl p-5 no-underline"
           >
-            <Youtube size={18} className="opacity-80" />
+            <YoutubeIcon size={18} className="opacity-80" />
             <span className="text-[14px] leading-tight font-bold">
               설교
               <br />
@@ -128,7 +123,9 @@ export const VariantCombo = () => (
               </span>
             </div>
             <div className="absolute bottom-7 left-7 text-white">
-              <div className="text-[26px] font-bold tracking-[-0.01em] md:text-[34px]">청년 예배</div>
+              <div className="text-[26px] font-bold tracking-[-0.01em] md:text-[34px]">
+                청년 예배
+              </div>
               <div className="text-[13px] opacity-80">
                 {YOUTH.schedule} · {YOUTH.place}
               </div>
@@ -144,7 +141,7 @@ export const VariantCombo = () => (
           >
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FF0000] text-white">
-                <Youtube size={20} />
+                <YoutubeIcon size={20} />
               </span>
               <div>
                 <div className="b1-mono text-b1-muted text-[10px] tracking-[0.1em]">YOUTUBE</div>

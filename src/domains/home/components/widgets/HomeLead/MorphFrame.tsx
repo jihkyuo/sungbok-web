@@ -11,7 +11,7 @@
 import Image from 'next/image';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 
-import mainExterior from '@/assets/images/main/main01.jpg';
+import mainExterior from '@/assets/images/main/main01.webp';
 import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
 
 import { exteriorAlign, fullRect, type Rect } from './morphMath';

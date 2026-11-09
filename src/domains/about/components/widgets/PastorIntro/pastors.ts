@@ -2,8 +2,8 @@
 // 인사말·사진·서명은 기존 사이트 각 페이지(담임 2026-10-10, 원로 2026-10-11) 원문 그대로. 문단 안의 배열 = 원문 행갈이(구 단위).
 import pastorEmeritusSign from '@/assets/images/pastor-emeritus-sign.png';
 import pastorSign from '@/assets/images/pastor-sign.png';
-import pastorEmeritusPhoto from '@/assets/images/main/pastor-emeritus.jpg';
-import pastorPhoto from '@/assets/images/main/pastor.jpg';
+import pastorEmeritusPhoto from '@/assets/images/main/pastor-emeritus.webp';
+import pastorPhoto from '@/assets/images/main/pastor.webp';
 import type { StaticImageData } from 'next/image';
 
 export interface PastorProfile {

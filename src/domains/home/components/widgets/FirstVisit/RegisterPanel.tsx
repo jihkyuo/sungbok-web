@@ -6,6 +6,7 @@ import { ArrowRight, Check, ChevronLeft, Mail, Phone, UserPlus, X } from 'lucide
 import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useIsClient } from '@/shared/lib/hooks/useIsClient';
 import { cn } from '@/shared/lib/utils';
 
 import {
@@ -33,7 +34,7 @@ export function usePanelFlow() {
   const close = () => setOpen(false);
   const selectIntent = (k: IntentKey) => {
     setIntent(k);
-    const meta = INTENTS.find((i) => i.key === k);
+    const meta = INTENTS.find(i => i.key === k);
     setStep(meta?.kind === 'info' ? 'guide' : 'form');
   };
   const back = () => setStep('intent');
@@ -54,9 +55,7 @@ export type PanelFlow = ReturnType<typeof usePanelFlow>;
 // 홈 래퍼 `<div class="relative z-0">` 가 스태킹 컨텍스트를 만들어 fixed 오버레이를
 // 헤더(z-50) 아래로 가둔다. 오버레이는 body 로 포털해 컨텍스트를 탈출시킨다.
 function Portal({ children }: { children: ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  if (!useIsClient()) return null;
   return createPortal(children, document.body);
 }
 
@@ -104,7 +103,8 @@ export function MorphPanel({ flow }: { flow: PanelFlow }) {
 /* ── 단계 내용 ──────────────────────────────────────────────────── */
 const STEP_TITLE = (flow: PanelFlow): string => {
   if (flow.step === 'guide') return '새가족 과정 안내';
-  if (flow.step === 'form') return INTENTS.find((i) => i.key === flow.intent)?.label ?? SECTION.ctaLabel;
+  if (flow.step === 'form')
+    return INTENTS.find(i => i.key === flow.intent)?.label ?? SECTION.ctaLabel;
   if (flow.step === 'done') return '';
   return SECTION.ctaLabel;
 };
@@ -140,7 +140,7 @@ function IntentMenu({ onSelect }: { onSelect: (k: IntentKey) => void }) {
   return (
     <div className="flex flex-col gap-2.5">
       <p className="text-b1-sub mb-1 text-[13px] leading-[1.6]">필요한 항목을 선택해 주세요.</p>
-      {INTENTS.map((i) => (
+      {INTENTS.map(i => (
         <button
           key={i.key}
           type="button"
@@ -168,7 +168,7 @@ function GuidePanel({ onRegister }: { onRegister: () => void }) {
       <section>
         <div className="b1-mono text-b1-accent mb-3 text-[10px] tracking-[0.12em]">등록절차</div>
         <ol className="flex flex-col gap-3">
-          {REGISTER_STEPS.map((s) => (
+          {REGISTER_STEPS.map(s => (
             <li key={s.no} className="flex gap-3">
               <span className="bg-b1-accent-soft text-b1-accent mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold">
                 {s.no}
@@ -182,9 +182,11 @@ function GuidePanel({ onRegister }: { onRegister: () => void }) {
         </ol>
       </section>
       <section>
-        <div className="b1-mono text-b1-accent mb-3 text-[10px] tracking-[0.12em]">새가족 5주 과정</div>
+        <div className="b1-mono text-b1-accent mb-3 text-[10px] tracking-[0.12em]">
+          새가족 5주 과정
+        </div>
         <ul className="flex flex-col gap-2">
-          {COURSE_WEEKS.map((w) => (
+          {COURSE_WEEKS.map(w => (
             <li key={w.wk} className="border-b1-border bg-b1-bg rounded-lg border px-3.5 py-2.5">
               <div className="text-b1-text text-[12.5px] font-bold">
                 <span className="text-b1-accent">{w.wk}</span> {w.title}
@@ -223,17 +225,17 @@ function GuidePanel({ onRegister }: { onRegister: () => void }) {
 }
 
 function MiniForm({ intent, onSubmit }: { intent: IntentKey; onSubmit: () => void }) {
-  const fields = FORM_FIELDS.filter((f) => !(intent === 'inquiry' && f.name === 'visit'));
+  const fields = FORM_FIELDS.filter(f => !(intent === 'inquiry' && f.name === 'visit'));
   return (
     <form
-      onSubmit={(e) => {
+      onSubmit={e => {
         e.preventDefault();
         // TODO: 전송처(담당자 메일) 연동 — 현재 미동작, 제출 시 완료 화면만 표시.
         onSubmit();
       }}
       className="flex flex-col gap-4"
     >
-      {fields.map((f) => (
+      {fields.map(f => (
         <label key={f.name} className="block">
           <span className="text-b1-sub mb-1.5 block text-[12px] font-semibold">
             {f.label}
@@ -246,12 +248,12 @@ function MiniForm({ intent, onSubmit }: { intent: IntentKey; onSubmit: () => voi
           {f.type === 'textarea' ? (
             <textarea
               rows={3}
-              className="border-b1-border bg-b1-surface text-b1-text focus:border-b1-accent w-full resize-none rounded-lg border px-3.5 py-2.5 text-[14px] outline-none transition-colors"
+              className="border-b1-border bg-b1-surface text-b1-text focus:border-b1-accent w-full resize-none rounded-lg border px-3.5 py-2.5 text-[14px] transition-colors outline-none"
             />
           ) : (
             <input
               type={f.type}
-              className="border-b1-border bg-b1-surface text-b1-text focus:border-b1-accent w-full rounded-lg border px-3.5 py-2.5 text-[14px] outline-none transition-colors"
+              className="border-b1-border bg-b1-surface text-b1-text focus:border-b1-accent w-full rounded-lg border px-3.5 py-2.5 text-[14px] transition-colors outline-none"
             />
           )}
         </label>

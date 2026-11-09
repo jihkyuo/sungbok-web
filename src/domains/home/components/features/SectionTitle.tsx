@@ -15,13 +15,7 @@ interface Props {
 /**
  * 홈 섹션 타이틀 — 2티어 규격. 위계는 유지하되 크기 체계를 통일.
  */
-export const SectionTitle = ({
-  title,
-  eyebrow,
-  action,
-  tier = 'standard',
-  className,
-}: Props) => {
+export const SectionTitle = ({ title, eyebrow, action, tier = 'standard', className }: Props) => {
   return (
     <div className={cn('mb-8 md:mb-10', className)}>
       {eyebrow && (

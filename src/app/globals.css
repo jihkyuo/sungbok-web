@@ -6,9 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans:
-    'Pretendard Variable', Pretendard, var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   /* B1 Sky palette — bright, modern, trustworthy (blue-undertone neutrals) */
   --color-b1-bg: #f6fafe;
@@ -263,9 +262,9 @@
   );
 }
 
-/* 표어 — 붓글씨 서예체 (layout.tsx 에서 폰트 로드) */
+/* 표어 — 붓글씨 서예체 (layout.tsx 의 next/font 가 --font-brush 로 주입) */
 .b1-brush {
-  font-family: 'Nanum Brush Script', cursive;
+  font-family: var(--font-brush), cursive;
 }
 
 /* 스크롤 큐 — 액센트 점이 아래로 흘러내림 */

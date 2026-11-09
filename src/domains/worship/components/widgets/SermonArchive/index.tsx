@@ -47,7 +47,7 @@ export const SermonArchive = () => (
             src={POSTER}
             alt=""
             fill
-            priority
+            preload
             className="object-cover"
             sizes="(min-width: 768px) 66vw, 100vw"
           />

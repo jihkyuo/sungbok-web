@@ -51,9 +51,8 @@ export const DockNav = () => {
     setLefts(next);
   }, []);
 
-  useEffect(() => {
-    if (open && hover) setShown(hover);
-  }, [open, hover]);
+  // 렌더 중 상태 맞추기(React 권장 패턴) — 열린 섹션이 바뀌면 같은 렌더에서 반영해 패널이 한 프레임 늦지 않게.
+  if (open && hover && hover !== shown) setShown(hover);
 
   useEffect(() => {
     measure();

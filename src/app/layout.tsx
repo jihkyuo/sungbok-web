@@ -2,23 +2,25 @@ import { AppProvider } from '@/app/_provider';
 import { Footer } from '@/shared/components/layout/Footer';
 import { Header } from '@/shared/components/layout/Header';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
+import { JetBrains_Mono, Nanum_Brush_Script } from 'next/font/google';
+// 본문 폰트 — Pretendard 를 같은 출처(/_next/static/media)에서 서빙한다. 외부 CDN 연결(DNS·TLS)과
+// 렌더 차단 외부 CSS 를 없앤다. dynamic-subset 이라 화면에 쓰인 글자 묶음만 받는다(전체 2MB 아님).
+import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 import './globals.css';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
 
 const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
+});
+
+// 표어용 붓글씨 서예체 — 빌드 때 받아 자체 호스팅. 한글 조각은 미리 받지 않고 쓰일 때 받는다.
+const nanumBrush = Nanum_Brush_Script({
+  variable: '--font-brush',
+  weight: '400',
+  subsets: ['latin'],
+  preload: false,
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -37,24 +39,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        <link
-          rel="stylesheet"
-          as="style"
-          crossOrigin="anonymous"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"
-        />
-        {/* 표어용 붓글씨 서예체 */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body
         suppressHydrationWarning
-        className={`${jetbrainsMono.variable} ${geistSans.variable} ${geistMono.variable} bg-b1-bg text-b1-text flex min-h-dvh flex-col font-sans antialiased`}
+        className={`${jetbrainsMono.variable} ${nanumBrush.variable} bg-b1-bg text-b1-text flex min-h-dvh flex-col font-sans antialiased`}
       >
         <AppProvider>
           <Header />

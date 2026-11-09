@@ -17,7 +17,7 @@ import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import mainExterior from '@/assets/images/main/main01.jpg';
+import mainExterior from '@/assets/images/main/main01.webp';
 import { GapckSymbol } from '@/shared/components/brand/GapckSymbol';
 
 const PHOTO_MASK =
@@ -103,7 +103,7 @@ export const HomeHero = ({ copyClassName }: { copyClassName?: string } = {}) => 
         src={mainExterior}
         alt="성복교회 전경"
         fill
-        priority
+        preload
         quality={85}
         sizes="(max-width:768px) 96vw, 74vw"
         className="object-cover object-[55%_50%]"

@@ -2,13 +2,13 @@
 // TODO(콘텐츠): 청년 영상(STANDIN_VIDEO)·청년부 채널(YOUTH_CHANNEL_HREF)·설교 메타를 실제 값으로 교체.
 import type { StaticImageData } from 'next/image';
 
-import dep01 from '@/assets/images/main/department/dep01.jpg';
-import dep03 from '@/assets/images/main/department/dep03.jpg';
-import dep05 from '@/assets/images/main/department/dep05.jpg';
-import dep07 from '@/assets/images/main/department/dep07.jpg';
-import dep09 from '@/assets/images/main/department/dep09.jpg';
-import main01 from '@/assets/images/main/main01.jpg';
-import worship from '@/assets/images/main/worship.jpg';
+import dep01 from '@/assets/images/main/department/dep01.webp';
+import dep03 from '@/assets/images/main/department/dep03.webp';
+import dep05 from '@/assets/images/main/department/dep05.webp';
+import dep07 from '@/assets/images/main/department/dep07.webp';
+import dep09 from '@/assets/images/main/department/dep09.webp';
+import main01 from '@/assets/images/main/main01.webp';
+import worship from '@/assets/images/main/worship.webp';
 
 /**
  * 청년 예배 앰비언트 영상 — 효과 시연용 stand-in(CC0). 실제 청년 예배 영상으로 교체 예정.

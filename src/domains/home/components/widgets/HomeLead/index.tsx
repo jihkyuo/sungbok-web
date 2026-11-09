@@ -18,7 +18,7 @@
 import Image from 'next/image';
 import { Fragment, useEffect, useRef } from 'react';
 
-import mainExterior from '@/assets/images/main/main01.jpg';
+import mainExterior from '@/assets/images/main/main01.webp';
 
 import { FLOW_PHOTOS, THIRD_PHOTOS } from './flowPhotos';
 import { EXT_G, MorphFrame, type MorphFrameHandle } from './MorphFrame';

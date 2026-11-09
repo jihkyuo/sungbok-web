@@ -16,7 +16,7 @@ export const PastorIntro = ({ pastor }: { pastor: PastorProfile }) => (
           src={pastor.photo}
           alt={`${pastor.role} ${pastor.name}`}
           fill
-          priority
+          preload
           className="object-cover object-top"
           sizes="(min-width: 1320px) 480px, (min-width: 768px) 36vw, 55vw"
         />

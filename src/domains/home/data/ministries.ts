@@ -1,14 +1,14 @@
 import type { StaticImageData } from 'next/image';
 
-import dep01Img from '@/assets/images/main/department/dep01.jpg';
-import dep02Img from '@/assets/images/main/department/dep02.jpg';
-import dep03Img from '@/assets/images/main/department/dep03.jpg';
-import dep04Img from '@/assets/images/main/department/dep04.jpg';
-import dep05Img from '@/assets/images/main/department/dep05.jpg';
-import dep06Img from '@/assets/images/main/department/dep06.jpg';
-import dep07Img from '@/assets/images/main/department/dep07.jpg';
-import dep08Img from '@/assets/images/main/department/dep08.jpg';
-import dep09Img from '@/assets/images/main/department/dep09.jpg';
+import dep01Img from '@/assets/images/main/department/dep01.webp';
+import dep02Img from '@/assets/images/main/department/dep02.webp';
+import dep03Img from '@/assets/images/main/department/dep03.webp';
+import dep04Img from '@/assets/images/main/department/dep04.webp';
+import dep05Img from '@/assets/images/main/department/dep05.webp';
+import dep06Img from '@/assets/images/main/department/dep06.webp';
+import dep07Img from '@/assets/images/main/department/dep07.webp';
+import dep08Img from '@/assets/images/main/department/dep08.webp';
+import dep09Img from '@/assets/images/main/department/dep09.webp';
 
 export interface Ministry {
   name: string;

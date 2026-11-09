@@ -1,0 +1,12 @@
+# 빌드 컨텍스트에서 뺀다 — 로컬(macOS) node_modules 의 네이티브 바이너리(sharp 등)가
+# 컨테이너에서 설치한 리눅스 것을 덮어쓰지 않게, 그리고 컨텍스트 전송을 가볍게.
+node_modules
+.next
+.git
+coverage
+.vercel
+.claude
+claude-plugins
+*.log
+.env*
+!.env.example

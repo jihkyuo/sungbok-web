@@ -59,14 +59,14 @@ const ServiceCard = ({ service }: { service: WorshipServiceSummary }) => {
 
 const WeekdayStrip = () => (
   <div className="bg-b1-border border-b1-border grid grid-cols-3 gap-px overflow-hidden rounded-2xl border">
-    {WEEKDAY_SECTIONS.map((sec) => (
+    {WEEKDAY_SECTIONS.map(sec => (
       <div key={sec.day} className="bg-b1-surface px-7 py-6">
         <div className="mb-4 flex items-center gap-2.5">
           <span className="bg-b1-accent h-5 w-[4px] rounded-full" />
           <h4 className="text-b1-text m-0 text-[19px] font-bold">{sec.day}</h4>
         </div>
         <ul className="m-0 flex list-none flex-col gap-3.5 p-0">
-          {sec.services.map((s) => (
+          {sec.services.map(s => (
             <li key={s.name} className="flex items-baseline gap-3">
               <span className="b1-mono text-b1-accent text-[17px] font-bold whitespace-nowrap">
                 {s.time}
@@ -98,7 +98,7 @@ export const WorshipTimesDesktop = () => {
         <div className="relative my-9">
           <div className="bg-b1-accent absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full" />
           <div className="relative grid" style={cols}>
-            {SUNDAY_TIMES.map((t) => (
+            {SUNDAY_TIMES.map(t => (
               <div key={t} className="flex justify-center">
                 <TimePill time={t} genOnly={sundayAt(t).every(isGenService)} />
               </div>
@@ -109,11 +109,11 @@ export const WorshipTimesDesktop = () => {
         {/* 1행 = 장년 주일 N부 전용. 장년 예배가 없는 시각(오후 2:00)은 비워 둔다 */}
         <LaneLabel label="장년" />
         <div className="mt-3 grid items-start gap-x-4" style={cols}>
-          {SUNDAY_TIMES.map((t) => (
+          {SUNDAY_TIMES.map(t => (
             <div key={t} className="flex flex-col gap-2.5">
               {sundayAt(t)
-                .filter((s) => !isGenService(s))
-                .map((s) => (
+                .filter(s => !isGenService(s))
+                .map(s => (
                   <ServiceCard key={s.name} service={s} />
                 ))}
             </div>
@@ -125,11 +125,11 @@ export const WorshipTimesDesktop = () => {
           <LaneLabel label="다음세대" />
         </div>
         <div className="mt-3 grid items-start gap-x-4" style={cols}>
-          {SUNDAY_TIMES.map((t) => (
+          {SUNDAY_TIMES.map(t => (
             <div key={t} className="flex flex-col gap-2.5">
               {sundayAt(t)
                 .filter(isGenService)
-                .map((s) => (
+                .map(s => (
                   <ServiceCard key={s.name} service={s} />
                 ))}
             </div>

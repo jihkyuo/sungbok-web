@@ -24,18 +24,106 @@ const GAP = 24;
 /** 8장 주기 — col: 1440 격자 자리, mcol: 390 자리, ar: 크롭 비율, rot: 정지 기울기(deg), top: 앞 행 밑으로 파고드는 양(px, 390 은 0.35배), z: 더미 순서(킵)
  *  drot: 공중에서 더 기운 양(deg, 부호 = rot 과 같음), dx: 공중 가로 밀림(px, 부호 = 기울어진 쪽), ms: 놓이는 시간 */
 const CYCLE = [
-  { col: '1 / 11', mcol: '1 / 13', ar: '21 / 9', rot: -1.6, pos: 'center 40%', top: 0, z: 2, drot: -8, dx: -16, ms: 1200 },
-  { col: '1 / 6', mcol: '1 / 11', ar: '1 / 1', rot: -2.8, pos: 'center 40%', top: -150, z: 1, drot: -10, dx: -22, ms: 1280 },
-  { col: '7 / 13', mcol: '3 / 13', ar: '4 / 3', rot: 2.4, pos: 'center 50%', top: -60, z: 3, drot: 9, dx: 18, ms: 1120 },
-  { col: '3 / 12', mcol: '1 / 13', ar: '3 / 2', rot: 1.2, pos: 'center 40%', top: -90, z: 2, drot: 8, dx: 14, ms: 1240 },
-  { col: '1 / 5', mcol: '1 / 10', ar: '3 / 4', rot: -3.4, pos: 'center 25%', top: -140, z: 4, drot: -11, dx: -22, ms: 1100 },
-  { col: '5 / 13', mcol: '2 / 13', ar: '16 / 10', rot: 0.8, pos: 'center 35%', top: 20, z: 1, drot: 8, dx: 14, ms: 1300 },
-  { col: '2 / 9', mcol: '1 / 12', ar: '4 / 3', rot: -1.4, pos: 'center 45%', top: -70, z: 3, drot: -9, dx: -18, ms: 1160 },
-  { col: '9 / 13', mcol: '3 / 13', ar: '4 / 5', rot: 3.2, pos: 'center 30%', top: 60, z: 2, drot: 10, dx: 20, ms: 1220 },
+  {
+    col: '1 / 11',
+    mcol: '1 / 13',
+    ar: '21 / 9',
+    rot: -1.6,
+    pos: 'center 40%',
+    top: 0,
+    z: 2,
+    drot: -8,
+    dx: -16,
+    ms: 1200,
+  },
+  {
+    col: '1 / 6',
+    mcol: '1 / 11',
+    ar: '1 / 1',
+    rot: -2.8,
+    pos: 'center 40%',
+    top: -150,
+    z: 1,
+    drot: -10,
+    dx: -22,
+    ms: 1280,
+  },
+  {
+    col: '7 / 13',
+    mcol: '3 / 13',
+    ar: '4 / 3',
+    rot: 2.4,
+    pos: 'center 50%',
+    top: -60,
+    z: 3,
+    drot: 9,
+    dx: 18,
+    ms: 1120,
+  },
+  {
+    col: '3 / 12',
+    mcol: '1 / 13',
+    ar: '3 / 2',
+    rot: 1.2,
+    pos: 'center 40%',
+    top: -90,
+    z: 2,
+    drot: 8,
+    dx: 14,
+    ms: 1240,
+  },
+  {
+    col: '1 / 5',
+    mcol: '1 / 10',
+    ar: '3 / 4',
+    rot: -3.4,
+    pos: 'center 25%',
+    top: -140,
+    z: 4,
+    drot: -11,
+    dx: -22,
+    ms: 1100,
+  },
+  {
+    col: '5 / 13',
+    mcol: '2 / 13',
+    ar: '16 / 10',
+    rot: 0.8,
+    pos: 'center 35%',
+    top: 20,
+    z: 1,
+    drot: 8,
+    dx: 14,
+    ms: 1300,
+  },
+  {
+    col: '2 / 9',
+    mcol: '1 / 12',
+    ar: '4 / 3',
+    rot: -1.4,
+    pos: 'center 45%',
+    top: -70,
+    z: 3,
+    drot: -9,
+    dx: -18,
+    ms: 1160,
+  },
+  {
+    col: '9 / 13',
+    mcol: '3 / 13',
+    ar: '4 / 5',
+    rot: 3.2,
+    pos: 'center 30%',
+    top: 60,
+    z: 2,
+    drot: 10,
+    dx: 20,
+    ms: 1220,
+  },
 ] as const;
 
 const spanOf = (col: string) => {
-  const [a, b] = col.split('/').map((s) => Number(s.trim()));
+  const [a, b] = col.split('/').map(s => Number(s.trim()));
   return b - a;
 };
 
@@ -92,7 +180,7 @@ export default function Landing({ photos }: { photos: Photo[] }) {
 
     /* 놓기: 선을 넘은 장을 위에서부터 순서대로 놓는다. 한 번 놓이면 끝 — 관찰도 그만둔다 */
     const land = (entries: IntersectionObserverEntry[]) => {
-      const fresh = entries.filter((e) => (e.target as HTMLElement).dataset.landed !== 'true');
+      const fresh = entries.filter(e => (e.target as HTMLElement).dataset.landed !== 'true');
       /* 이미 지나간 장(스크롤 복원·뒤로 가기): 공연 없이 놓인 채로 둔다 */
       for (const e of fresh) {
         if (!e.isIntersecting && e.boundingClientRect.bottom < 0) {
@@ -103,13 +191,15 @@ export default function Landing({ photos }: { photos: Photo[] }) {
         }
       }
       const batch = fresh
-        .filter((e) => e.isIntersecting && (e.target as HTMLElement).dataset.landed !== 'true')
+        .filter(e => e.isIntersecting && (e.target as HTMLElement).dataset.landed !== 'true')
         .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
       batch.forEach((e, i) => {
         const n = e.target as HTMLElement;
         n.style.setProperty('--ld-delay', `${i * STAGGER_MS}ms`);
         n.style.willChange = 'transform'; // 놓이는 동안만 — 40장 전부에 걸지 않는다
-        n.addEventListener('transitionend', () => n.style.removeProperty('will-change'), { once: true });
+        n.addEventListener('transitionend', () => n.style.removeProperty('will-change'), {
+          once: true,
+        });
         n.dataset.landed = 'true';
         io?.unobserve(n);
       });
@@ -121,12 +211,12 @@ export default function Landing({ photos }: { photos: Photo[] }) {
       seam();
       if (mq.matches) {
         el.dataset.reduced = 'true';
-        items.forEach((n) => (n.dataset.landed = 'true'));
+        items.forEach(n => (n.dataset.landed = 'true'));
         return;
       }
       delete el.dataset.reduced;
       io = new IntersectionObserver(land, { threshold: LAND_VISIBLE });
-      items.forEach((n) => {
+      items.forEach(n => {
         if (n.dataset.landed !== 'true') io?.observe(n);
       });
     };

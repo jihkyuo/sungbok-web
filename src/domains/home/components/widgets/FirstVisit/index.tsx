@@ -6,7 +6,7 @@
 
 import { ArrowRight } from 'lucide-react';
 
-import bg from '@/assets/images/main/first-visit.jpg';
+import bg from '@/assets/images/main/first-visit.webp';
 
 import { SECTION } from './data';
 import { MorphPanel, usePanelFlow } from './RegisterPanel';

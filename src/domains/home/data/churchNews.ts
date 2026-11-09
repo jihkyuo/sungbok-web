@@ -1,10 +1,10 @@
 import type { StaticImageData } from 'next/image';
 
-import dep02Img from '@/assets/images/main/department/dep02.jpg';
-import dep03Img from '@/assets/images/main/department/dep03.jpg';
-import dep04Img from '@/assets/images/main/department/dep04.jpg';
-import dep07Img from '@/assets/images/main/department/dep07.jpg';
-import dep08Img from '@/assets/images/main/department/dep08.jpg';
+import dep02Img from '@/assets/images/main/department/dep02.webp';
+import dep03Img from '@/assets/images/main/department/dep03.webp';
+import dep04Img from '@/assets/images/main/department/dep04.webp';
+import dep07Img from '@/assets/images/main/department/dep07.webp';
+import dep08Img from '@/assets/images/main/department/dep08.webp';
 
 // 홈 '교회 소식' 섹션 데이터.
 // 현재는 placeholder(목업 + stand-in 이미지). 실제 소식 연동·이미지 규칙은 후속.

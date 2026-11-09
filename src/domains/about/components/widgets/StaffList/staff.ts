@@ -1,23 +1,23 @@
 // 교회소개 › 섬기는 이들 명단. 기존 사이트 「섬기는 이들」 게시판(bo_table=0104, 2026-10-25 수집) 원문 순서·표기 그대로.
 // 사진은 같은 게시판 원본을 최대 1000px JPEG 로 정리해 assets/images/staff 에 둔 것.
 // 단 이원효·임경일·최미정·최주찬·이진희·이명화·천지현 7장은 게시판에 275×350 썸네일만 있어 저해상도 그대로(실사진 수신 시 교체).
-import choJunghan from '@/assets/images/staff/cho-junghan.jpg';
-import choiJuchan from '@/assets/images/staff/choi-juchan.jpg';
-import choiMijung from '@/assets/images/staff/choi-mijung.jpg';
-import choiWonjae from '@/assets/images/staff/choi-wonjae.jpg';
-import chunJihyun from '@/assets/images/staff/chun-jihyun.jpg';
-import jungHwakyung from '@/assets/images/staff/jung-hwakyung.jpg';
-import kimJunghan from '@/assets/images/staff/kim-junghan.jpg';
-import kimMinki from '@/assets/images/staff/kim-minki.jpg';
-import leeJinhee from '@/assets/images/staff/lee-jinhee.jpg';
-import leeMyunghwa from '@/assets/images/staff/lee-myunghwa.jpg';
-import leeOkgeun from '@/assets/images/staff/lee-okgeun.jpg';
-import leeWonhyo from '@/assets/images/staff/lee-wonhyo.jpg';
-import limKyungil from '@/assets/images/staff/lim-kyungil.jpg';
-import parkByungwook from '@/assets/images/staff/park-byungwook.jpg';
-import shimHeungsook from '@/assets/images/staff/shim-heungsook.jpg';
-import shinMija from '@/assets/images/staff/shin-mija.jpg';
-import yangYoungbok from '@/assets/images/staff/yang-youngbok.jpg';
+import choJunghan from '@/assets/images/staff/cho-junghan.webp';
+import choiJuchan from '@/assets/images/staff/choi-juchan.webp';
+import choiMijung from '@/assets/images/staff/choi-mijung.webp';
+import choiWonjae from '@/assets/images/staff/choi-wonjae.webp';
+import chunJihyun from '@/assets/images/staff/chun-jihyun.webp';
+import jungHwakyung from '@/assets/images/staff/jung-hwakyung.webp';
+import kimJunghan from '@/assets/images/staff/kim-junghan.webp';
+import kimMinki from '@/assets/images/staff/kim-minki.webp';
+import leeJinhee from '@/assets/images/staff/lee-jinhee.webp';
+import leeMyunghwa from '@/assets/images/staff/lee-myunghwa.webp';
+import leeOkgeun from '@/assets/images/staff/lee-okgeun.webp';
+import leeWonhyo from '@/assets/images/staff/lee-wonhyo.webp';
+import limKyungil from '@/assets/images/staff/lim-kyungil.webp';
+import parkByungwook from '@/assets/images/staff/park-byungwook.webp';
+import shimHeungsook from '@/assets/images/staff/shim-heungsook.webp';
+import shinMija from '@/assets/images/staff/shin-mija.webp';
+import yangYoungbok from '@/assets/images/staff/yang-youngbok.webp';
 import type { StaticImageData } from 'next/image';
 
 export interface StaffMember {

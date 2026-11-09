@@ -25,17 +25,17 @@ export const FirstVisit = () => {
         <div className="relative z-10 w-full px-[6vw]">
           <div className="mx-auto max-w-[1320px]">
             <div className="max-w-[460px] rounded-3xl border border-white/25 bg-white/10 p-8 text-white backdrop-blur-md md:p-10">
-              <div className="b1-mono mb-4 text-[11px] tracking-[0.2em] text-white/80">
+              <div className="b1-mono mb-4 text-eyebrow tracking-[0.2em] text-white/80">
                 {SECTION.eyebrow}
               </div>
               <h2 className="m-0 text-[30px] leading-[1.12] font-bold tracking-[-0.02em] md:text-[40px]">
                 {SECTION.headingShort}
               </h2>
-              <p className="mt-4 text-[15px] leading-[1.8] text-white/90">{SECTION.lead}</p>
+              <p className="mt-4 text-body-sm leading-[1.8] text-white/90">{SECTION.lead}</p>
               <button
                 type="button"
                 onClick={flow.openPanel}
-                className="text-b1-accent mt-7 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-[14px] font-bold transition-transform hover:-translate-y-0.5"
+                className="text-b1-accent mt-7 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-label font-bold transition-transform hover:-translate-y-0.5"
               >
                 {SECTION.ctaLabel}
                 <ArrowRight size={16} />

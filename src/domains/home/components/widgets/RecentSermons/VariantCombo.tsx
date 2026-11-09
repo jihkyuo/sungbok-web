@@ -27,7 +27,7 @@ export const VariantCombo = () => (
           action={
             <Link
               href={ARCHIVE_HREF}
-              className="b1-link text-b1-sub text-[16px] font-medium no-underline"
+              className="b1-link text-b1-sub text-body font-medium no-underline"
             >
               설교 전체 보기
               <ArrowRight size={15} strokeWidth={2} />
@@ -46,13 +46,13 @@ export const VariantCombo = () => (
             <AmbientVideo className="absolute inset-0 h-full w-full" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
             <div className="absolute bottom-6 left-6 text-white">
-              <div className="b1-mono text-[11px] tracking-[0.06em] opacity-85">
+              <div className="b1-mono text-caption tracking-[0.06em] opacity-85">
                 최근 설교 · {LATEST_SERMON.date}
               </div>
               <div className="mt-1 text-[24px] font-bold tracking-[-0.01em]">
                 {LATEST_SERMON.title}
               </div>
-              <div className="text-[13px] opacity-85">
+              <div className="text-caption opacity-85">
                 {LATEST_SERMON.scripture} · {LATEST_SERMON.preacher}
               </div>
             </div>
@@ -68,12 +68,12 @@ export const VariantCombo = () => (
             <Image src={SERMON_STILLS[1].img} alt="" fill sizes="40vw" className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
             <div className="absolute inset-0 flex flex-col justify-between p-5 text-white">
-              <span className="b1-mono text-[10px] tracking-[0.06em] opacity-80">
+              <span className="b1-mono text-caption tracking-[0.06em] opacity-80">
                 지난 설교 · {SERMON_STILLS[1].date}
               </span>
               <div>
-                <div className="text-[16px] font-bold">{SERMON_STILLS[1].title}</div>
-                <div className="text-[12px] opacity-80">{SERMON_STILLS[1].scripture}</div>
+                <div className="text-body font-bold">{SERMON_STILLS[1].title}</div>
+                <div className="text-caption opacity-80">{SERMON_STILLS[1].scripture}</div>
               </div>
             </div>
           </Link>
@@ -86,7 +86,7 @@ export const VariantCombo = () => (
             className="b1-card-hover bg-b1-text text-b1-bg flex h-full flex-col justify-between rounded-2xl p-5 no-underline"
           >
             <YoutubeIcon size={18} className="opacity-80" />
-            <span className="text-[14px] leading-tight font-bold">
+            <span className="text-label leading-tight font-bold">
               설교
               <br />
               유튜브
@@ -97,14 +97,14 @@ export const VariantCombo = () => (
         {/* 최신 설교 메타 */}
         <Reveal delay={200} className="md:col-span-3">
           <div className="bg-b1-accent-soft flex h-full flex-col justify-between rounded-2xl p-5">
-            <span className="b1-mono text-b1-accent text-[10px] tracking-[0.08em]">
+            <span className="b1-mono text-b1-accent text-eyebrow tracking-[0.08em]">
               설교 · {SERMON_STILLS[2].date}
             </span>
             <div>
-              <div className="text-b1-text text-[16px] font-bold tracking-[-0.01em]">
+              <div className="text-b1-text text-body font-bold tracking-[-0.01em]">
                 {SERMON_STILLS[2].title}
               </div>
-              <div className="text-b1-sub text-[12px]">{SERMON_STILLS[2].scripture}</div>
+              <div className="text-b1-sub text-caption">{SERMON_STILLS[2].scripture}</div>
             </div>
           </div>
         </Reveal>
@@ -118,7 +118,7 @@ export const VariantCombo = () => (
           <AmbientVideo className="aspect-[21/9] w-full rounded-3xl">
             <div className="absolute inset-0 bg-gradient-to-tr from-black/55 via-transparent to-transparent" />
             <div className="absolute top-7 left-7">
-              <span className="b1-mono rounded-full bg-white/15 px-3 py-1 text-[10px] tracking-[0.12em] text-white backdrop-blur">
+              <span className="b1-mono text-eyebrow rounded-full bg-white/15 px-3 py-1 tracking-[0.12em] text-white backdrop-blur">
                 ● 청년 예배 · YOUTH WORSHIP
               </span>
             </div>
@@ -126,7 +126,7 @@ export const VariantCombo = () => (
               <div className="text-[26px] font-bold tracking-[-0.01em] md:text-[34px]">
                 청년 예배
               </div>
-              <div className="text-[13px] opacity-80">
+              <div className="text-caption opacity-80">
                 {YOUTH.schedule} · {YOUTH.place}
               </div>
             </div>
@@ -144,13 +144,13 @@ export const VariantCombo = () => (
                 <YoutubeIcon size={20} />
               </span>
               <div>
-                <div className="b1-mono text-b1-muted text-[10px] tracking-[0.1em]">YOUTUBE</div>
-                <div className="text-b1-text text-[16px] font-bold tracking-[-0.01em]">
+                <div className="b1-mono text-b1-muted text-eyebrow tracking-[0.1em]">YOUTUBE</div>
+                <div className="text-b1-text text-body font-bold tracking-[-0.01em]">
                   청년부 유튜브 채널
                 </div>
               </div>
             </div>
-            <span className="bg-b1-text inline-flex shrink-0 items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-white">
+            <span className="bg-b1-text text-caption inline-flex shrink-0 items-center gap-1 rounded-full px-4 py-2 font-semibold text-white">
               채널 가기 <ArrowUpRight size={15} />
             </span>
           </Link>

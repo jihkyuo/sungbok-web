@@ -437,11 +437,11 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
         <div className={HEAD_CLASS}>
           <h3
             key={current.id}
-            className="sp-b-title text-b1-text pb-1 text-[17px] leading-[1.4] font-semibold tracking-[-0.015em] text-balance md:text-[21px]"
+            className="sp-b-title text-b1-text pb-1 text-title leading-[1.4] font-semibold tracking-[-0.015em] text-balance md:text-[21px]"
           >
             {current.title}
             {current.durationSec !== null && (
-              <span className="b1-mono text-b1-sub ml-2.5 text-[13px] font-normal tracking-normal whitespace-nowrap md:text-[14px]">
+              <span className="b1-mono text-b1-sub ml-2.5 text-caption font-normal tracking-normal whitespace-nowrap md:text-body-sm">
                 <span className="sr-only">길이 </span>
                 {clock(current.durationSec)}
               </span>
@@ -452,7 +452,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
             onClick={toggleSound}
             aria-label={soundLabel}
             className={cn(
-              'focus-visible:ring-b1-accent focus-visible:ring-offset-b1-bg inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border text-[14px] font-medium transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 max-sm:w-11 sm:px-4',
+              'focus-visible:ring-b1-accent focus-visible:ring-offset-b1-bg inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full border text-label font-medium transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-offset-2 max-sm:w-11 sm:px-4',
               audio.active
                 ? 'border-b1-text bg-b1-text text-white'
                 : 'border-b1-border bg-b1-surface/80 text-b1-text hover:border-b1-sub'

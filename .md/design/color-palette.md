@@ -113,7 +113,35 @@ CSS 변수 정의 위치: [src/app/globals.css](../../src/app/globals.css) 의 `
 **주의 사항**
 
 - `b1-muted`와 `b1-accent2`는 18px 미만 노멀 굵기 본문에는 권장하지 않음.
-- 다크 모드는 별도 토큰(`.dark` 셀렉터)이 정의되어 있으며 본 팔레트와 독립적으로 관리됨.
+- 다크 모드는 지원하지 않는다(`.dark` 블록 제거, 2026-11-05 — 설계 [design-system-design §5.1](../specs/2026-11-05-design-system-design.md)).
+
+## 상태 색 (관리자 화면의 저장 완료·경고·오류)
+
+`b1-sunday`는 주일 강조 전용이라 오류색으로 쓰지 않는다. 상태 표시는 아래 쌍(글자색 + 연한 배경)만 쓴다.
+
+| 토큰 | 값 | 흰 배경 대비 | `b1-bg` 대비 | 연한 배경 토큰 |
+|------|----|------|------|------|
+| `b1-success` | `#15803d` | 5.0:1 AA | 4.8:1 AA | `b1-success-soft` `#e8f6ed` |
+| `b1-warning` | `#b45309` | 5.0:1 AA | 4.8:1 AA | `b1-warning-soft` `#fdf3e2` |
+| `b1-danger` | `#c81e1e` | 5.7:1 AA | 5.5:1 AA | `b1-danger-soft` `#fdecec` |
+
+`tests/design/tokens.test.ts`가 글자색의 흰 배경 대비 4.5:1 이상을 잠근다.
+
+## 의미 토큰 (shadcn) → B1 연결
+
+shadcn 부품(`src/shared/components/ui/*`)은 `bg-primary`, `border-input` 같은 **의미 토큰**을 쓴다. 의미 토큰은 값을 갖지 않고 B1 원시 토큰을 가리킨다(`globals.css`의 `:root`). 부품은 의미 토큰을, 화면 연출은 B1 토큰을 쓴다.
+
+| 의미 토큰 | → B1 |
+|---|---|
+| `background` / `foreground` | `b1-bg` / `b1-text` |
+| `card`, `popover` (+`-foreground`) | `b1-surface` (글자 `b1-text`) |
+| `primary` / `primary-foreground` | `b1-accent` / `#ffffff` |
+| `secondary` / `secondary-foreground` | `b1-accent-soft` / `b1-accent` |
+| `muted` / `muted-foreground` | `b1-placeholder` / `b1-sub` (본문 보조 글자라 대비가 충분한 `sub`. `b1-muted`는 캡션·플레이스홀더 전용) |
+| `accent` / `accent-foreground` (shadcn의 hover 배경) | `b1-accent-soft` / `b1-text` |
+| `border`, `input` | `b1-border` |
+| `ring` | `b1-accent` |
+| `destructive` | `b1-danger` |
 
 ## 영향받는 컴포넌트
 

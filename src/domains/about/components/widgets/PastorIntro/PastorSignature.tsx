@@ -23,7 +23,7 @@ export const PastorSignature = ({
 
   return (
     <div ref={ref} className="flex items-center gap-4">
-      <span className="text-b1-sub text-[16px]">{label}</span>
+      <span className="text-b1-sub text-body">{label}</span>
       <span className="block overflow-hidden">
         <span
           className={cn(

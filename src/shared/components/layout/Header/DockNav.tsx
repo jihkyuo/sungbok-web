@@ -90,7 +90,7 @@ export const DockNav = () => {
         aria-hidden={!open}
         inert={!open}
         className={cn(
-          'absolute inset-x-0 top-0 isolate hidden overflow-x-clip transition-opacity md:block',
+          'absolute inset-x-0 top-0 isolate hidden overflow-x-clip transition-opacity lg:block',
           open ? 'opacity-100 duration-300' : 'pointer-events-none opacity-0 duration-150'
         )}
       >
@@ -124,7 +124,7 @@ export const DockNav = () => {
                   <Link
                     href={childHref(sec, c)}
                     onClick={() => setHover(null)}
-                    className="text-b1-text hover:text-b1-accent block text-[16px] leading-[1.6] font-semibold whitespace-nowrap opacity-90 transition-colors hover:opacity-100"
+                    className="text-b1-text hover:text-b1-accent block text-body leading-[1.6] font-semibold whitespace-nowrap opacity-90 transition-colors hover:opacity-100"
                   >
                     {c.label}
                   </Link>
@@ -148,7 +148,7 @@ export const DockNav = () => {
         >
           <HomeLogo />
 
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 md:flex">
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-7 lg:flex">
             {sections.map(item => {
               const has = !!item.children?.length;
               const isHover = hover === item.slug;
@@ -174,7 +174,7 @@ export const DockNav = () => {
                     setHover(null); // 이동 뒤 패널이 열린 채 남지 않게
                   }}
                   className={cn(
-                    'text-b1-text grid text-[16px] transition-opacity duration-200',
+                    'text-b1-text grid text-body transition-opacity duration-200',
                     dim ? 'opacity-50' : 'opacity-100',
                     emph ? 'font-semibold' : 'font-medium'
                   )}

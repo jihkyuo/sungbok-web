@@ -16,16 +16,16 @@ const CHURCH = {
 const Dot = () => <span className="text-b1-border px-2.5">·</span>;
 
 export const Footer = () => (
-  <footer className="bg-b1-surface border-t-b1-border relative z-10 border-t px-5 py-16 text-center md:py-20">
+  <footer data-site-footer className="bg-b1-surface border-t-b1-border relative z-10 border-t px-5 py-16 text-center md:py-20">
     <Reveal>
       <div className="text-b1-text text-[26px] font-bold tracking-[-0.01em] md:text-[30px]">
         {CHURCH.name}
-        <span className="b1-mono text-b1-muted ml-2 align-middle text-[12px] font-medium tracking-[0.12em]">
+        <span className="b1-mono text-b1-muted ml-2 align-middle text-eyebrow font-medium tracking-[0.12em]">
           {CHURCH.wordmark}
         </span>
       </div>
 
-      <p className="text-b1-sub mx-auto mt-5 flex max-w-[640px] flex-wrap items-center justify-center text-[13px] leading-[1.9] md:text-[14px]">
+      <p className="text-b1-sub mx-auto mt-5 flex max-w-[640px] flex-wrap items-center justify-center text-caption leading-[1.9] md:text-body-sm">
         <span>
           {CHURCH.pastorLabel} {CHURCH.pastor}
         </span>
@@ -41,7 +41,7 @@ export const Footer = () => (
         <span>{CHURCH.address}</span>
       </p>
 
-      <div className="b1-mono text-b1-muted mt-8 text-[11px] tracking-[0.04em]">{CHURCH.copyright}</div>
+      <div className="b1-mono text-b1-muted mt-8 text-caption tracking-[0.04em]">{CHURCH.copyright}</div>
     </Reveal>
   </footer>
 );

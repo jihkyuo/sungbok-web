@@ -39,22 +39,22 @@ export const ChurchNews = () => {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
               <div className="absolute top-5 left-5 flex items-center gap-2">
-                <span className="b1-mono rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold tracking-[0.1em] text-white backdrop-blur-sm">
+                <span className="b1-mono text-caption rounded-full bg-white/15 px-2.5 py-1 font-semibold tracking-[0.1em] text-white backdrop-blur-sm">
                   헤드라인
                 </span>
                 <span
-                  className={`rounded-full px-2 py-[3px] text-[10px] font-bold ${tagColor[headline.tag]}`}
+                  className={`text-caption rounded-full px-2 py-[3px] font-bold ${tagColor[headline.tag]}`}
                 >
                   {headline.tag}
                 </span>
               </div>
               <div className="absolute inset-x-0 bottom-0 p-6">
-                <div className="b1-mono mb-2 text-[12px] text-white/75">{headline.date}</div>
+                <div className="b1-mono text-caption mb-2 text-white/75">{headline.date}</div>
                 <h3 className="m-0 text-[22px] leading-[1.28] font-bold tracking-[-0.02em] text-white md:text-[27px]">
                   {headline.title}
                 </h3>
                 {headline.excerpt && (
-                  <p className="mt-2.5 line-clamp-2 max-w-[420px] text-[13.5px] leading-[1.6] text-white/85">
+                  <p className="text-caption mt-2.5 line-clamp-2 max-w-[420px] leading-[1.6] text-white/85">
                     {headline.excerpt}
                   </p>
                 )}
@@ -88,17 +88,17 @@ export const ChurchNews = () => {
                   <div className="flex min-w-0 flex-1 flex-col justify-center py-3.5 pr-1 pl-1">
                     <div className="mb-1 flex items-center gap-2">
                       <span
-                        className={`rounded-full px-2 py-[2px] text-[10px] font-bold ${tagColor[p.tag]}`}
+                        className={`text-caption rounded-full px-2 py-[2px] font-bold ${tagColor[p.tag]}`}
                       >
                         {p.tag}
                       </span>
-                      <span className="b1-mono text-b1-muted text-[11px]">{p.date}</span>
+                      <span className="b1-mono text-b1-muted text-caption">{p.date}</span>
                     </div>
-                    <div className="text-b1-text group-hover:text-b1-accent text-[15.5px] font-bold tracking-[-0.01em] transition-colors">
+                    <div className="text-b1-text group-hover:text-b1-accent text-body-sm font-bold tracking-[-0.01em] transition-colors">
                       {p.title}
                     </div>
                     {p.excerpt && (
-                      <p className="text-b1-sub mt-1 line-clamp-1 text-[13px] leading-[1.5]">
+                      <p className="text-b1-sub text-caption mt-1 line-clamp-1 leading-[1.5]">
                         {p.excerpt}
                       </p>
                     )}
@@ -118,10 +118,10 @@ export const ChurchNews = () => {
             <div className="mt-3 flex justify-end">
               <Link
                 href="/news"
-                className="b1-link text-b1-sub hover:text-b1-accent flex items-center gap-1.5 text-[13px] font-semibold no-underline"
+                className="b1-link text-b1-sub hover:text-b1-accent text-caption flex items-center gap-1.5 font-semibold no-underline"
               >
                 교회 소식 더 보기
-                <span className="b1-mono text-b1-muted text-[11px]">+{NEWS_TOTAL - 4}</span>
+                <span className="b1-mono text-b1-muted text-caption">+{NEWS_TOTAL - 4}</span>
                 <ArrowRight size={14} strokeWidth={2.2} />
               </Link>
             </div>

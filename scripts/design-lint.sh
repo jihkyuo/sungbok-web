@@ -8,11 +8,13 @@
 #
 # 카테고리:
 #   error(차단): 색-fill arbitrary 유틸 `(bg|text|border|from|to|via|fill|stroke|ring|outline|decoration|caret|accent|divide)-[#hex]`
+#                + 임의 글자 크기 `text-[13px]`·임의 그림자 `shadow-[…]`·임의 둥글기 `rounded-[…]`
+#                  (토큰: text-caption 등·shadow-sm/md/lg·rounded-* — .md/design/design-system.md)
 #   warn(경고만): 인라인 rgba()/hsl() (토큰 없는 1회성 그림자/그라데이션 alpha는 정당)
 #
 # 이스케이프 해치:
 #   · 같은 라인에 `design-lint-ignore` 가 있으면 면제
-#   · .design-lint-baseline 에 등재된 (파일, #hex) 쌍은 grandfather(차단 안 함)
+#   · .design-lint-baseline 에 등재된 (파일, 위반 토큰) 쌍은 grandfather(차단 안 함). hex 는 소문자로 비교
 #
 # 비-git/대상 없음/판정 불가 → fail-open(작업을 막지 않음).
 
@@ -29,6 +31,8 @@ baseline_file="$project_dir/.design-lint-baseline"
 
 # 색-fill arbitrary 유틸 (hex만) — error 카테고리
 util_re='(bg|text|border|from|to|via|fill|stroke|ring|outline|decoration|caret|accent|divide)-\[#[0-9A-Fa-f]{3,8}\]'
+# 임의 글자 크기·그림자·둥글기 — error 카테고리(토큰을 쓴다)
+token_re='text-\[[0-9.]+(px|rem)\]|shadow-\[[^]]+\]|rounded(-[trbl]{1,2})?-\[[^]]+\]'
 # 인라인 색함수 — warn 카테고리
 warn_re='(rgba?|hsla?)\('
 
@@ -49,15 +53,17 @@ baseline_keys=""
 # tr -d '\r': CRLF 베이스라인이 grep -qxF 매칭을 조용히 깨뜨려 grandfather가 무력화되는 것 방지
 [ -f "$baseline_file" ] && baseline_keys="$(tr -d '\r' < "$baseline_file" 2>/dev/null | grep -v '^[[:space:]]*#' | grep -v '^[[:space:]]*$' || true)"
 
-in_baseline() {  # $1=file  $2=#hex(원본) → 등재돼 있으면 0
+in_baseline() {  # $1=file  $2=위반 토큰(원본) → 등재돼 있으면 0. hex(#…)는 소문자로 비교
   [ -n "$baseline_keys" ] || return 1
-  local hex_lc; hex_lc="$(printf '%s' "$2" | tr 'A-F' 'a-f')"
-  printf '%s\n' "$baseline_keys" | grep -qxF "$1	$hex_lc"
+  local key="$2"
+  case "$key" in \#*) key="$(printf '%s' "$key" | tr 'A-F' 'a-f')" ;; esac
+  printf '%s\n' "$baseline_keys" | grep -qxF "$1	$key"
 }
 
-# 한 라인에서 색-fill 유틸 hex 토큰들을 추출(공백 구분) — 없으면 빈줄
-extract_hexes() {
-  printf '%s' "$1" | grep -oE "$util_re" 2>/dev/null | grep -oE '#[0-9A-Fa-f]{3,8}' 2>/dev/null | tr '\n' ' '
+# 한 라인의 위반 토큰들(줄 단위): 색 hex + 임의 글자 크기·그림자·둥글기
+extract_violations() {
+  printf '%s' "$1" | grep -oE "$util_re" 2>/dev/null | grep -oE '#[0-9A-Fa-f]{3,8}' 2>/dev/null
+  printf '%s' "$1" | grep -oE "$token_re" 2>/dev/null
 }
 
 # --- 모드 분기 ---------------------------------------------------------------
@@ -80,14 +86,15 @@ if [ "$mode" = "baseline" ]; then
     is_production "$f" || continue
     while IFS= read -r line; do
       case "$line" in *design-lint-ignore*) continue ;; esac
-      hexes="$(extract_hexes "$line")"
-      for h in $hexes; do
-        printf '%s\t%s\n' "$f" "$(printf '%s' "$h" | tr 'A-F' 'a-f')"
-      done
-    done < <(grep -hE "$util_re" "$f" 2>/dev/null || true)
+      while IFS= read -r v; do
+        [ -n "$v" ] || continue
+        case "$v" in \#*) v="$(printf '%s' "$v" | tr 'A-F' 'a-f')" ;; esac
+        printf '%s\t%s\n' "$f" "$v"
+      done < <(extract_violations "$line")
+    done < <(grep -hE "$util_re|$token_re" "$f" 2>/dev/null || true)
   done | sort -u > "$tmp"
   {
-    echo "# design-lint baseline — grandfather된 레거시 (파일<TAB>#hex 소문자)"
+    echo "# design-lint baseline — grandfather된 레거시 (파일<TAB>위반 토큰, hex 는 소문자)"
     echo "# 재생성: pnpm design:lint --update-baseline. 신규 위반은 여기 추가하지 말 것."
     cat "$tmp"
   } > "$baseline_file"
@@ -106,17 +113,16 @@ grandfathered=0
 classify_line() {  # $1=file $2=lineno $3=content
   local f="$1" ln="$2" content="$3"
   case "$content" in *design-lint-ignore*) return ;; esac
-  # error: 색-fill hex
-  local hexes; hexes="$(extract_hexes "$content")"
-  if [ -n "${hexes// /}" ]; then
-    for h in $hexes; do
-      if in_baseline "$f" "$h"; then
-        grandfathered=$((grandfathered + 1))
-      else
-        errors="${errors}${f}:${ln} — ${h} (b1 토큰으로 교체)"$'\n'
-      fi
-    done
-  fi
+  # error: 색 hex + 임의 글자 크기·그림자·둥글기
+  local v
+  while IFS= read -r v; do
+    [ -n "$v" ] || continue
+    if in_baseline "$f" "$v"; then
+      grandfathered=$((grandfathered + 1))
+    else
+      errors="${errors}${f}:${ln} — ${v} (토큰으로 교체)"$'\n'
+    fi
+  done < <(extract_violations "$content")
   # warn: rgba/hsl
   if printf '%s' "$content" | grep -qE "$warn_re" 2>/dev/null; then
     warns="${warns}${f}:${ln} — rgba/hsl 인라인 (토큰 가능하면 토큰; 1회성 alpha면 /* design-lint-ignore */)"$'\n'
@@ -151,7 +157,7 @@ else
       ln="${row%%:*}"
       content="${row#*:}"
       classify_line "$f" "$ln" "$content"
-    done < <(grep -nE "$util_re|$warn_re" "$f" 2>/dev/null || true)
+    done < <(grep -nE "$util_re|$token_re|$warn_re" "$f" 2>/dev/null || true)
   done < <(git ls-files 'src/**/*.ts' 'src/**/*.tsx' 2>/dev/null)
 fi
 
@@ -160,7 +166,7 @@ err_n="$(printf '%s' "$errors" | grep -c . || true)"
 warn_n="$(printf '%s' "$warns" | grep -c . || true)"
 
 if [ "$err_n" -gt 0 ]; then
-  echo "🔴 토큰 규율 위반(색 하드코딩) — $err_n 건:"
+  echo "🔴 토큰 규율 위반(하드코딩) — $err_n 건:"
   printf '%s' "$errors" | sed 's/^/   /'
 fi
 if [ "$warn_n" -gt 0 ]; then
@@ -170,13 +176,13 @@ fi
 [ "$grandfathered" -gt 0 ] && echo "ℹ️  baseline grandfather $grandfathered 건 통과 (레거시)"
 
 if [ "$err_n" -eq 0 ] && [ "$warn_n" -eq 0 ]; then
-  echo "✅ design:lint — 색 하드코딩 위반 없음"
+  echo "✅ design:lint — 하드코딩 위반 없음"
 fi
 
 # diff 모드만 error 로 차단. 풀스캔은 항상 통과(리포트 전용).
 if [ "$mode" = "diff" ] && [ "$err_n" -gt 0 ]; then
   echo "" >&2
-  echo "→ 신규 색 하드코딩이 있습니다. b1 토큰(bg-b1-accent 등)으로 바꾸거나," >&2
+  echo "→ 신규 하드코딩이 있습니다. 토큰(bg-b1-accent·text-caption·shadow-md·rounded-2xl 등)으로 바꾸거나," >&2
   echo "  토큰이 없는 1회성이면 같은 라인에 /* design-lint-ignore: 사유 */ 를 다세요." >&2
   exit 1
 fi

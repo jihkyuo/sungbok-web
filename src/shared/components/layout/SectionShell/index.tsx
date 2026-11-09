@@ -69,7 +69,7 @@ export const SectionShell = ({ section, children }: PropsWithChildren<Props>) =>
                   aria-current={active ? 'page' : undefined}
                   style={{ animationDelay: `${300 + i * 50}ms` }}
                   className={cn(
-                    'ss-in-pill rounded-full px-4 py-2 text-[15px] font-semibold transition-colors',
+                    'ss-in-pill inline-flex min-h-11 items-center rounded-full px-4 py-2 text-body-sm font-semibold transition-colors',
                     active
                       ? 'bg-b1-accent text-white shadow-[0_6px_14px_-4px_rgba(37,99,235,0.45)]' /* design-lint-ignore: 활성 알약 accent 그림자(DockNav 와 동일 값) */
                       : 'text-b1-sub hover:bg-b1-accent-soft hover:text-b1-text'

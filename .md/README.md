@@ -8,7 +8,8 @@
 .md/
 ├── README.md                       # 이 파일 — 문서 인덱스 + 컨벤션
 ├── design/                         # 디자인 시스템 (살아있는 문서)
-│   └── color-palette.md
+│   ├── color-palette.md
+│   └── design-system.md
 ├── domains/                        # 도메인별 상세 (살아있는 문서)
 │   └── home.md
 ├── workflow/                       # 작업 방식·도구 (살아있는 문서)
@@ -21,7 +22,9 @@
 │   ├── 2026-10-10-site-nav-skeleton-design.md
 │   ├── 2026-10-10-site-nav-skeleton-a1-plan.md
 │   ├── 2026-10-10-subpage-layouts-round2-analysis.md
-│   └── 2026-10-11-home-video-sections-analysis.md
+│   ├── 2026-10-11-home-video-sections-analysis.md
+│   ├── 2026-11-05-design-system-design.md
+│   └── 2026-11-05-design-system-plan.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
@@ -30,6 +33,8 @@
     ├── 0005-dock-toss-bar.md
     ├── 0006-home-lead-flow-stage.md
     ├── 0007-department-page-template.md
+    ├── 0008-admin-backend-vercel-supabase.md
+    ├── 0009-design-system-tokens-responsive.md
     └── 0010-next16-node26-perf-baseline.md
 ```
 
@@ -55,7 +60,8 @@
 ### Design
 
 - [../DESIGN.md](../DESIGN.md) — **(루트 예외)** 디자인 바 정본. gstack `/design-review`·`design-qa` 의 채점 기준(토큰 규율·카피 톤·모션 바·한글 타이포·a11y·subtraction). 루트에 두는 이유·운용은 [CLAUDE.md](../CLAUDE.md) "디자인 QA" 참조. 토큰 수치 표는 아래 color-palette.md
-- [color-palette.md](design/color-palette.md) — B1 Sky 팔레트. 컬러 토큰 정의·시각적 위계·Tailwind 사용 예시·접근성
+- [color-palette.md](design/color-palette.md) — B1 Sky 팔레트. 컬러 토큰 정의·시각적 위계·Tailwind 사용 예시·접근성·상태 색·shadcn 의미 토큰 연결표
+- [design-system.md](design/design-system.md) — 글자 크기·그림자·모션 토큰, 공용 부품 목록, 반응형 기준, `/design` 견본·`pnpm design:audit` 안내
 
 ### Domains
 
@@ -78,6 +84,7 @@
 - [2026-10-10-site-nav-skeleton-design.md](specs/2026-10-10-site-nav-skeleton-design.md) — 작업 패키지 A: 글로벌 IA·네비 골격. `siteNav` 단일 소스, `/{section}/{page}` 영문 슬러그 26개, 상위→첫 하위 redirect, 공통 머리 S1. **A1 구현 완료(2026-10-10)**, 모바일 메뉴 미확정. 구현 계획: [-a1-plan.md](specs/2026-10-10-site-nav-skeleton-a1-plan.md)
 - [2026-10-10-subpage-layouts-round2-analysis.md](specs/2026-10-10-subpage-layouts-round2-analysis.md) — 서브페이지 본문 레이아웃 페이지별 분석(영어예배부·주일예배·섬기는 이들·주보) + 머리 20종 비교 결과(S1 확정)
 - [2026-10-11-home-video-sections-analysis.md](specs/2026-10-11-home-video-sections-analysis.md) — 홈 영상 섹션 분석: 위=라이브 스테이지(라이브 우선·없으면 담임 최신 설교) / 아래=광고 릴(재생목록 로테이션). 유튜브 채널 실데이터(라이브 패턴·제목 규칙·재생목록)·쿼터·자동재생 제약·광고 비율 분석, 확정/미결 목록. 승격 완료, 프리뷰 정리 완료
+- [2026-11-05-design-system-design.md](specs/2026-11-05-design-system-design.md) — 작업 패키지 1: 디자인 시스템 + 모바일·태블릿 보완. 토큰 2계층(B1 원시 → shadcn 의미), 타이포 스케일·그림자·모션 토큰, 공용 부품 세트, `/design` 견본(dev 전용), 반응형 기준(375/768/1280·터치 44px·한글 최소 13px), `design:lint` 확장 + `design:audit`. 2026-11-05 실측 문제 목록 포함. **구현 완료(2026-11-05)**. 구현 계획: [-plan.md](specs/2026-11-05-design-system-plan.md) (12 태스크 — audit 도구·기준 캡처 → 토큰 → 폰트 → 부품 → `/design` → 글자 이전 → 반응형 보완 → lint 확장 → 문서·ADR 0009)
 
 ### Decisions
 
@@ -88,6 +95,8 @@
 - [0005-dock-toss-bar.md](decisions/0005-dock-toss-bar.md) — 2026-10-18 — 글로벌 헤더를 글래스 캡슐에서 토스식 전폭 바 + 흰 안개 패널로 교체(hover 섹션 하위만 한 열, 스크롤 숨김 없음). "독=accent 알약" 위계 폐기
 - [0006-home-lead-flow-stage.md](decisions/0006-home-lead-flow-stage.md) — 2026-10-19 — 홈 상단을 변형 무대(HomeLead)로 재설계: 히어로가 사진 띠로 내려앉아 표어·담임으로 잇는다(시안 P 승격)
 - [0007-department-page-template.md](decisions/0007-department-page-template.md) — 2026-11-04 — 다음세대 부서 페이지 템플릿 확정: 도입부(정보 한 덩어리) + 사진 쇼케이스(데스크톱 «놓기»·모바일 «부채»), 영아부 승격·8부서는 데이터만 교체
+- [0008-admin-backend-vercel-supabase.md](decisions/0008-admin-backend-vercel-supabase.md) — 2026-11-05 — 관리자·백엔드를 Vercel + Supabase(DB·Auth·RLS·Storage) 두 서비스로, 교회 명의 계정·Cloudflare 없음. 관리 범위(A/B/C)·권한(사무 담당 ⊇ 부서 담당자)·기존 사이트 이전 포함. 관리자 코드는 같은 앱 `/admin`(모노레포·별도 저장소 탈락)
+- [0009-design-system-tokens-responsive.md](decisions/0009-design-system-tokens-responsive.md) — 2026-11-05 — 디자인 시스템: B1 원시→shadcn 의미 토큰 2계층, 글자 크기 10단계(한글 최소 13px), 폰트 직접 제공(외부 요청 0), 반응형 기준(375/768/1280·lg 헤더·터치 44px), design:lint 확장 + design:audit
 - [0010-next16-node26-perf-baseline.md](decisions/0010-next16-node26-perf-baseline.md) — 2026-11-09 — Next 16·Node 26 업그레이드 + 성능 기준선: 유튜브는 서버 fetch 하나로(gapi·googleapis·axios 제거), 사진은 WebP 사전 변환(17.8MB→3.1MB), 폰트는 같은 출처, 무거운 임베드는 화면 근처에서, Vercel 서울 리전. (0008·0009 는 develop 쪽 ADR 이 쓰고 있어 건너뜀)
 
 ## 컨벤션
@@ -140,6 +149,7 @@
 | 코드 변경 | 함께 업데이트할 문서 |
 |-----------|----------------------|
 | [src/app/globals.css](../src/app/globals.css) 의 팔레트 토큰 | [design/color-palette.md](design/color-palette.md) |
+| [src/app/globals.css](../src/app/globals.css) 의 글자 크기·그림자·모션 토큰, [src/shared/components/ui/](../src/shared/components/ui/) 부품 | [design/design-system.md](design/design-system.md) + `/design` 견본 |
 | 디자인 바(토큰 규율·모션·a11y·카피 톤) 규칙 변경 | [../DESIGN.md](../DESIGN.md) |
 | [src/app/page.tsx](../src/app/page.tsx) 또는 [src/domains/home/](../src/domains/home/) 변경 | [domains/home.md](domains/home.md) |
 | 도메인 추가/구조 변경 | `domains/<domain>.md` |

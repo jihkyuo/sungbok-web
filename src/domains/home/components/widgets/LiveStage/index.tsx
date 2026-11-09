@@ -112,7 +112,7 @@ export const LiveStage = () => {
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/45 via-transparent to-transparent" />
             {video && (
-              <div className="absolute top-6 left-6 flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-[13px] font-medium text-white backdrop-blur">
+              <div className="text-caption absolute top-6 left-6 flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 font-medium text-white backdrop-blur">
                 {isLive && <span className="bg-b1-sunday h-2 w-2 rounded-full" aria-hidden />}
                 {isLive ? meta : LABELS.latestSermon}
               </div>
@@ -121,7 +121,7 @@ export const LiveStage = () => {
               <button
                 type="button"
                 onClick={toggleMute}
-                className="absolute top-6 right-6 flex h-11 items-center gap-2 rounded-full border border-white/25 bg-black/35 px-4 text-[13px] font-medium text-white backdrop-blur-md transition-colors hover:bg-black/55 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                className="text-caption absolute top-6 right-6 flex h-11 items-center gap-2 rounded-full border border-white/25 bg-black/35 px-4 font-medium text-white backdrop-blur-md transition-colors hover:bg-black/55 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
               >
                 {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                 {muted ? LABELS.unmute : LABELS.mute}
@@ -148,14 +148,14 @@ export const LiveStage = () => {
                   />
                 </span>
                 <div className="min-w-0">
-                  <div className="text-b1-sub text-[13px]">{isLive ? LABELS.channel : meta}</div>
-                  <div className="text-b1-text truncate text-[16px] font-bold tracking-[-0.01em]">
+                  <div className="text-b1-sub text-caption">{isLive ? LABELS.channel : meta}</div>
+                  <div className="text-b1-text text-body truncate font-bold tracking-[-0.01em]">
                     {title}
                   </div>
-                  {sub && <div className="text-b1-sub truncate text-[13px]">{sub}</div>}
+                  {sub && <div className="text-b1-sub text-caption truncate">{sub}</div>}
                 </div>
               </div>
-              <span className="bg-b1-text inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[13px] font-semibold text-white">
+              <span className="bg-b1-text text-caption inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 font-semibold text-white">
                 <YoutubeIcon size={16} />
                 {LABELS.watchOnYoutube}
                 <ArrowUpRight size={15} />

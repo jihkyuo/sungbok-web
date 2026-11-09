@@ -23,11 +23,11 @@ const SundayHeader = () => (
 const TimePill = ({ time, genOnly }: { time: string; genOnly: boolean }) => (
   <span
     className={cn(
-      'text-b1-accent b1-mono flex items-baseline gap-1.5 rounded-full border-2 px-4 py-1.5 text-[17px] font-bold',
+      'text-b1-accent b1-mono flex items-baseline gap-1.5 rounded-full border-2 px-4 py-1.5 text-title font-bold',
       genOnly ? 'bg-b1-accent-soft border-transparent' : 'bg-b1-surface border-b1-accent'
     )}
   >
-    <span className="text-[12px]">{periodKo(time)}</span>
+    <span className="text-caption">{periodKo(time)}</span>
     {stripPeriod(time)}
   </span>
 );
@@ -35,7 +35,7 @@ const TimePill = ({ time, genOnly }: { time: string; genOnly: boolean }) => (
 /** 레인 라벨 + 가로 구분선 */
 const LaneLabel = ({ label }: { label: string }) => (
   <div className="flex items-center gap-3">
-    <span className="text-b1-sub text-[13px] font-semibold whitespace-nowrap">{label}</span>
+    <span className="text-b1-sub text-caption font-semibold whitespace-nowrap">{label}</span>
     <span className="bg-b1-border h-px flex-1" />
   </div>
 );
@@ -49,10 +49,10 @@ const ServiceCard = ({ service }: { service: WorshipServiceSummary }) => {
         gen ? 'bg-b1-accent-soft' : 'bg-b1-bg border-b1-border border'
       )}
     >
-      <div className={cn('text-[15px] font-semibold', gen ? 'text-b1-accent' : 'text-b1-text')}>
+      <div className={cn('text-body-sm font-semibold', gen ? 'text-b1-accent' : 'text-b1-text')}>
         {service.name}
       </div>
-      <div className="text-b1-sub text-[13px]">{service.place}</div>
+      <div className="text-b1-sub text-caption">{service.place}</div>
     </div>
   );
 };
@@ -68,17 +68,17 @@ const WeekdayStrip = () => (
         <ul className="m-0 flex list-none flex-col gap-3.5 p-0">
           {sec.services.map(s => (
             <li key={s.name} className="flex items-baseline gap-3">
-              <span className="b1-mono text-b1-accent text-[17px] font-bold whitespace-nowrap">
+              <span className="b1-mono text-b1-accent text-title font-bold whitespace-nowrap">
                 {s.time}
               </span>
               <div>
-                <div className="text-b1-text text-[15px] font-semibold">
+                <div className="text-b1-text text-body-sm font-semibold">
                   {s.name}
                   {s.note && (
-                    <span className="text-b1-muted ml-1 text-[11px] font-normal">{s.note}</span>
+                    <span className="text-b1-muted ml-1 text-caption font-normal">{s.note}</span>
                   )}
                 </div>
-                <div className="text-b1-sub text-[13px]">{s.place}</div>
+                <div className="text-b1-sub text-caption">{s.place}</div>
               </div>
             </li>
           ))}

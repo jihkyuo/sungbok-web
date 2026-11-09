@@ -27,7 +27,7 @@ export const BulletinPage = () => (
   <>
     <SampleNotice what="주보 내용과 날짜" />
     <Reveal>
-      <p className="text-b1-sub text-[17px] md:text-[18px]">
+      <p className="text-b1-sub text-title font-normal md:text-[18px]">
         최신 호{' '}
         <time dateTime={LATEST.date} className="text-b1-text font-semibold">
           2026년 {LATEST.label}
@@ -51,16 +51,16 @@ export const BulletinPage = () => (
                   <span className="text-b1-text text-[22px] font-bold tracking-[-0.02em]">
                     성복교회
                   </span>
-                  <span className="text-b1-sub text-[13px]">주보</span>
+                  <span className="text-b1-sub text-caption">주보</span>
                 </div>
-                <div className="text-b1-sub mt-1 text-[14px] tabular-nums">
+                <div className="text-b1-sub mt-1 text-body-sm tabular-nums">
                   {LATEST.date.replaceAll('-', '. ')}
                 </div>
                 <hr className="border-b1-border my-6" />
-                <div className="text-b1-text text-[15px] font-bold">주일예배 순서</div>
+                <div className="text-b1-text text-body-sm font-bold">주일예배 순서</div>
                 <ol className="mt-3 space-y-2.5">
                   {ORDER.map(o => (
-                    <li key={o} className="text-b1-sub flex items-baseline gap-2 text-[14px]">
+                    <li key={o} className="text-b1-sub flex items-baseline gap-2 text-body-sm">
                       <span className="shrink-0">{o}</span>
                       <span
                         aria-hidden
@@ -69,8 +69,8 @@ export const BulletinPage = () => (
                     </li>
                   ))}
                 </ol>
-                <div className="text-b1-text mt-7 text-[15px] font-bold">말씀</div>
-                <p className="text-b1-sub mt-1.5 text-[14px]">{LATEST.title}</p>
+                <div className="text-b1-text mt-7 text-body-sm font-bold">말씀</div>
+                <p className="text-b1-sub mt-1.5 text-body-sm">{LATEST.title}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2.5">
@@ -78,7 +78,7 @@ export const BulletinPage = () => (
               <button
                 type="button"
                 disabled
-                className="bg-b1-accent inline-flex items-center gap-2 rounded-full px-5 py-3 text-[15px] font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="bg-b1-accent inline-flex items-center gap-2 rounded-full px-5 py-3 text-body-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Maximize2 className="h-4 w-4" />
                 크게 보기
@@ -86,7 +86,7 @@ export const BulletinPage = () => (
               <button
                 type="button"
                 disabled
-                className="border-b1-border text-b1-text hover:border-b1-accent hover:text-b1-accent inline-flex items-center gap-2 rounded-full border bg-white px-5 py-3 text-[15px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                className="border-b1-border text-b1-text hover:border-b1-accent hover:text-b1-accent inline-flex items-center gap-2 rounded-full border bg-white px-5 py-3 text-body-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Download className="h-4 w-4" />
                 PDF 내려받기
@@ -104,7 +104,7 @@ export const BulletinPage = () => (
           <div className="mt-5 flex flex-col gap-8">
             {Object.entries(byMonth).map(([month, items]) => (
               <div key={month}>
-                <div className="text-b1-sub text-[15px] font-semibold">{month}</div>
+                <div className="text-b1-sub text-body-sm font-semibold">{month}</div>
                 <ul className="border-b1-border divide-b1-border mt-2 divide-y border-t">
                   {items.map(it => {
                     const active = it.date === LATEST.date;
@@ -113,14 +113,14 @@ export const BulletinPage = () => (
                         <div className="flex items-baseline justify-between gap-4 py-3.5">
                           <span
                             className={cn(
-                              'flex items-center gap-2.5 text-[16px] whitespace-nowrap',
+                              'flex items-center gap-2.5 text-body whitespace-nowrap',
                               active ? 'text-b1-text font-bold' : 'text-b1-text font-medium'
                             )}
                           >
                             {active && <span className="bg-b1-accent h-1.5 w-1.5 rounded-full" />}
                             <time dateTime={it.date}>{it.label}</time>
                           </span>
-                          <span className="text-b1-sub truncate text-[15px]">{it.title}</span>
+                          <span className="text-b1-sub truncate text-body-sm">{it.title}</span>
                         </div>
                       </li>
                     );

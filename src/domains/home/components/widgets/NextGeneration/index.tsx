@@ -170,14 +170,14 @@ export const NextGeneration = () => {
         style={{ touchAction: 'none' }}
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 mx-auto w-full max-w-[1320px] px-[6vw] pt-24 md:pt-28">
-          <div className="b1-mono mb-3 text-[11px] font-semibold tracking-[0.16em] text-[#9fb6ff]">
+          <div className="b1-mono text-eyebrow mb-3 font-semibold tracking-[0.16em] text-[#9fb6ff]">
             {EYEBROW}
           </div>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="m-0 text-[36px] leading-[1.05] font-bold tracking-[-0.03em] text-balance text-white md:text-[54px]">
               {TITLE}
             </h2>
-            <p className="m-0 max-w-[330px] text-[15px] leading-[1.8] text-white/65">
+            <p className="text-body-sm m-0 max-w-[330px] leading-[1.8] text-white/65">
               밤하늘을 훑으면 가장 가까운 별이 깨어나고, 정보 카드가 커서를 따라옵니다. 누르면 바로
               이동합니다.
             </p>
@@ -269,7 +269,7 @@ export const NextGeneration = () => {
                   }}
                 />
                 <span
-                  className="b1-mono absolute top-6 left-1/2 -translate-x-1/2 text-[11px] whitespace-nowrap transition-all duration-300"
+                  className="b1-mono text-caption absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap transition-all duration-300"
                   style={{
                     color: on ? '#fff' : 'rgba(255,255,255,0.62)',
                     fontWeight: on ? 700 : 400,
@@ -304,14 +304,14 @@ export const NextGeneration = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
             </div>
             <div className="p-4">
-              <div className="b1-mono text-[10px] tracking-[0.1em] text-[#9fb6ff]">
+              <div className="b1-mono text-caption tracking-[0.1em] text-[#9fb6ff]">
                 NG · {String(active + 1).padStart(2, '0')} · {STAGE_OF[a.name]} · {a.age}
               </div>
               <div className="mt-1 text-[20px] font-bold tracking-[-0.01em] text-white">
                 {a.name}
               </div>
-              <div className="mt-0.5 text-[13px] leading-[1.6] text-white/70">{a.tone}</div>
-              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-black">
+              <div className="text-caption mt-0.5 leading-[1.6] text-white/70">{a.tone}</div>
+              <span className="text-caption mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 font-semibold text-black">
                 {a.name} 바로가기 <ArrowUpRight size={14} />
               </span>
             </div>
@@ -319,7 +319,7 @@ export const NextGeneration = () => {
         </div>
 
         {!engaged && (
-          <div className="b1-mono pointer-events-none absolute right-[6vw] bottom-6 z-30 text-[10px] tracking-[0.14em] text-white/35">
+          <div className="b1-mono text-caption pointer-events-none absolute right-[6vw] bottom-6 z-30 tracking-[0.14em] text-white/35">
             밤하늘을 훑어 보세요 · 누르면 이동
           </div>
         )}

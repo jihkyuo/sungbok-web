@@ -24,7 +24,7 @@ export const SideMenu = () => {
       {/* 오버레이 */}
       <div
         className={cn(
-          'fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300 md:hidden',
+          'fixed inset-0 z-[60] bg-black/40 transition-opacity duration-300 lg:hidden',
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         )}
         onClick={() => setIsOpen(false)}
@@ -33,7 +33,7 @@ export const SideMenu = () => {
       {/* 사이드 메뉴 패널 */}
       <div
         className={cn(
-          'fixed top-0 right-0 z-[70] h-full w-full bg-white shadow-2xl transition-transform duration-300 ease-in-out md:hidden',
+          'fixed top-0 right-0 z-[70] h-full w-full bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:hidden',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >
@@ -88,7 +88,7 @@ export const SideMenu = () => {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="cursor-pointer md:hidden"
+        className="-mr-[11px] flex size-11 cursor-pointer items-center justify-center lg:hidden"
         aria-label="메뉴 열기"
       >
         <Image src={menuIcon} alt="menu" width={22} height={22} />

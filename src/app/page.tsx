@@ -25,10 +25,15 @@ export default async function Home() {
         <LiveStage />
         {/* 광고 릴 — 재생목록 로테이션 */}
         <NoticeReel />
-        {/* 청년 예배 영상 — LP 턴테이블 */}
-        <TurntableStage endW={80} endH={45} endRadiusPx={16} darkHex="#0b0b0d" />
-        {/* 다음세대 — LP 어둠 연속 → 여명. 밤하늘 별자리 + 커서 추종 카드 */}
-        <NextGeneration />
+        {/* LP 턴테이블·다음세대 별자리는 폰(768px 미만)에서 숨긴다 — 넓은 화면용 인터랙션이고(기획 요구 8),
+            별자리는 touch-action:none 이라 폰에서 그 화면 높이만큼 스크롤이 막힌다. 폰 대체 화면은 따로 만든다.
+            숨겨져 있으면 화면 근처 감지가 안 걸려 턴테이블 유튜브 임베드·회전 루프도 시작하지 않는다. */}
+        <div className="hidden md:block">
+          {/* 청년 예배 영상 — LP 턴테이블 */}
+          <TurntableStage endW={80} endH={45} endRadiusPx={16} darkHex="#0b0b0d" />
+          {/* 다음세대 — LP 어둠 연속 → 여명. 밤하늘 별자리 + 커서 추종 카드 */}
+          <NextGeneration />
+        </div>
         {/* 교회 소식 — 좌 헤드라인 + 우 카드 뉴스 */}
         <ChurchNews />
         <LocationMap />

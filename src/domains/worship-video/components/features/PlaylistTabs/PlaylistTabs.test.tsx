@@ -79,7 +79,9 @@ describe('PlaylistTabs', () => {
     setup({ hydrate: server });
     expect(screen.getByRole('tab', { name: '탭A' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('A 영상')).toBeInTheDocument();
-    expect(fetchMock).not.toHaveBeenCalled();
+    // 보이는 것(재생목록·첫 탭)은 다시 묻지 않는다 — 나머지 탭 미리 받기는 아래 테스트가 본다
+    expect(fetchMock).not.toHaveBeenCalledWith('/api/worship-video/playlists');
+    expect(fetchedFor('A')).toBe(0);
   });
 
   it('서버가 못 채웠으면(빌드 중 실패 등) 화면이 재생목록·첫 탭 영상을 직접 받는다', async () => {
@@ -106,6 +108,60 @@ describe('PlaylistTabs', () => {
     await act(() => client.refetchQueries({ queryKey: PLAYLISTS_QUERY_KEY }));
     await screen.findByRole('tab', { name: '탭B' });
     expect(screen.getByRole('tab', { name: '탭A' })).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('보고 있는 탭을 다 받은 뒤 나머지 탭도 미리 받아 둔다 — 탭을 옮기면 요청 없이 바로 보인다', async () => {
+    const user = userEvent.setup();
+    setup();
+    expect(await screen.findByText('A 영상')).toBeInTheDocument();
+    await waitFor(() => expect(fetchedFor('B')).toBe(1));
+
+    await user.click(screen.getByRole('tab', { name: '탭B' }));
+    expect(screen.getByText('B 영상')).toBeInTheDocument(); // 기다리지 않고 바로
+    expect(screen.queryByText(LOADING)).toBeNull();
+    expect(fetchedFor('B')).toBe(1);
+  });
+
+  it('보고 있는 탭을 받는 동안엔 다른 탭을 받지 않는다 — 지금 보는 영상이 먼저', async () => {
+    let release: (r: Res) => void = () => {};
+    videosRes = id => (id === 'A' ? new Promise<Res>(r => (release = r)) : okRes(videosOf(id)));
+    setup();
+    expect(await screen.findByRole('tab', { name: '탭B' })).toBeInTheDocument();
+    await act(() => new Promise(r => setTimeout(r, 50)));
+    expect(fetchedFor('B')).toBe(0);
+
+    await act(async () => release(okRes(videosOf('A'))));
+    expect(await screen.findByText('A 영상')).toBeInTheDocument();
+    await waitFor(() => expect(fetchedFor('B')).toBe(1));
+  });
+
+  it('보고 있는 탭이 실패하면 다른 탭을 미리 받지 않는다 — 쿼터 소진 때 요청을 늘리지 않게', async () => {
+    videosRes = id => (id === 'A' ? fail(429) : okRes(videosOf(id)));
+    setup();
+    expect(await screen.findByText(FAIL)).toBeInTheDocument();
+    await act(() => new Promise(r => setTimeout(r, 50)));
+    expect(fetchedFor('B')).toBe(0);
+  });
+
+  it('서버가 모든 탭을 채워 왔으면 요청이 하나도 없고, 탭을 옮겨도 바로 보인다', async () => {
+    const server = new QueryClient();
+    server.setQueryData(PLAYLISTS_QUERY_KEY, PLAYLISTS);
+    for (const { id } of PLAYLISTS) server.setQueryData(playlistVideosQueryKey(id), videosOf(id));
+    const user = userEvent.setup();
+    setup({ hydrate: server });
+    await user.click(screen.getByRole('tab', { name: '탭B' }));
+    expect(screen.getByText('B 영상')).toBeInTheDocument();
+    await act(() => new Promise(r => setTimeout(r, 50)));
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('서버가 첫 탭만 채워 왔으면(나머지 실패) 화면을 열자마자 나머지 탭을 받는다', async () => {
+    const server = new QueryClient();
+    server.setQueryData(PLAYLISTS_QUERY_KEY, PLAYLISTS);
+    server.setQueryData(playlistVideosQueryKey('A'), videosOf('A'));
+    setup({ hydrate: server });
+    await waitFor(() => expect(fetchedFor('B')).toBe(1));
+    expect(fetchedFor('A')).toBe(0);
   });
 
   it('상태 문구는 화면낭독기가 읽는다(role=status)', async () => {

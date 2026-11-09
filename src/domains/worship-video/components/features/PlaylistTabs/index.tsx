@@ -1,6 +1,9 @@
 'use client';
 
-import { usePlaylists } from '@/domains/worship-video/api/usePlaylistVideos';
+import {
+  usePlaylists,
+  usePrefetchPlaylistVideos,
+} from '@/domains/worship-video/api/usePlaylistVideos';
 import { Playlist } from '@/domains/worship-video/components/features/Playlist';
 import { QueryStatus } from '@/domains/worship-video/components/features/StatusText';
 import { Tabs } from '@/shared/components/features/Tabs';
@@ -9,8 +12,9 @@ import { cn } from '@/shared/lib/utils';
 import { useState } from 'react';
 
 /**
- * 주일예배 재생목록 탭. 서버가 재생목록·첫 탭 영상을 미리 채워 두면(HydrationBoundary) 첫 화면부터 영상이 보이고,
- * 못 채웠으면(빌드 중 실패 등) 화면이 직접 받는다. 다른 탭은 열 때 받는다(Radix 는 고른 탭 내용만 그린다).
+ * 주일예배 재생목록 탭. 서버가 재생목록·모든 탭 영상을 미리 채워 두면(HydrationBoundary) 첫 탭은 HTML 로 그려 오고
+ * 다른 탭은 눌러도 요청 없이 바로 그린다. 서버가 못 채운 탭(빌드 중 실패 등)은 화면이 받는다 — 보고 있는 탭을 먼저,
+ * 그 탭을 다 받으면 나머지도 받아 둔다(서버가 채워 왔으면 다시 받지 않는다).
  */
 export const PlaylistTabs = () => {
   const q = usePlaylists();
@@ -18,6 +22,8 @@ export const PlaylistTabs = () => {
   // 탭 버튼만 남고 내용이 비지 않게 첫 탭으로 보이고, 그 재생목록이 다시 생겨도 저절로 옛 탭으로 튀지 않는다.
   const [picked, setPicked] = useState<string>();
   if (picked && q.data && !q.data.some(p => p.id === picked)) setPicked(undefined);
+  const current = picked ?? q.data?.[0]?.id;
+  usePrefetchPlaylistVideos(q.data?.map(p => p.id) ?? [], current);
 
   const options = (q.data ?? []).map(({ id, title }) => ({
     label: title,
@@ -36,7 +42,7 @@ export const PlaylistTabs = () => {
     >
       {options.length > 0 ? (
         // 처음엔 첫 탭 — 고른 탭이 없으면 영상이 하나도 보이지 않는다.
-        <Tabs options={options} value={picked ?? options[0].value} onValueChange={setPicked} />
+        <Tabs options={options} value={current ?? options[0].value} onValueChange={setPicked} />
       ) : (
         // 알림 영역은 불러오는 중 ↔ 실패 ↔ 없음 사이에서 그대로 남는다 — 화면낭독기가 바뀐 문구를 읽게.
         <QueryStatus query={q} empty="아직 등록된 영상 재생목록이 없습니다." />

@@ -40,7 +40,7 @@ const Signature = () => {
   const { ref, isVisible: on } = useScrollFadeIn({ threshold: 0 });
   return (
     <div ref={ref} className="mt-10 flex items-center gap-4">
-      <span className="text-b1-text text-[15px] font-semibold">성복교회 담임목사</span>
+      <span className="text-b1-text text-body-sm font-semibold">성복교회 담임목사</span>
       <span className="block overflow-hidden">
         <span
           className={`block overflow-hidden ${WIPE} ${on ? 'translate-x-0' : '-translate-x-full'}`}

@@ -16,6 +16,8 @@
 - 색·폰트·반경은 [src/app/globals.css](src/app/globals.css) `@theme inline` 의 토큰을 Tailwind 유틸로 참조한다: `bg-b1-accent`, `text-b1-sub`, `border-b1-border` 등.
 - **arbitrary 색 하드코딩 금지** — `text-[#…]`·`bg-[#…]`·`border-[#…]`·`fill-/stroke-/from-/to-/via-/ring-[#…]` 는 🔴. 정적 체크(`pnpm design:lint`)가 신규분을 잡는다.
 - b1 팔레트(13토큰, 값은 color-palette.md): `bg`·`surface`·`text`·`sub`·`muted`·`border`·`accent`·`accent2`·`accent-soft`·`sunday`·`placeholder`·`placeholder-tone`·`glow`(서브페이지 머리 글로우 배경 장식 전용, 텍스트·UI 색 ❌). `sunday`(#dc2626)는 **주일 강조 포인트(워드마크·도트) 전용** — 일반 빨강으로 쓰면 🔴.
+- **의미 토큰**: shadcn 부품(`src/shared/components/ui/*`)은 `bg-primary`·`border-input`·`ring-ring` 같은 의미 토큰을 쓰고, 의미 토큰은 B1 을 가리킨다(연결표는 color-palette.md). 부품에 B1 을 직접 박지 않고, 화면 연출에 의미 토큰을 끌어오지 않는다.
+- **글자 크기·그림자·둥글기도 토큰**: `text-display~text-eyebrow`, `shadow-sm|md|lg`, `rounded-*`. 임의 값 `text-[Npx]`·`shadow-[…]`·`rounded-[…]` 신규는 🔴(`design:lint` 차단, 레거시는 baseline).
 - 예외: 토큰이 없는 1회성 그림자/그라데이션 alpha(`shadow-[…rgba…]` 등)는 허용하되 `/* design-lint-ignore: 사유 */` 로 의도를 남긴다(🟡 경고 대상이지 차단 아님). 색을 토큰으로 표현할 수 있으면 토큰을 쓴다.
 
 ## 2. 카피 톤
@@ -35,6 +37,7 @@
 
 ## 4. 한글 타이포
 
+- **글자 크기 단계**(.md/design/design-system.md): `display·h1·h2·h3·title·body(16)·body-sm(15)·label(14)·caption(13)·eyebrow(12)`. 한글 13px 미만 🔴. `label` 은 버튼·탭·배지 전용 — 본문에 쓰면 🟡. `eyebrow` 는 라틴 대문자 머리표 전용.
 - 한글 가독성: `word-break: keep-all`(globals.css 전역). 단어 중간 줄바꿈이 보이면 🟡.
 - 헤딩은 `text-wrap: balance`. 본문/헤딩 스케일은 `clamp()` 로 반응형 연속.
 - 폰트는 토큰(`font-sans`=Pretendard, `font-mono`)만. 임의 폰트 인라인 ❌.
@@ -54,8 +57,23 @@
 
 ---
 
+## 7. 반응형
+
+| 기준 | 값 |
+|---|---|
+| 확인 필수 폭 | 375 · 768 · 1280 (헤더는 1024도) |
+| 헤더 PC 메뉴 전환 | `lg`(1024). 그 아래는 메뉴 버튼 |
+| 터치 영역 | 1024 미만 폭에서 44×44px 이상(문단 안 글 링크 제외). 보이는 크기가 작으면 패딩·`::before/::after` 가상 영역으로 |
+| 최소 글씨 | 한글 13px · 본문 16px · **입력칸 16px**(작으면 아이폰이 확대) |
+| 가로 넘침 | 0 — 위반은 🔴 |
+| 떠 있는 버튼 | 콘텐츠를 가리지 않게 페이지 끝 여백 확보 |
+
+- 확인 도구: `pnpm dev` 상태에서 `pnpm design:audit`(넘침·터치·글씨를 실제 렌더로 측정, `.design-audit/<폭>/` 캡처). 위반 0 이 승격 조건.
+- 연출 위젯이 `window.innerWidth` 로 폭을 계산하면(HomeLead·TurntableStage 등) CSS 브레이크포인트와 따로 움직인다 — 768·1024 에서 반드시 확인.
+
 ## 채점 노트 (리뷰어용)
 
 - **소스만 읽는 패스(design-qa)** 는 모션·대비를 *의심 제기*까지만 한다. 런타임 확정(실제 렌더·브레이크포인트·reduced-motion 동작)은 마일스톤의 라이브 감사(`/design-review`) 몫.
 - 프리뷰 코드(`*-preview/`·`_variants/`)는 던져버릴 시안이라 **이 바의 차단 대상이 아니다** — 정식 위젯으로 승격된 코드만 본다.
+- 반응형(§7)은 소스만으로 확정하지 않는다 — `pnpm design:audit` 결과를 근거로 한다.
 - 문서·메모리가 코드 현실과 어긋나면 **현재 코드를 정본**으로 보고 어긋남을 보고한다.

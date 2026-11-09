@@ -198,7 +198,7 @@ export const HomeLead = () => {
         >
           {/* 표어 — 정적. 히어로가 걷히며 드러난다. 무대 pt-16 = 헤더 높이(낮은 뷰포트에서 세 줄이 헤더 밑으로 밀리지 않게) */}
           <div className="mx-auto w-full max-w-[1320px] px-[6vw] pb-[4vh]">
-            <span className="text-b1-sub inline-flex items-center gap-2 text-[14px] font-semibold">
+            <span className="text-b1-sub inline-flex items-center gap-2 text-label font-semibold">
               <span className="bg-b1-accent block h-1.5 w-1.5 rounded-full" />
               2026년 표어
             </span>
@@ -207,7 +207,7 @@ export const HomeLead = () => {
               <br />
               <span className="text-b1-accent">묵은 땅</span>을 기경하라
             </h2>
-            <p className="b1-mono text-b1-sub mt-4 text-[14px]">에베소서 4:22–24 · 호세아 10:12</p>
+            <p className="b1-mono text-b1-sub mt-4 text-body-sm">에베소서 4:22–24 · 호세아 10:12</p>
           </div>
           {TILES.map(row)}
           {/* 히어로 — 전체화면에서 윗줄 빈 칸으로 변형 */}

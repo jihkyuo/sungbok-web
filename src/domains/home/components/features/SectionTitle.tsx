@@ -19,7 +19,7 @@ export const SectionTitle = ({ title, eyebrow, action, tier = 'standard', classN
   return (
     <div className={cn('mb-8 md:mb-10', className)}>
       {eyebrow && (
-        <div className="b1-mono text-b1-accent mb-3 text-[13px] font-semibold tracking-[0.16em]">
+        <div className="b1-mono text-b1-accent mb-3 text-caption font-semibold tracking-[0.16em]">
           {eyebrow}
         </div>
       )}
@@ -39,7 +39,8 @@ export const SectionTitle = ({ title, eyebrow, action, tier = 'standard', classN
         >
           {title}
         </h2>
-        {action && <div className="shrink-0">{action}</div>}
+        {/* max-w-full: 줄바꿈돼 혼자 한 줄이 될 때 화면 폭을 넘지 않게(375 가로 넘침 원인) */}
+        {action && <div className="max-w-full shrink-0">{action}</div>}
       </div>
     </div>
   );

@@ -121,7 +121,7 @@ export default function Fan({ photos }: { photos: Photo[] }) {
       <style>{`
         .fa-stage {
           --fa-run: 0px; --fa-mt: 0px; --fa-mb: 0px;
-          --fa-w: calc(100vw - 40px);
+          --fa-w: calc(100vw - var(--sbw, 0px) - 40px);
           position: relative; width: 100%;
           height: calc(100svh + var(--fa-run));
           margin-top: var(--fa-mt); margin-bottom: var(--fa-mb);

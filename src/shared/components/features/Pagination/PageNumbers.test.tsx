@@ -6,8 +6,13 @@ import { describe, expect, it, vi } from 'vitest';
 // 시드(컴포넌트 렌더 + RTL): 페이지 번호/생략부호 분기를 검증.
 // 쪽 번호는 PaginationLink(button, data-slot="pagination-link"),
 // 건너뛰기는 PaginationJump(button, data-slot="pagination-jump") — data-slot 으로 쿼리한다.
-const links = (c: HTMLElement) => c.querySelectorAll('[data-slot="pagination-link"]');
-const jumps = (c: HTMLElement) => c.querySelectorAll('[data-slot="pagination-jump"]');
+// PC 에 보이는 칸만 센다 — 휴대폰 전용 칸(li.sm:hidden)은 빼고(jsdom 은 CSS 를 적용하지 않는다)
+const onDesktop = (c: HTMLElement, slot: string) =>
+  [...c.querySelectorAll(`[data-slot="${slot}"]`)].filter(
+    el => !el.closest('li')?.classList.contains('sm:hidden')
+  );
+const links = (c: HTMLElement) => onDesktop(c, 'pagination-link');
+const jumps = (c: HTMLElement) => onDesktop(c, 'pagination-jump');
 
 describe('PageNumbers', () => {
   it('전체 페이지가 5 이하면 모든 번호를 노출하고 생략부호는 없다', () => {
@@ -53,11 +58,11 @@ describe('PageNumbers', () => {
     expect(navToPage).toHaveBeenLastCalledWith(15); // min(10 + 5, 20 - 1)
   });
 
-  it('생략부호는 키보드로 누를 수 있고 화면낭독기가 용도를 읽는다', async () => {
+  it('생략부호는 키보드로 누를 수 있고 화면낭독기가 도착할 쪽을 읽는다', async () => {
     const navToPage = vi.fn();
     render(<PageNumbers totalPageCount={20} page={10} navToPage={navToPage} />);
-    const back = screen.getByRole('button', { name: '앞쪽 페이지로 건너뛰기' });
-    expect(screen.getByRole('button', { name: '뒤쪽 페이지로 건너뛰기' })).toBeInTheDocument();
+    const back = screen.getByRole('button', { name: '5페이지로 건너뛰기' });
+    expect(screen.getByRole('button', { name: '15페이지로 건너뛰기' })).toBeInTheDocument();
     back.focus();
     await userEvent.keyboard('{Enter}');
     expect(navToPage).toHaveBeenLastCalledWith(5);
@@ -69,5 +74,16 @@ describe('PageNumbers', () => {
 
     await userEvent.click(screen.getByText('2'));
     expect(navToPage).toHaveBeenCalledWith(2);
+  });
+
+  it('휴대폰에서는 지금 쪽 양옆 번호를 숨기고, 필요하면 휴대폰 전용 건너뛰기를 보인다', () => {
+    const { container } = render(<PageNumbers totalPageCount={20} page={4} navToPage={vi.fn()} />);
+    const item = (name: string) => screen.getByRole('button', { name }).closest('li')!;
+    expect(item('4')).not.toHaveClass('max-sm:hidden');
+    expect(item('3')).toHaveClass('max-sm:hidden');
+    expect(item('2페이지로 건너뛰기')).toHaveClass('sm:hidden'); // PC 는 2·3 이 보여 건너뛰기 없음
+    expect(item('1')).not.toHaveClass('max-sm:hidden');
+    expect(item('20')).not.toHaveClass('max-sm:hidden');
+    expect(container.querySelectorAll('[aria-current="page"]')).toHaveLength(1); // 한 벌만 그린다
   });
 });

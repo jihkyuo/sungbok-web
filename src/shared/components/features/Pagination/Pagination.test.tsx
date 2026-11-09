@@ -18,6 +18,16 @@ const on = (name: string) =>
   expect(screen.getByRole('button', { name })).not.toHaveAttribute('aria-disabled', 'true');
 const current = (name: string) =>
   expect(screen.getByRole('button', { name })).toHaveAttribute('aria-current', 'page');
+// 생략부호(건너뛰기) 버튼 — 이름은 «N페이지로 건너뛰기». 지금 쪽보다 앞이면 back, 뒤면 forward.
+const jump = (dir: 'back' | 'forward') => {
+  const cur = Number(document.querySelector('[aria-current="page"]')?.textContent);
+  return (
+    screen.queryAllByRole('button', { name: /^\d+페이지로 건너뛰기$/ }).find(b => {
+      const to = parseInt(b.getAttribute('aria-label') ?? '', 10);
+      return dir === 'back' ? to < cur : to > cur;
+    }) ?? null
+  );
+};
 
 describe('Pagination', () => {
   it('쪽 번호·이전·다음은 키보드로 누를 수 있는 버튼이다', async () => {
@@ -80,7 +90,7 @@ describe('Pagination', () => {
 
   it('부모가 이동을 무시하면 화면낭독기도 아무것도 읽지 않는다', async () => {
     render(<Pagination total={50} pageSize={5} currentPage={3} onChange={() => {}} />);
-    await userEvent.click(screen.getByRole('button', { name: '뒤쪽 페이지로 건너뛰기' }));
+    await userEvent.click(jump('forward')!);
     expect(screen.getByRole('status')).toHaveTextContent('');
   });
 
@@ -97,7 +107,7 @@ describe('Pagination', () => {
       );
     }
     render(<Late />);
-    screen.getByRole('button', { name: '뒤쪽 페이지로 건너뛰기' }).focus();
+    jump('forward')!.focus();
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(screen.getByRole('button', { name: '8' })).toHaveFocus());
   });
@@ -115,11 +125,22 @@ describe('Pagination', () => {
   it('건너뛰기로 생략부호가 사라져도 포커스는 새로 고른 쪽 번호로 간다', async () => {
     render(<Harness total={50} />); // 10쪽
     await userEvent.click(screen.getByRole('button', { name: '3' }));
-    screen.getByRole('button', { name: '뒤쪽 페이지로 건너뛰기' }).focus();
+    jump('forward')!.focus();
     await userEvent.keyboard('{Enter}'); // 3 → 8, 뒤쪽 생략부호는 사라진다(8 다음은 9·10 뿐)
     current('8');
-    expect(screen.queryByRole('button', { name: '뒤쪽 페이지로 건너뛰기' })).toBeNull();
+    expect(jump('forward')).toBeNull();
     await waitFor(() => expect(screen.getByRole('button', { name: '8' })).toHaveFocus());
+  });
+
+  it('건너뛴 뒤 그 생략부호가 «휴대폰에서만 보이는 칸»으로 바뀌어 PC 에서 숨어도 포커스는 새 쪽 번호로 간다', async () => {
+    render(<Harness total={100} />); // 20쪽
+    await userEvent.click(jump('forward')!); // 1 → 6
+    await userEvent.click(screen.getByRole('button', { name: '8' }));
+    await userEvent.click(screen.getByRole('button', { name: '9' }));
+    jump('back')!.focus();
+    await userEvent.keyboard('{Enter}'); // 9 → 4 — PC 는 2·3 이 보여 앞쪽 생략부호가 없다(휴대폰 전용 칸)
+    current('4');
+    await waitFor(() => expect(screen.getByRole('button', { name: '4' })).toHaveFocus());
   });
 
   it('사용자가 쪽을 넘길 때만 화면낭독기에 알린다(처음·데이터 갱신 때는 조용히)', async () => {
@@ -142,7 +163,7 @@ describe('Pagination', () => {
     const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     render(<Harness total={50} />);
     await userEvent.click(screen.getByRole('button', { name: '3' }));
-    screen.getByRole('button', { name: '뒤쪽 페이지로 건너뛰기' }).focus();
+    jump('forward')!.focus();
     focus.mockClear();
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(focus).toHaveBeenCalledWith({ preventScroll: true }));
@@ -164,7 +185,7 @@ describe('Pagination', () => {
     const { rerender } = render(
       <Pagination total={50} pageSize={5} currentPage={3} onChange={() => {}} />
     );
-    screen.getByRole('button', { name: '뒤쪽 페이지로 건너뛰기' }).focus();
+    jump('forward')!.focus();
     focus.mockClear();
     await userEvent.keyboard('{Enter}'); // 부모가 무시 — 쪽 그대로
     await new Promise(r => requestAnimationFrame(() => r(null)));
@@ -180,7 +201,7 @@ describe('Pagination', () => {
     const { rerender } = render(
       <Pagination total={50} pageSize={5} currentPage={3} onChange={() => {}} />
     );
-    screen.getByRole('button', { name: '뒤쪽 페이지로 건너뛰기' }).focus();
+    jump('forward')!.focus();
     now.mockReturnValue(10_000);
     await userEvent.keyboard('{Enter}'); // 8 을 요청했지만 부모가 무시
     focus.mockClear();

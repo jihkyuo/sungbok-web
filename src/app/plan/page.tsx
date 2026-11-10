@@ -60,7 +60,9 @@ export default function Page() {
     <div className="px-[6vw] pb-24">
       <div className="mx-auto w-full max-w-[1320px] pt-[112px] md:pt-[128px]">
         <header className="border-b-b1-border border-b pb-8">
-          <p className="text-b1-muted text-[13px] font-medium">내부 문서 · 2026-11-08 정리</p>
+          <p className="text-b1-muted text-caption font-medium">
+            내부 문서 · 2026-11-08 정리 · 11-09 갱신
+          </p>
           <h1 className="text-b1-text mt-2 text-[40px] leading-[1.05] font-bold tracking-[-0.03em] text-balance md:text-[56px]">
             홈페이지 기획 기준
           </h1>

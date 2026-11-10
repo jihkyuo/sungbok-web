@@ -22,7 +22,8 @@ export const WORSHIP_GROUPS: WorshipServiceGroup[] = [
       { name: '주일 5부', time: '오후 3:30', place: '예루살렘성전 3F' },
       { name: '새벽예배', time: '오전 5:30', place: '임마누엘성전 3F', note: '월~금' },
       { name: '수요예배', time: '오후 7:30', place: '임마누엘성전 3F' },
-      { name: '청년수요예배', time: '오후 8:30', place: '벧엘성전 4F' },
+      // 기획 D9: 요일을 앞에 — "청년수요예배" 아님
+      { name: '수요 청년예배', time: '오후 8:30', place: '벧엘성전 4F' },
       { name: '금요생수의강', time: '오후 8:30', place: '예루살렘성전 3F' },
     ],
   },
@@ -59,7 +60,7 @@ const ADULT = WORSHIP_GROUPS[0].services;
 
 /** 주일 1~5부 */
 export const SUNDAY_PARTS = ADULT.slice(0, 5);
-/** 새벽·수요·청년수요·금요생수의강 */
+/** 새벽·수요·수요 청년·금요생수의강 */
 export const WEEKDAY_SERVICES = ADULT.slice(5);
 /** 다음세대 8개 부서 (전부 주일) */
 export const GEN_SERVICES = WORSHIP_GROUPS[1].services;
@@ -83,7 +84,7 @@ export const WEEKDAY_SECTIONS: { day: string; services: WorshipServiceSummary[] 
   { day: '매일 새벽', services: WEEKDAY_SERVICES.filter(s => s.name === '새벽예배') },
   {
     day: '수요일',
-    services: WEEKDAY_SERVICES.filter(s => s.name === '수요예배' || s.name === '청년수요예배'),
+    services: WEEKDAY_SERVICES.filter(s => s.name === '수요예배' || s.name === '수요 청년예배'),
   },
   { day: '금요일', services: WEEKDAY_SERVICES.filter(s => s.name === '금요생수의강') },
 ];

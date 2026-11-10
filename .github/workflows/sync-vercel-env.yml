@@ -1,0 +1,53 @@
+# GitHub Secrets → Vercel 환경변수 동기화 (수동 실행, 변수 1개씩)
+#
+# 환경변수의 정본은 이 레포의 GitHub Secrets 다. 값을 추가·변경한 뒤
+# Actions 탭 → "Sync env to Vercel" → Run workflow → 변수 이름 입력 → 실행하면
+# 그 Secret 하나를 Vercel 프로젝트의 production·preview 환경변수에 덮어쓴다.
+#
+# - 입력한 이름의 Secret 만 읽는다(secrets[inputs.name]). 다른 Secret 은 이 실행에 노출되지 않는다.
+# - `vercel env add --force` 로 덮어쓰므로 삭제 단계가 없다. 중간에 실패해도 기존 값은 남는다.
+# - 반영은 다음 배포부터. 즉시 반영하려면 Vercel 대시보드에서 Redeploy.
+# - 절차·셋업은 .md/workflow/deploy-and-env.md 참조.
+
+name: Sync env to Vercel
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: '동기화할 Secret 이름 (= Vercel 환경변수 이름, 예: YOUTUBE_API_KEY)'
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: sync-vercel-env
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Vercel CLI
+        # --environment / --force 는 64.7.0 이상. 검증한 정확한 버전으로 고정(운영 변수를 바꾸는 작업이라 패치 릴리스에 흔들리지 않게).
+        run: npm install --global vercel@65.14.0
+
+      - name: Push one secret to Vercel (production, preview)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NAME: ${{ inputs.name }}
+          VALUE: ${{ secrets[inputs.name] }}
+        run: |
+          set -euo pipefail
+          for v in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            [ -n "${!v:-}" ] || { echo "::error::Secret '$v' is missing"; exit 1; }
+          done
+          # 대문자 전용. GitHub Secret 조회는 대소문자를 구분하지 않아 'vercel_token' 도 VERCEL_TOKEN 을 읽으므로 소문자를 아예 거부한다.
+          [[ "$NAME" =~ ^[A-Z_][A-Z0-9_]*$ ]] || { echo "::error::Invalid variable name '$NAME' (uppercase A-Z, 0-9, _ only)"; exit 1; }
+          case "$NAME" in VERCEL_*|GITHUB_*) echo "::error::'$NAME' is a control secret, not an app variable"; exit 1;; esac
+          [ -n "$VALUE" ] || { echo "::error::Secret '$NAME' is empty or not registered in this repo"; exit 1; }
+          printf '%s' "$VALUE" | vercel env add "$NAME" --environment production,preview --force --yes --token "$VERCEL_TOKEN"
+          echo "synced: $NAME → production, preview"

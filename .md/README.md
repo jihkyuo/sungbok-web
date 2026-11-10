@@ -13,7 +13,8 @@
 ├── domains/                        # 도메인별 상세 (살아있는 문서)
 │   └── home.md
 ├── workflow/                       # 작업 방식·도구 (살아있는 문서)
-│   └── prototype-preview.md
+│   ├── prototype-preview.md
+│   └── deploy-and-env.md
 ├── patterns/                       # 재사용 인터랙션 패턴 (살아있는 문서)
 │   └── scroll-autoplay-intro.md
 ├── meetings/                       # 회의록 (불변 — 회의 시점 기록)
@@ -24,7 +25,9 @@
 │   ├── 2026-10-10-subpage-layouts-round2-analysis.md
 │   ├── 2026-10-11-home-video-sections-analysis.md
 │   ├── 2026-11-05-design-system-design.md
-│   └── 2026-11-05-design-system-plan.md
+│   ├── 2026-11-05-design-system-plan.md
+│   ├── 2026-11-10-github-org-env-sync-design.md
+│   └── 2026-11-10-github-org-env-sync-plan.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
@@ -35,7 +38,8 @@
     ├── 0007-department-page-template.md
     ├── 0008-admin-backend-vercel-supabase.md
     ├── 0009-design-system-tokens-responsive.md
-    └── 0010-next16-node26-perf-baseline.md
+    ├── 0010-next16-node26-perf-baseline.md
+    └── 0011-github-org-and-env-source.md
 ```
 
 향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
@@ -70,6 +74,7 @@
 ### Workflow
 
 - [prototype-preview.md](workflow/prototype-preview.md) — 시안(디자인 변형) 탐색·라이브 프리뷰 방식. 좋은 시안의 조건(콘텐츠 분리·쏠림 금지·등장/사라짐 설계) + `<name>-preview` 라우트 + `_variants/` + 전용 dev 포트 + 비인터랙티브 영상/스크롤 헬퍼 + browse 자기점검. (구 standalone HTML 방식 폐기)
+- [deploy-and-env.md](workflow/deploy-and-env.md) — 배포·환경변수 운영 절차. 정본 = GitHub Secrets, Actions "Sync env to Vercel"(수동, 변수 1개씩)로 Vercel 에 덮어쓰기, 배포는 Vercel Git 자동. 1회 셋업 체크리스트(조직 이전·Vercel 재연결·토큰)·일상 절차·로컬 개발·규칙
 
 ### Patterns
 
@@ -85,6 +90,7 @@
 - [2026-10-10-subpage-layouts-round2-analysis.md](specs/2026-10-10-subpage-layouts-round2-analysis.md) — 서브페이지 본문 레이아웃 페이지별 분석(영어예배부·주일예배·섬기는 이들·주보) + 머리 20종 비교 결과(S1 확정)
 - [2026-10-11-home-video-sections-analysis.md](specs/2026-10-11-home-video-sections-analysis.md) — 홈 영상 섹션 분석: 위=라이브 스테이지(라이브 우선·없으면 담임 최신 설교) / 아래=광고 릴(재생목록 로테이션). 유튜브 채널 실데이터(라이브 패턴·제목 규칙·재생목록)·쿼터·자동재생 제약·광고 비율 분석, 확정/미결 목록. 승격 완료, 프리뷰 정리 완료
 - [2026-11-05-design-system-design.md](specs/2026-11-05-design-system-design.md) — 작업 패키지 1: 디자인 시스템 + 모바일·태블릿 보완. 토큰 2계층(B1 원시 → shadcn 의미), 타이포 스케일·그림자·모션 토큰, 공용 부품 세트, `/design` 견본(dev 전용), 반응형 기준(375/768/1280·터치 44px·한글 최소 13px), `design:lint` 확장 + `design:audit`. 2026-11-05 실측 문제 목록 포함. **구현 완료(2026-11-05)**. 구현 계획: [-plan.md](specs/2026-11-05-design-system-plan.md) (12 태스크 — audit 도구·기준 캡처 → 토큰 → 폰트 → 부품 → `/design` → 글자 이전 → 반응형 보완 → lint 확장 → 문서·ADR 0009)
+- [2026-11-10-github-org-env-sync-design.md](specs/2026-11-10-github-org-env-sync-design.md) — 레포를 GitHub Organization 으로 이전하고 환경변수 정본을 GitHub Secrets 로 둔다. Actions 는 Secrets→Vercel 동기화만(수동), 배포는 Vercel Git 자동 유지. 협업자가 본인 없이 운영 변수 추가·변경 가능. **승인·구현 완료(2026-11-10), 셋업 검증 대기**. 계획: [-plan.md](specs/2026-11-10-github-org-env-sync-plan.md)
 
 ### Decisions
 
@@ -98,6 +104,7 @@
 - [0008-admin-backend-vercel-supabase.md](decisions/0008-admin-backend-vercel-supabase.md) — 2026-11-05 — 관리자·백엔드를 Vercel + Supabase(DB·Auth·RLS·Storage) 두 서비스로, 교회 명의 계정·Cloudflare 없음. 관리 범위(A/B/C)·권한(사무 담당 ⊇ 부서 담당자)·기존 사이트 이전 포함. 관리자 코드는 같은 앱 `/admin`(모노레포·별도 저장소 탈락)
 - [0009-design-system-tokens-responsive.md](decisions/0009-design-system-tokens-responsive.md) — 2026-11-05 — 디자인 시스템: B1 원시→shadcn 의미 토큰 2계층, 글자 크기 10단계(한글 최소 13px), 폰트 직접 제공(외부 요청 0), 반응형 기준(375/768/1280·lg 헤더·터치 44px), design:lint 확장 + design:audit
 - [0010-next16-node26-perf-baseline.md](decisions/0010-next16-node26-perf-baseline.md) — 2026-11-09 — Next 16·Node 26 업그레이드 + 성능 기준선: 유튜브는 서버 fetch 하나로(gapi·googleapis·axios 제거), 사진은 WebP 사전 변환(17.8MB→3.1MB), 폰트는 같은 출처, 무거운 임베드는 화면 근처에서, Vercel 서울 리전. (0008·0009 는 develop 쪽 ADR 이 쓰고 있어 건너뜀)
+- [0011-github-org-and-env-source.md](decisions/0011-github-org-and-env-source.md) — 2026-11-10 — 레포를 GitHub Organization 으로 이전, 환경변수 정본 = GitHub Secrets, Actions 는 Secrets→Vercel 덮어쓰기 동기화만(변수 1개씩), 배포는 Vercel Git 자동 유지, 레포 공개 유지. Pro·공용 계정·.env 커밋·Actions 전면 배포 탈락. 상태: 셋업 검증 대기
 
 ## 컨벤션
 

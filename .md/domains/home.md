@@ -16,7 +16,7 @@
 | 2   | PastorWelcome    | (신설 예정) `src/domains/home/components/widgets/PastorWelcome/`                         | 미구현                                 |
 | 3   | WorshipTimes     | [WorshipTimes](../../src/domains/home/components/widgets/WorshipTimes/index.tsx)         | 유지                                   |
 | 4   | RecentSermons    | [RecentSermons](../../src/domains/home/components/widgets/RecentSermons/index.tsx)       | 유지 + placeholder 카드 교체           |
-| 5   | CommunityGallery | [CommunityGallery](../../src/domains/home/components/widgets/CommunityGallery/index.tsx) | 유지 + 모바일 6+더보기                 |
+| 5   | NextGeneration   | [NextGeneration](../../src/domains/home/components/widgets/NextGeneration/index.tsx)     | 별자리 8부서, 폰에서는 숨김            |
 | 6   | VisitorAndNews   | [VisitorAndNews](../../src/domains/home/components/widgets/VisitorAndNews/index.tsx)     | 유지 + 좌:우 60:40                     |
 | 7   | LocationMap      | [LocationMap](../../src/domains/home/components/widgets/LocationMap/index.tsx)           | 유지 + "주소 복사" 추가                |
 
@@ -84,7 +84,10 @@
 | **Secondary CTA** | "청년부 영상"                                                                                                                                                                                                                                                |
 | **성공 지표**     | unmute 클릭률, 30초+ 시청률, `/worship-video` 이동률                                                                                                                                                                                                         |
 
-### 5. CommunityGallery
+### 5. NextGeneration (구 CommunityGallery)
+
+> 2026-11-10: 부서 카드 갤러리(CommunityGallery)는 다음세대 별자리(NextGeneration, 시안 "Z 커서 카드" 채택)로 바뀌어 삭제했다.
+> 8부서(엘림가족부 제외, 기획 D4)·별마다 부서 페이지 링크·폰(768px 미만)에서는 숨김. 아래 표는 옛 갤러리 기준 기록.
 
 | 항목              | 내용                                                                                                                                      |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -131,7 +134,7 @@
 | PastorWelcome    | 사진 위 → 텍스트 아래. 사진 4:5 인물 비율. 인사말 17px medium.                                                                                |
 | WorshipTimes     | 4개 카드 2×2 그리드. 4개 모두 동등 비중.                                                                                                      |
 | RecentSermons    | 메인 영상 위, 서브 카드 아래. 첫 프레임 썸네일 품질 중요(자동재생 제한 대비).                                                                 |
-| CommunityGallery | 2열, 6개까지 + "전체 부서 보기 ▼".                                                                                                            |
+| NextGeneration   | 숨김(별자리는 넓은 화면 전용, 기획 요구 8). 폰 대체 화면은 미착수.                                                                            |
 | VisitorAndNews   | 1열 스택 (방문 안내 위 / 소식 아래).                                                                                                          |
 | LocationMap      | 지도 4:3 압축. 지도 위 "지도 앱으로 열기" 버튼 우선.                                                                                          |
 

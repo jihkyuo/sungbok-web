@@ -1,4 +1,4 @@
-import { toMinutes } from '@/domains/home/data/worshipTimes';
+import { WEEKDAY_SECTIONS, toMinutes } from '@/domains/home/data/worshipTimes';
 import { describe, expect, it } from 'vitest';
 
 // 시드(순수 함수): 12시간 한글 표기 → 정렬용 분(minute) 변환.
@@ -23,5 +23,22 @@ describe('toMinutes', () => {
     const ordered = ['오전 6:00', '오전 11:30', '오후 12:00', '오후 1:00', '오후 7:00'];
     const sorted = [...ordered].sort((a, b) => toMinutes(a) - toMinutes(b));
     expect(sorted).toEqual(ordered);
+  });
+});
+
+// 기획 D9: "청년수요예배" 가 아니라 요일을 앞에 둔 "수요 청년예배". 수요일 칸에 수요예배와 함께 놓인다.
+describe('WEEKDAY_SECTIONS', () => {
+  it('수요일 칸에 수요예배와 수요 청년예배가 순서대로 들어간다', () => {
+    const wed = WEEKDAY_SECTIONS.find(s => s.day === '수요일');
+    expect(wed?.services.map(s => s.name)).toEqual(['수요예배', '수요 청년예배']);
+  });
+
+  it('주중 예배가 빠짐없이 한 칸씩에 들어간다', () => {
+    expect(WEEKDAY_SECTIONS.flatMap(s => s.services.map(v => v.name))).toEqual([
+      '새벽예배',
+      '수요예배',
+      '수요 청년예배',
+      '금요생수의강',
+    ]);
   });
 });

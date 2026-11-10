@@ -2,7 +2,7 @@
  * /plan 기획 기준 페이지의 내용.
  * 정본: .md/meetings/2026-10-08-pastor-review.md + public/plan/homepage-revisions-2026-10-08.pdf(목사님 원문).
  * 회의록은 시간순·불변이라, 여기서는 세 화면(이 페이지·새 사이트·레거시)을 나란히 비교하기 좋게 메뉴 축으로 재배열만 한다.
- * D·O 번호는 회의록 0절과 같다. "새 사이트 현재" 상태는 레포 라우트 기준 1차 판정(2026-11-08) — 미팅에서 고친다.
+ * D·O 번호는 회의록 0절과 같다. "새 사이트 현재" 상태는 레포 라우트 기준 1차 판정(2026-11-08), 2026-11-09 갱신 — 미팅에서 고친다.
  */
 
 export const LEGACY_ORIGIN = 'http://sungbok.or.kr';
@@ -86,8 +86,8 @@ export const BLOCKS: Block[] = [
       {
         label: '예배 시간표',
         href: '/#worship',
-        status: 'scaffold',
-        note: '장년예배/다음세대예배 레인 구분은 반영됨. 표기는 아직 "청년수요예배"(D9 "수요 청년예배" 미반영)',
+        status: 'done',
+        note: '"수요 청년예배" 표기와 장년예배/다음세대예배 구분 모두 반영(D9)',
       },
       {
         label: '라이브 스테이지 + 광고 릴',
@@ -99,13 +99,13 @@ export const BLOCKS: Block[] = [
         label: 'LP 턴테이블(청년 예배 영상)',
         href: '/',
         status: 'scaffold',
-        note: 'D12·D8에 따라 "성복의 찬양"으로 전환 또는 제거 결정 필요. 현 배포본(c270ddc)에는 비노출, 로컬에서 복원됨(미커밋)',
+        note: '넓은 화면만 노출, 폰에서는 숨김. D12·D8에 따라 "성복의 찬양"으로 전환 또는 제거 결정 필요',
       },
       {
         label: '다음세대 별자리',
         href: '/',
         status: 'scaffold',
-        note: '데스크톱만. 모바일 대체 화면 미착수(요구 8번). 현 배포본에는 비노출, 로컬에서 복원됨(미커밋)',
+        note: '넓은 화면만 노출, 폰에서는 숨김. 별을 누르면 각 부서 페이지로 이동(키보드 좌우 화살표·Enter도 됨). 폰 대체 화면 미착수(요구 8번)',
       },
       { label: '교회 소식', href: '/', status: 'scaffold', note: '레이아웃 완료, 데이터는 샘플' },
       {
@@ -209,7 +209,7 @@ export const BLOCKS: Block[] = [
         label: '주일예배',
         href: '/worship/sunday',
         status: 'scaffold',
-        note: '구 사이트 재생목록 페이지네이션 그대로. 설계한 아카이브 미연결',
+        note: '구 사이트 재생목록 탭 그대로. 탭 5개를 서버가 미리 받아 두어 탭 이동이 즉시 되고, 폰에서는 쪽 번호가 한 줄. 설계한 아카이브 미연결',
       },
       { label: '금요 생수의 강·월삭예배', href: '/worship/friday', status: 'todo' },
       { label: '특별집회·행사', href: '/worship/special', status: 'todo' },
@@ -255,6 +255,7 @@ export const BLOCKS: Block[] = [
     ],
     remarks: [
       '8부서 모두 공통 템플릿(도입부 + 사진 쇼케이스, ADR 0007)으로 연결됨. 부서별 사진·소개 글은 임시이며 각 부서에서 취합해야 한다',
+      '메인 다음세대 별자리도 8부서로 맞춤. 엘림가족부를 뺐고 순서는 레거시대로, 별마다 해당 부서 페이지로 연결(D4)',
       '목사님 전망: 부서 자료 요청 때문에 다음세대가 가장 오래 걸린다',
     ],
   },
@@ -296,6 +297,7 @@ export const BLOCKS: Block[] = [
       { label: '성복의 뜰', href: '/news/garden', status: 'todo', note: '행사 영상·홍보 영상' },
       { label: '교회앨범', href: '/news/album', status: 'todo' },
     ],
+    remarks: ['공지사항 메뉴는 처음부터 만들지 않았다(D6 반영)'],
   },
   {
     id: 'resources',
@@ -364,7 +366,7 @@ export const CROSS_CUTTING: { title: string; text: string; ref?: string }[] = [
   },
   {
     title: '모바일',
-    text: '메인 전체를 모바일 최적화 화면으로 다시 설계. 별 선택 같은 넓은 인터랙션은 모바일 미노출',
+    text: '메인 전체를 모바일 최적화 화면으로 다시 설계. 별 선택·LP 턴테이블 같은 넓은 인터랙션은 폰에서 숨김 처리됨. 폰 대체 화면과 메인 전체 재설계는 미착수',
     ref: '요구 8',
   },
   {

@@ -26,11 +26,11 @@
 ## 2. 1회 셋업 체크리스트 (소유자 계정 필요)
 
 - [x] **0. (이전 전) 동료가 지금 레포에 커밋 하나 push → Vercel 이 배포하는지 확인.** ✅ 2026-11-10 확인: 동료(jwkim705) 커밋 7f61c48·80d5bc2·69aacaa 등이 Production 으로 자동 배포 성공(GitHub deployments 기록, vercel[bot]). 공식 문서상 커밋 작성자 제한은 비공개·조직 레포에만 걸리고 개인 계정의 협업자에게는 적용되지 않는다. 배포돼야 정상. 막히면 여기서 멈추고 설계로 돌아간다.
-- [ ] 1. GitHub Organization 생성(Free). GitHub › 프로필 메뉴 › Your organizations › New organization.
-- [ ] 2. 레포 이전: `jihkyuo/sungbok-web` › Settings › Danger Zone › **Transfer ownership** → 조직. **공개 유지.** 비공개로 바꾸면 Hobby 는 조직 레포를 배포하지 못한다.
-- [ ] 3. 동료를 조직 멤버로 초대하고 레포 **Admin**(또는 조직 Owner) 부여. Secrets 는 Admin 이상만 편집할 수 있다.
-- [ ] 4. 로컬 remote 갱신: `git remote set-url origin git@github.com:<org>/sungbok-web.git`
-- [ ] 5. Vercel 재연결. 조건: **Vercel 에 연결된 소유자 GitHub 계정이 조직의 Member 이고 레포 Write 이상**(Outside Collaborator 로는 조직 레포를 연결할 수 없다). GitHub › 조직 Settings › GitHub Apps › Vercel 설치(또는 Vercel › Add New › Import 의 "Adjust GitHub App Permissions"). Vercel › 프로젝트 › Settings › Git › Connected Git Repository 가 `<org>/sungbok-web` 인지 확인, 아니면 Disconnect → Connect.
+- [x] 1. ✅ 2026-11-10 `sungbok-church`(Free) 생성. GitHub Organization 생성(Free). GitHub › 프로필 메뉴 › Your organizations › New organization.
+- [x] 2. ✅ 2026-11-10 `gh api …/transfer` 로 이전, 공개 유지 확인. 레포 이전: `jihkyuo/sungbok-web` › Settings › Danger Zone › **Transfer ownership** → 조직. **공개 유지.** 비공개로 바꾸면 Hobby 는 조직 레포를 배포하지 못한다.
+- [x] 3. ✅ 2026-11-10 `jwkim705` 레포 Admin 부여(이전 시 Write 로 따라옴). 조직 멤버 초대는 생성 화면에서 처리. `rladnjs705` 는 Write 유지. 동료를 조직 멤버로 초대하고 레포 **Admin**(또는 조직 Owner) 부여. Secrets 는 Admin 이상만 편집할 수 있다.
+- [x] 4. ✅ 2026-11-10 완료. 로컬 remote 갱신: `git remote set-url origin git@github.com:<org>/sungbok-web.git`
+- [x] 5. ✅ 2026-11-10 Vercel GitHub App 을 조직에 설치(sungbok-web 만, installation 180468160). 프로젝트 Settings › Git 은 이전 뒤에도 `sungbok-church/sungbok-web` 로 자동 추적돼 재연결 불필요. Vercel 재연결. 조건: **Vercel 에 연결된 소유자 GitHub 계정이 조직의 Member 이고 레포 Write 이상**(Outside Collaborator 로는 조직 레포를 연결할 수 없다). GitHub › 조직 Settings › GitHub Apps › Vercel 설치(또는 Vercel › Add New › Import 의 "Adjust GitHub App Permissions"). Vercel › 프로젝트 › Settings › Git › Connected Git Repository 가 `<org>/sungbok-web` 인지 확인, 아니면 Disconnect → Connect.
 - [ ] **6. 게이트: 소유자 커밋 push → 자동 배포 확인. 동료 커밋 push → 자동 배포 확인.** 둘 다 되면 설계 전제가 실측으로 확인된 것. 동료 커밋이 막히면 멈추고 ADR 0011 을 보류한다.
 - [ ] 7. Vercel 토큰 발급: Vercel › Account Settings › Tokens › Create. Scope = 소유자 팀, 만료 1년 권장. 만료되면 워크플로우가 실패해서 알게 된다 → 재발급 후 Secret 교체.
 - [ ] 8. ID 확보: `VERCEL_ORG_ID` = Vercel › 팀 Settings › General › Team ID. `VERCEL_PROJECT_ID` = 프로젝트 Settings › General › Project ID.

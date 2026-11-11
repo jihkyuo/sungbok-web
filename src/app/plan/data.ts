@@ -152,7 +152,12 @@ export const BLOCKS: Block[] = [
         status: 'done',
         note: '교역자 7명 사진이 275×350 저해상. 실사진 수신 시 교체',
       },
-      { label: '양육·훈련', href: '/about/training', status: 'todo' },
+      {
+        label: '양육·훈련',
+        href: '/about/training',
+        status: 'done',
+        note: '기존 사이트 안내 이미지(기초·성장·섬김 4과정) 원문을 단계 경로로 재구성. 신청·일정 안내는 자료 없음',
+      },
       {
         label: '연혁',
         href: '/about/history',

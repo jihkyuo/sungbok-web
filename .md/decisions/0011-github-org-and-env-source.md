@@ -14,7 +14,7 @@
 
 ## 결정
 
-레포를 교회 GitHub Organization 으로 이전하고 협업자를 Admin 으로 둔다. 환경변수의 정본은 GitHub Repository Secrets 로 하고, 수동 실행 워크플로우(`.github/workflows/sync-vercel-env.yml`)가 입력한 이름의 Secret 하나를 `vercel env add --environment production,preview --force` 로 Vercel 에 덮어쓴다. **배포 경로는 바꾸지 않는다** — Vercel Git 연동 자동 배포(PR 프리뷰 포함)를 그대로 쓴다. 레포는 공개를 유지한다.
+레포를 교회 GitHub Organization 으로 이전하고 협업자를 Admin 으로 둔다. 환경변수의 정본은 GitHub Repository Secrets 로 하고, 수동 실행 워크플로우(`.github/workflows/sync-vercel-env.yml`)가 입력한 이름의 Secret 하나를 Vercel REST API(`POST /v10/projects/{id}/env?upsert=true`, production·preview)로 Vercel 에 덮어쓴다(처음엔 `vercel env add --force` 였으나 팀 범위 토큰으로는 CLI 가 프로젝트를 못 읽어 2026-11-11 API 직접 호출로 바꿨다. 같은 엔드포인트다). **배포 경로는 바꾸지 않는다** — Vercel Git 연동 자동 배포(PR 프리뷰 포함)를 그대로 쓴다. 레포는 공개를 유지한다.
 
 핵심 디테일:
 - 한 번 실행에 변수 하나(`secrets[inputs.name]`). 레포 Secrets 전체를 열거하지 않는다.

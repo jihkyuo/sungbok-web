@@ -5,7 +5,8 @@
 # 그 Secret 하나를 Vercel 프로젝트의 production·preview 환경변수에 덮어쓴다.
 #
 # - 입력한 이름의 Secret 만 읽는다(secrets[inputs.name]). 다른 Secret 은 이 실행에 노출되지 않는다.
-# - `vercel env add --force` 로 덮어쓰므로 삭제 단계가 없다. 중간에 실패해도 기존 값은 남는다.
+# - Vercel REST API(`POST /v10/projects/{id}/env?upsert=true`) 로 덮어쓰므로 삭제 단계가 없다. 중간에 실패해도 기존 값은 남는다.
+#   (`vercel env add --force` 와 같은 호출. CLI 는 팀 범위 토큰으로 프로젝트를 못 읽어 쓰지 않는다 — 아래 주석)
 # - 반영은 다음 배포부터. 즉시 반영하려면 Vercel 대시보드에서 Redeploy.
 # - 절차·셋업은 .md/workflow/deploy-and-env.md 참조.
 
@@ -29,10 +30,6 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Vercel CLI
-        # --environment / --force 는 64.7.0 이상. 검증한 정확한 버전으로 고정(운영 변수를 바꾸는 작업이라 패치 릴리스에 흔들리지 않게).
-        run: npm install --global vercel@65.14.0
-
       - name: Push one secret to Vercel (production, preview)
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -49,5 +46,13 @@ jobs:
           [[ "$NAME" =~ ^[A-Z_][A-Z0-9_]*$ ]] || { echo "::error::Invalid variable name '$NAME' (uppercase A-Z, 0-9, _ only)"; exit 1; }
           case "$NAME" in VERCEL_*|GITHUB_*) echo "::error::'$NAME' is a control secret, not an app variable"; exit 1;; esac
           [ -n "$VALUE" ] || { echo "::error::Secret '$NAME' is empty or not registered in this repo"; exit 1; }
-          printf '%s' "$VALUE" | vercel env add "$NAME" --environment production,preview --force --yes --token "$VERCEL_TOKEN"
+          # Vercel CLI(`vercel env add --force`)가 아니라 REST API 를 직접 부른다. CLI 도 내부에서 이 엔드포인트를 upsert=true 로
+          # 부르지만, 그 전에 GET /v2/user 를 먼저 호출하고 팀 범위 토큰은 거기서 404 가 나 "Could not retrieve Project Settings" 로
+          # 멈춘다(vercel@65.14.0, 2026-11-11 실측). 토큰을 전체 계정 범위로 넓히는 대신 CLI 를 뺐다 — 설치 13초도 사라진다.
+          # 값은 인자가 아니라 stdin 으로 넘긴다(프로세스 목록 노출 방지). 응답 본문은 에러 메시지만 출력한다(레코드에 값이 포함됨).
+          code=$(jq -nc --arg k "$NAME" --arg v "$VALUE" '{key:$k, value:$v, type:"encrypted", target:["production","preview"]}' \
+            | curl -sS -o resp.json -w '%{http_code}' -X POST \
+                "https://api.vercel.com/v10/projects/$VERCEL_PROJECT_ID/env?teamId=$VERCEL_ORG_ID&upsert=true" \
+                -H "Authorization: Bearer $VERCEL_TOKEN" -H 'Content-Type: application/json' --data-binary @-)
+          case "$code" in 200|201) ;; *) echo "::error::Vercel API HTTP $code: $(jq -r '.error.message // "(no message)"' resp.json 2>/dev/null)"; exit 1;; esac
           echo "synced: $NAME → production, preview"

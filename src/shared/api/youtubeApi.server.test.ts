@@ -14,7 +14,6 @@ beforeEach(() => {
   fetchMock.mockReset();
   vi.stubGlobal('fetch', fetchMock);
   vi.stubEnv('YOUTUBE_API_KEY', 'test-key');
-  vi.stubEnv('NEXT_PUBLIC_YOUTUBE_API_KEY', '');
 });
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -71,12 +70,12 @@ describe('youtubeGet', () => {
     });
   });
 
-  it('키는 서버 전용 이름(YOUTUBE_API_KEY)을 먼저, 없으면 옛 이름을 읽는다(Vercel 이름 바꾸기 전까지)', async () => {
+  it('키는 서버 전용 이름(YOUTUBE_API_KEY)만 읽는다 — 옛 NEXT_PUBLIC_ 이름은 읽지 않는다(브라우저 번들에 실릴 수 있는 이름)', async () => {
     vi.stubEnv('YOUTUBE_API_KEY', '');
     vi.stubEnv('NEXT_PUBLIC_YOUTUBE_API_KEY', 'old-key');
     fetchMock.mockResolvedValue({ ok: true, status: 200, json: async () => ({}) });
     await youtubeGet('videos', {}, 60);
-    expect(fetchMock.mock.calls[0][1].headers).toEqual({ 'X-goog-api-key': 'old-key' });
+    expect(fetchMock.mock.calls[0][1].headers).toEqual({ 'X-goog-api-key': '' });
   });
 
   it('youtubeGetDated 는 유튜브가 원래 응답한 시각(Date 헤더)을 함께 준다 — 캐시에서 꺼낸 옛 응답인지 알 수 있게', async () => {

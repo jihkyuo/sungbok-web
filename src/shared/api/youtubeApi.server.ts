@@ -5,8 +5,8 @@ import 'server-only'; // 화면(클라이언트) 코드가 가져다 쓰면 빌�
 
 const API = 'https://www.googleapis.com/youtube/v3/';
 
-// 키는 서버 전용 이름(YOUTUBE_API_KEY)을 쓴다. Vercel 환경변수 이름을 바꾸기 전까지만 옛 이름도 읽는다(그 뒤 지운다).
-const apiKey = () => process.env.YOUTUBE_API_KEY || process.env.NEXT_PUBLIC_YOUTUBE_API_KEY || '';
+// 키는 서버 전용 이름(YOUTUBE_API_KEY)만 읽는다. 옛 NEXT_PUBLIC_ 이름은 브라우저 번들에 실릴 수 있어 버렸다(ADR 0010).
+const apiKey = () => process.env.YOUTUBE_API_KEY || '';
 
 /** 유튜브 응답 실패. reason 은 유튜브가 알려 준 이유(예: quotaExceeded) — 우리 API 응답 상태를 가르는 데 쓴다. */
 export class YoutubeApiError extends Error {

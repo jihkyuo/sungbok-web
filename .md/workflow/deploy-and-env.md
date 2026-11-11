@@ -1,6 +1,6 @@
 # 배포와 환경변수 — 운영 절차
 
-**현재 상태**: 워크플로우·문서 준비 완료(2026-11-10). 아래 "1회 셋업" 은 사용자가 수행 중. 결정 기록은 [ADR 0011](../decisions/0011-github-org-and-env-source.md), 설계는 [스펙](../specs/2026-11-10-github-org-env-sync-design.md).
+**현재 상태**: 셋업 0~5·7~10 완료, 동기화 실측 성공(2026-11-11). 남은 것: 6번 동료 push 게이트·11번 옛 이름 정리·12번 동료 단독 실행. 결정 기록은 [ADR 0011](../decisions/0011-github-org-and-env-source.md), 설계는 [스펙](../specs/2026-11-10-github-org-env-sync-design.md).
 
 ## 1. 구조 한 장
 
@@ -35,7 +35,7 @@
 - [x] 7. ✅ 2026-11-11 팀 범위·1년으로 발급해 `VERCEL_TOKEN` 등록. 주의: 팀 범위 토큰은 Vercel CLI 가 못 쓴다(`GET /v2/user` 404 → "Could not retrieve Project Settings", vercel@65.14.0 실측). 그래서 워크플로우는 CLI 대신 REST API 를 직접 부른다 — 토큰을 전체 계정 범위로 넓히지 말 것. Vercel 토큰 발급: Vercel › Account Settings › Tokens › Create. Scope = 소유자 팀, 만료 1년 권장. 만료되면 워크플로우가 실패해서 알게 된다 → 재발급 후 Secret 교체.
 - [x] 8. ✅ 2026-11-11 등록(`team_…`·`prj_…` — 비밀값이 아니라 `GET api.vercel.com/v9/projects?search=sungbok` 으로 토큰만 있으면 다시 얻을 수 있다). ID 확보: `VERCEL_ORG_ID` = Vercel › 팀 Settings › General › Team ID. `VERCEL_PROJECT_ID` = 프로젝트 Settings › General › Project ID.
 - [x] 9. ✅ 2026-11-11 4개 등록(`YOUTUBE_API_KEY` 값은 Vercel 에 이미 있던 같은 이름 변수의 값을 복사). 주의: `gh secret set NAME` 을 `--body` 없이 여러 줄 한꺼번에 붙여넣으면 stdin 이 비어 **빈 값이 저장**되고 에러도 없다 — 한 줄씩 `--body` 로. GitHub › 레포 Settings › Secrets and variables › Actions › New repository secret 로 4개 등록: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`, `YOUTUBE_API_KEY`(값은 현재 Vercel 대시보드의 옛 이름 `NEXT_PUBLIC_YOUTUBE_API_KEY` 값과 동일. 코드는 새 이름을 먼저 읽고 없으면 옛 이름을 읽는다 — ADR 0010).
-- [ ] 10. Actions › Sync env to Vercel › Run workflow › `name` 에 `YOUTUBE_API_KEY` → 실행. 로그에 `synced: YOUTUBE_API_KEY → production, preview` 확인. Vercel › 프로젝트 › Settings › Environment Variables 에서 그 키가 Production·Preview 에 있고, `VERCEL_*` 는 없는지 확인. 원래 있던 다른 변수는 그대로 남는 게 정상. Development 값이 남았는지도 기록해 둔다(문서가 명시하지 않는 부분).
+- [x] 10. ✅ 2026-11-11 run 42974766792 `synced: YOUTUBE_API_KEY → production, preview`. 실측: Vercel 에 이미 있던 `YOUTUBE_API_KEY`(5/29, 3환경 한 레코드)는 upsert 로 **production·preview 만 새 레코드로 분리**되고 development 는 옛 레코드에 그대로 남았다(삭제 없음). 같은 push(65cf83f) 의 새 배포 success → `/api/home-video` 200. Actions › Sync env to Vercel › Run workflow › `name` 에 `YOUTUBE_API_KEY` → 실행. 로그에 `synced: YOUTUBE_API_KEY → production, preview` 확인. Vercel › 프로젝트 › Settings › Environment Variables 에서 그 키가 Production·Preview 에 있고, `VERCEL_*` 는 없는지 확인. 원래 있던 다른 변수는 그대로 남는 게 정상. Development 값이 남았는지도 기록해 둔다(문서가 명시하지 않는 부분).
 - [ ] 11. Redeploy(Vercel › Deployments › 최신 › ⋯ › Redeploy) 또는 아무 커밋 push → **새 배포**에서 홈 영상 섹션이 production·preview 모두 정상인지 확인. 환경변수 변경은 기존 배포에 반영되지 않는다. 새 배포가 정상이면 Vercel 대시보드에서 옛 이름 `NEXT_PUBLIC_YOUTUBE_API_KEY` 를 지우고, 코드의 옛 이름 fallback(`src/shared/api/youtubeApi.server.ts`)도 별도 PR 로 지운다.
 - [ ] 12. 동료 계정으로 `YOUTUBE_API_KEY` Secret 값을 바꾸고 Run workflow → Vercel 값이 바뀌는지 확인(소유자 개입 없이). 확인 후 원래 값으로 되돌리고 한 번 더 실행.
 

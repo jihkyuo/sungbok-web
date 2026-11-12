@@ -106,6 +106,29 @@ describe('fetchHomeVideoFeed', () => {
     now.mockRestore();
   });
 
+  it('모양이 어긋난 항목 하나는 빼고 나머지로 피드를 만든다 — 영상 하나 때문에 홈 영상 전체가 비지 않게', async () => {
+    fetchMock.mockImplementation(async (input: string) => {
+      const u = new URL(input);
+      if (u.pathname.endsWith('/playlistItems'))
+        return ok({ items: [playlistItem('n1'), {}, playlistItem('n2')] }); // 가운데는 videoId 없음
+      const broken = { id: 'n2', snippet: { title: 'n2' } }; // 게시 시각·썸네일 없음
+      return ok({ items: [videoItem('n1'), broken] });
+    });
+    const feed = await fetchHomeVideoFeed();
+    expect(feed.notices.map(v => v.id)).toEqual(['n1']);
+  });
+
+  it('썸네일이 아직 없는 영상(라이브 시작 직후·처리 중)도 빼지 않는다 — 썸네일만 빈 채로', async () => {
+    fetchMock.mockImplementation(async (input: string) => {
+      const u = new URL(input);
+      if (u.pathname.endsWith('/playlistItems')) return ok({ items: [playlistItem('L')] });
+      const v = videoItem('L', { title: '2026년 10월 11일 성복교회 주일예배', live: 'live' });
+      return ok({ items: [{ ...v, snippet: { ...v.snippet, thumbnails: undefined } }] });
+    });
+    const feed = await fetchHomeVideoFeed();
+    expect(feed.live).toMatchObject({ id: 'L', thumbnail: '' });
+  });
+
   it('재생목록이 비어 items 가 없는 응답이어도 터지지 않는다', async () => {
     fetchMock.mockImplementation(async () => ok({}));
     await expect(fetchHomeVideoFeed()).resolves.toMatchObject({
@@ -204,11 +227,48 @@ describe('fetchHomeVideoFeed — stale-while-error', () => {
     now.mockRestore();
   });
 
-  it('코드 버그(유튜브 실패가 아닌 오류)는 마지막 성공분으로 가리지 않는다', async () => {
+  it('응답 모양 오류도 마지막 성공분으로 버틴다 — 유튜브 쪽 문제라 홈 영상을 비우지 않는다', async () => {
     const fn = await fresh();
-    await fn();
-    fetchMock.mockResolvedValue(ok({ items: [{}] })); // contentDetails 없는 항목 → 우리 코드에서 TypeError
-    await expect(fn()).rejects.toBeInstanceOf(TypeError);
+    const first = await fn();
+    fetchMock.mockResolvedValue(ok({ items: {} })); // 배열 자리에 객체 — 응답 전체의 모양이 다르다
+    await expect(fn()).resolves.toMatchObject({ notices: first.notices });
+  });
+
+  it('우리 코드 버그(TypeError 등)는 마지막 성공분으로 가리지 않는다', async () => {
+    let broken = false;
+    vi.doMock('./homeVideoFeed', async importOriginal => {
+      const real = await importOriginal<typeof import('./homeVideoFeed')>();
+      return {
+        ...real,
+        pickLive: (...a: Parameters<typeof real.pickLive>) => {
+          if (broken) throw new TypeError('bug');
+          return real.pickLive(...a);
+        },
+      };
+    });
+    try {
+      const fn = await fresh();
+      await fn();
+      broken = true;
+      await expect(fn()).rejects.toBeInstanceOf(TypeError);
+    } finally {
+      vi.doUnmock('./homeVideoFeed'); // 실패해도 다음 테스트에 가짜가 남지 않게
+    }
+  });
+
+  it('모르는 방송 상태(liveBroadcastContent)가 와도 피드 전체를 깨지 않고 «방송 아님»으로 본다', async () => {
+    const fn = await fresh();
+    fetchMock.mockImplementation(async (input: string) => {
+      const u = new URL(input);
+      if (u.pathname.endsWith('/playlistItems')) return ok({ items: [playlistItem('x')] });
+      const v = videoItem('x', { title: '사도행전 강해 1 | 제목 | 사도행전 1:1 | 이요셉 목사' });
+      return ok({
+        items: [{ ...v, snippet: { ...v.snippet, liveBroadcastContent: 'completed' } }],
+      });
+    });
+    const feed = await fn();
+    expect(feed.live).toBeNull();
+    expect(feed.notices[0]).toMatchObject({ id: 'x', broadcast: 'none', durationSec: 60 });
   });
 
   it('첫 호출부터 실패(non-2xx) → throw', async () => {

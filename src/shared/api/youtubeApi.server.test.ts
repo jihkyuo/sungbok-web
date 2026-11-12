@@ -1,11 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { z } from 'zod';
 
 import {
   pickThumbnail,
+  validItems,
   youtubeGet,
   youtubeGetDated,
   YoutubeApiError,
   YoutubeNetworkError,
+  YoutubeShapeError,
 } from './youtubeApi.server';
 
 const fetchMock = vi.fn();
@@ -24,10 +27,11 @@ describe('youtubeGet', () => {
   it('Data API 경로에 파라미터를 붙이고, 키는 주소가 아닌 헤더로(캐시 파일에 남지 않게), Data Cache 재검증 주기·10초 제한을 넘긴다', async () => {
     fetchMock.mockResolvedValue({ ok: true, status: 200, json: async () => ({ items: [1] }) });
 
-    const r = await youtubeGet<{ items: number[] }>(
+    const r = await youtubeGet(
       'playlists',
       { part: 'snippet', maxResults: '5' },
-      3600
+      3600,
+      z.object({ items: z.array(z.number()) })
     );
 
     expect(r).toEqual({ items: [1] });
@@ -42,7 +46,7 @@ describe('youtubeGet', () => {
 
   it('200 이 아니면 경로·상태를 담아 throw 한다(실패 응답은 캐시되지 않는다)', async () => {
     fetchMock.mockResolvedValue({ ok: false, status: 403, json: async () => ({}) });
-    await expect(youtubeGet('videos', {}, 60)).rejects.toThrow('videos 403');
+    await expect(youtubeGet('videos', {}, 60, z.unknown())).rejects.toThrow('videos 403');
   });
 
   it('실패하면 상태와 유튜브가 알려 준 이유(쿼터 소진 등)를 담은 YoutubeApiError 를 던진다', async () => {
@@ -51,7 +55,7 @@ describe('youtubeGet', () => {
       status: 403,
       json: async () => ({ error: { errors: [{ reason: 'quotaExceeded' }] } }),
     });
-    const e = await youtubeGet('videos', {}, 60).catch(x => x);
+    const e = await youtubeGet('videos', {}, 60, z.unknown()).catch(x => x);
     expect(e).toBeInstanceOf(YoutubeApiError);
     expect(e).toMatchObject({ status: 403, reason: 'quotaExceeded' });
   });
@@ -64,7 +68,7 @@ describe('youtubeGet', () => {
         throw new Error('html');
       },
     });
-    await expect(youtubeGet('videos', {}, 60)).rejects.toMatchObject({
+    await expect(youtubeGet('videos', {}, 60, z.unknown())).rejects.toMatchObject({
       status: 500,
       reason: undefined,
     });
@@ -74,7 +78,7 @@ describe('youtubeGet', () => {
     vi.stubEnv('YOUTUBE_API_KEY', '');
     vi.stubEnv('NEXT_PUBLIC_YOUTUBE_API_KEY', 'old-key');
     fetchMock.mockResolvedValue({ ok: true, status: 200, json: async () => ({}) });
-    await youtubeGet('videos', {}, 60);
+    await youtubeGet('videos', {}, 60, z.unknown());
     expect(fetchMock.mock.calls[0][1].headers).toEqual({ 'X-goog-api-key': '' });
   });
 
@@ -85,14 +89,16 @@ describe('youtubeGet', () => {
       headers: new Headers({ date: 'Mon, 09 Nov 2026 01:00:00 GMT' }),
       json: async () => ({ items: [] }),
     });
-    const r = await youtubeGetDated('videos', {}, 60);
+    const r = await youtubeGetDated('videos', {}, 60, z.unknown());
     expect(r.fetchedAt).toBe(Date.parse('Mon, 09 Nov 2026 01:00:00 GMT'));
     expect(r.data).toEqual({ items: [] });
   });
 
   it('유튜브에 닿지 못하면(망 오류) YoutubeNetworkError — 우리 코드 버그(TypeError)와 구분한다', async () => {
     fetchMock.mockRejectedValue(new TypeError('fetch failed'));
-    await expect(youtubeGet('videos', {}, 60)).rejects.toBeInstanceOf(YoutubeNetworkError);
+    await expect(youtubeGet('videos', {}, 60, z.unknown())).rejects.toBeInstanceOf(
+      YoutubeNetworkError
+    );
   });
 
   it('200 본문을 받다가 끊겨도(TypeError) YoutubeNetworkError — 503 으로 재시도되게', async () => {
@@ -104,7 +110,9 @@ describe('youtubeGet', () => {
       },
     });
 
-    await expect(youtubeGet('videos', {}, 60)).rejects.toBeInstanceOf(YoutubeNetworkError);
+    await expect(youtubeGet('videos', {}, 60, z.unknown())).rejects.toBeInstanceOf(
+      YoutubeNetworkError
+    );
   });
 
   it('본문을 받다가 시간 제한에 걸려도(TimeoutError) YoutubeNetworkError, JSON 형식 오류는 그대로', async () => {
@@ -115,7 +123,9 @@ describe('youtubeGet', () => {
         throw new DOMException('timed out', 'TimeoutError');
       },
     });
-    await expect(youtubeGet('videos', {}, 60)).rejects.toBeInstanceOf(YoutubeNetworkError);
+    await expect(youtubeGet('videos', {}, 60, z.unknown())).rejects.toBeInstanceOf(
+      YoutubeNetworkError
+    );
     fetchMock.mockResolvedValue({
       ok: true,
       status: 200,
@@ -123,7 +133,72 @@ describe('youtubeGet', () => {
         throw new SyntaxError('Unexpected token <');
       },
     });
-    await expect(youtubeGet('videos', {}, 60)).rejects.toBeInstanceOf(SyntaxError);
+    await expect(youtubeGet('videos', {}, 60, z.unknown())).rejects.toBeInstanceOf(SyntaxError);
+  });
+
+  it('응답을 스키마로 검사해 통과한 값만 돌려준다 — 스키마에 없는 필드는 버린다', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ items: [{ id: 'a', etag: 'x' }], kind: 'youtube#list' }),
+    });
+    const r = await youtubeGet(
+      'videos',
+      {},
+      60,
+      z.object({ items: z.array(z.object({ id: z.string() })) })
+    );
+    expect(r).toEqual({ items: [{ id: 'a' }] });
+  });
+
+  it('응답 모양이 스키마와 다르면 YoutubeShapeError — 경로와 어긋난 위치를 담는다(조용히 깨진 화면 대신)', async () => {
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ items: [{ id: 3 }] }),
+    });
+    const e = await youtubeGet(
+      'videos',
+      {},
+      60,
+      z.object({ items: z.array(z.object({ id: z.string() })) })
+    ).catch(x => x);
+    expect(e).toBeInstanceOf(YoutubeShapeError);
+    expect(e.path).toBe('videos');
+    expect(e.message).toContain('items.0.id');
+  });
+});
+
+describe('validItems', () => {
+  it('배열에서 항목 스키마를 통과한 것만 남긴다 — 하나가 어긋나도 나머지는 산다', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const schema = validItems('videos', z.object({ id: z.string() }));
+    expect(schema.parse([{ id: 'a' }, { id: 3 }, null, { id: 'b', x: 1 }])).toEqual([
+      { id: 'a' },
+      { id: 'b' },
+    ]);
+    // 어느 응답의 몇 번째 항목인지 로그에 남긴다 — 원인을 찾을 수 있게
+    expect(warn.mock.calls[0].join(' ')).toMatch(/videos.*items\[1\]/);
+    warn.mockRestore();
+  });
+
+  it('같은 항목 경고는 한 번만 — 캐시된 응답을 요청마다 다시 읽어도 로그가 불어나지 않게', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const schema = validItems('dedupe-test', z.object({ id: z.string() }));
+    schema.parse([{ id: 1 }]);
+    schema.parse([{ id: 1 }]);
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
+  });
+
+  it('items 가 없거나 null 이면 빈 목록 — 빈 재생목록', () => {
+    const schema = z.object({ items: validItems('videos', z.object({ id: z.string() })) });
+    expect(schema.parse({})).toEqual({ items: [] });
+    expect(schema.parse({ items: null })).toEqual({ items: [] });
+  });
+
+  it('배열이 아니면 실패한다 — 응답 전체의 모양이 바뀐 것', () => {
+    expect(validItems('videos', z.object({ id: z.string() })).safeParse({}).success).toBe(false);
   });
 });
 

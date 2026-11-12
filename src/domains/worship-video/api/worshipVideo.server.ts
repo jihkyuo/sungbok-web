@@ -3,7 +3,15 @@
 
 import 'server-only'; // 화면(클라이언트) 코드가 가져다 쓰면 빌드가 실패한다 — 키·쿼터는 서버에만
 
-import { pickThumbnail, youtubeGet, type YoutubeThumbnails } from '@/shared/api/youtubeApi.server';
+import { z } from 'zod';
+
+import {
+  pickThumbnail,
+  validItems,
+  youtubeGet,
+  youtubeThumbnailsSchema,
+  type YoutubeThumbnails,
+} from '@/shared/api/youtubeApi.server';
 
 import type { PlaylistSummary, PlaylistVideo } from './worshipVideo.types';
 
@@ -14,15 +22,32 @@ export const SUNDAY_PLAYLIST_COUNT = 5;
 // 실제 재생목록이 이 한도에 닿을 일은 없다고 본다. 응답은 1시간 캐시라 쿼터는 재생목록당 시간당 최대 100유닛.
 export const MAX_PLAYLIST_PAGES = 100;
 
-type PlaylistsResponse = {
-  items?: { id?: string; snippet?: { title?: string; channelId?: string } }[];
-};
-type PlaylistItemsResponse = {
-  items?: {
-    snippet?: { title?: string; thumbnails?: YoutubeThumbnails; resourceId?: { videoId?: string } };
-  }[];
-  nextPageToken?: string;
-};
+// 응답 스키마 — 아래 코드가 빠진 값을 이미 걸러 내므로(제목 없음 → '', id·썸네일 없음 → 제외) 전부 optional.
+// 모양 자체가 다를 때(배열 자리에 객체 등)만 YoutubeShapeError 로 실패한다.
+const playlistsSchema = z.object({
+  items: validItems(
+    'playlists',
+    z.object({
+      id: z.string().optional(),
+      snippet: z.object({ title: z.string().optional() }).optional(),
+    })
+  ),
+});
+const playlistItemsSchema = z.object({
+  items: validItems(
+    'playlistItems',
+    z.object({
+      snippet: z
+        .object({
+          title: z.string().optional(),
+          thumbnails: youtubeThumbnailsSchema.optional(),
+          resourceId: z.object({ videoId: z.string().optional() }).optional(),
+        })
+        .optional(),
+    })
+  ),
+  nextPageToken: z.string().optional(),
+});
 
 // 목록 카드는 작게 보여 주므로 high(480px)부터 — 큰 것은 받는 양만 늘린다
 const thumb = (t?: YoutubeThumbnails) =>
@@ -32,16 +57,17 @@ const thumb = (t?: YoutubeThumbnails) =>
 // 나눠 쓴다 — 따로 부르면 캐시 시각이 어긋나 새로 보인 탭이 허용 목록에 아직 없어 404 가 날 수 있다.
 const CHANNEL_WINDOW = 50;
 const fetchChannelPlaylists = async (): Promise<PlaylistSummary[]> => {
-  const r = await youtubeGet<PlaylistsResponse>(
+  const r = await youtubeGet(
     'playlists',
     {
       part: 'snippet',
       channelId: process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID ?? '',
       maxResults: String(CHANNEL_WINDOW),
     },
-    REVALIDATE
+    REVALIDATE,
+    playlistsSchema
   );
-  return (r.items ?? []).filter(p => p.id).map(p => ({ id: p.id!, title: p.snippet?.title ?? '' }));
+  return r.items.filter(p => p.id).map(p => ({ id: p.id!, title: p.snippet?.title ?? '' }));
 };
 
 export const fetchPlaylists = async (max = SUNDAY_PLAYLIST_COUNT): Promise<PlaylistSummary[]> =>
@@ -56,12 +82,13 @@ export const fetchPlaylistVideos = async (playlistId: string): Promise<PlaylistV
   const videos: PlaylistVideo[] = [];
   let pageToken: string | undefined;
   for (let page = 0; page < MAX_PLAYLIST_PAGES; page++) {
-    const r = await youtubeGet<PlaylistItemsResponse>(
+    const r = await youtubeGet(
       'playlistItems',
       { part: 'snippet', playlistId, maxResults: '50', ...(pageToken ? { pageToken } : {}) },
-      REVALIDATE
+      REVALIDATE,
+      playlistItemsSchema
     );
-    for (const { snippet } of r.items ?? []) {
+    for (const { snippet } of r.items) {
       const id = snippet?.resourceId?.videoId;
       const thumbnail = thumb(snippet?.thumbnails);
       // 삭제·비공개 영상은 id 가 남아도 썸네일이 비어 온다 — 빈 src 카드를 만들지 않게 뺀다

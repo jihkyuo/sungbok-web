@@ -3,6 +3,8 @@
 
 import 'server-only'; // 화면(클라이언트) 코드가 가져다 쓰면 빌드가 실패한다 — 키·쿼터는 서버에만
 
+import { z } from 'zod';
+
 import {
   NOTICE_PLAYLIST_ID,
   SERMON_PREACHER,
@@ -23,22 +25,34 @@ import {
   youtubeGetDated,
   YoutubeApiError,
   YoutubeNetworkError,
-  type YoutubeThumbnails,
+  YoutubeShapeError,
+  validItems,
+  youtubeThumbnailsSchema,
 } from '@/shared/api/youtubeApi.server';
 
-type PlaylistItem = { contentDetails: { videoId: string } };
-type VideoItem = {
-  id: string;
-  snippet: {
-    title: string;
-    description: string;
-    publishedAt: string;
-    thumbnails: YoutubeThumbnails;
-    liveBroadcastContent: 'none' | 'live' | 'upcoming';
-  };
-  contentDetails?: { duration?: string };
-  liveStreamingDetails?: { actualStartTime?: string };
-};
+// 응답 스키마 — 화면에 꼭 필요한 값(id·제목·게시 시각)은 필수, 나머지는 optional.
+// 필수값이 빠진 항목은 validItems 가 그 항목만 뺀다(목록 전체는 산다).
+const playlistItemsSchema = z.object({
+  items: validItems(
+    'playlistItems',
+    z.object({ contentDetails: z.object({ videoId: z.string() }) })
+  ),
+});
+const videoSchema = z.object({
+  id: z.string(),
+  snippet: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    publishedAt: z.string(),
+    thumbnails: youtubeThumbnailsSchema.optional(), // 라이브 시작 직후·처리 중엔 없을 수 있다 — 빈 썸네일로 둔다
+    // 모르는 값이 새로 생겨도 피드 전체를 깨지 않는다 — «방송 아님»으로 본다(라이브로 잘못 띄우는 쪽보다 안전)
+    liveBroadcastContent: z.enum(['none', 'live', 'upcoming']).catch('none'),
+  }),
+  contentDetails: z.object({ duration: z.string().optional() }).optional(),
+  liveStreamingDetails: z.object({ actualStartTime: z.string().optional() }).optional(),
+});
+const videosSchema = z.object({ items: validItems('videos', videoSchema) });
+type VideoItem = z.output<typeof videoSchema>;
 
 // Data Cache 보관 시간(초) — 재생목록·영상 정보가 같은 주기로 새로 받도록 한 곳에서 정한다.
 const REVALIDATE = 60;
@@ -67,21 +81,23 @@ const toVideo = (v: VideoItem): HomeVideo => ({
 // 영상 정보(라이브 여부 포함)와 그 응답을 유튜브가 만든 시각 — 캐시에 남은 옛 응답이면 라이브를 믿지 않는다.
 const videosById = async (ids: string[]) => {
   if (ids.length === 0) return { videos: new Map<string, HomeVideo>(), fetchedAt: Date.now() };
-  const { data, fetchedAt } = await youtubeGetDated<{ items?: VideoItem[] }>(
+  const { data, fetchedAt } = await youtubeGetDated(
     'videos',
     { part: 'snippet,contentDetails,liveStreamingDetails', id: ids.join(','), maxResults: '50' },
-    REVALIDATE
+    REVALIDATE,
+    videosSchema
   );
-  return { videos: new Map((data.items ?? []).map(v => [v.id, toVideo(v)])), fetchedAt };
+  return { videos: new Map(data.items.map(v => [v.id, toVideo(v)])), fetchedAt };
 };
 
 const playlistIds = async (playlistId: string, max: number) => {
-  const r = await youtubeGet<{ items?: PlaylistItem[] }>(
+  const r = await youtubeGet(
     'playlistItems',
     { part: 'contentDetails', playlistId, maxResults: String(max) },
-    REVALIDATE
+    REVALIDATE,
+    playlistItemsSchema
   );
-  return (r.items ?? []).map(i => i.contentDetails.videoId);
+  return r.items.map(i => i.contentDetails.videoId);
 };
 
 // 피드와, 그 안 영상 정보를 유튜브가 만든 시각(라이브 만료 판단에 쓴다).
@@ -120,7 +136,7 @@ const withAge = ({
   staleMs: Math.max(0, Date.now() - fetchedAt),
 });
 
-// Data Cache 는 200 만 저장한다 — 유튜브가 403/5xx 를 내는 동안은 마지막 성공분으로 버틴다(stale-while-error).
+// Data Cache 는 200 만 저장한다 — 유튜브가 403/5xx·어긋난 모양을 내는 동안은 마지막 성공분으로 버틴다(stale-while-error).
 // 마지막 성공분은 10분까지만, 유튜브 실패일 때만 대신 쓴다 — 우리 코드 버그는 가리지 않고, 그 뒤로는 실패를
 // 그대로 알린다. 대신 줄 때도 staleMs 는 원래 응답 시각부터 세므로 라이브 만료가 밀리지 않는다.
 const LAST_GOOD_MAX_AGE = 10 * 60_000;
@@ -132,7 +148,11 @@ export const fetchHomeVideoFeed = async (): Promise<HomeVideoFeedData> => {
     lastGood = { feed, at: Date.now() };
     return withAge(feed);
   } catch (e) {
-    const youtubeFailure = e instanceof YoutubeApiError || e instanceof YoutubeNetworkError;
+    // 응답 모양 오류도 유튜브 쪽 문제다 — 홈 영상을 비우지 않고 버틴다(우리 코드 버그만 그대로 드러낸다)
+    const youtubeFailure =
+      e instanceof YoutubeApiError ||
+      e instanceof YoutubeNetworkError ||
+      e instanceof YoutubeShapeError;
     if (youtubeFailure && lastGood && Date.now() - lastGood.at <= LAST_GOOD_MAX_AGE) {
       return withAge(lastGood.feed);
     }

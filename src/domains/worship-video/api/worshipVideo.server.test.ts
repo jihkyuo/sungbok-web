@@ -75,14 +75,28 @@ describe('fetchPlaylistVideos', () => {
       1,
       'playlistItems',
       { part: 'snippet', playlistId: 'PL1', maxResults: '50' },
-      3600
+      3600,
+      expect.any(Object) // 응답 스키마
     );
     expect(get).toHaveBeenNthCalledWith(
       2,
       'playlistItems',
       { part: 'snippet', playlistId: 'PL1', maxResults: '50', pageToken: 'p2' },
-      3600
+      3600,
+      expect.any(Object)
     );
+  });
+
+  it('응답 스키마는 삭제·비공개 영상(id·썸네일 없음)이 섞인 응답을 받아들이고, 모양이 다른 응답은 거른다', async () => {
+    get.mockResolvedValueOnce({ items: [] });
+    await fetchPlaylistVideos('PL1');
+    const schema = get.mock.calls[0][3];
+    const real = {
+      items: [item('a'), { snippet: { title: 'Private video', thumbnails: {} } }],
+      nextPageToken: 'p2',
+    };
+    expect(schema.safeParse(real).success).toBe(true);
+    expect(schema.safeParse({ items: {} }).success).toBe(false);
   });
 
   it('비공개·삭제 영상(영상 id 없음)은 뺀다', async () => {
@@ -123,7 +137,8 @@ describe('isChannelPlaylist', () => {
     expect(get).toHaveBeenCalledWith(
       'playlists',
       { part: 'snippet', channelId: 'CH', maxResults: '50' },
-      3600
+      3600,
+      expect.any(Object) // 응답 스키마
     );
   });
 

@@ -66,6 +66,5 @@ src/shared/components/features/BgOverlayCard/LinkBgCard.tsx	shadow-[1px_1px_2px_
 src/shared/components/features/EdgeHoleArea/index.tsx	rounded-bl-[30px]
 src/shared/components/layout/Footer/index.tsx	text-[26px]
 src/shared/components/layout/Footer/index.tsx	text-[30px]
-src/shared/components/layout/SectionShell/index.tsx	text-[40px]
 src/shared/components/layout/SectionShell/index.tsx	text-[64px]
 src/shared/components/ui/tooltip.tsx	rounded-[2px]

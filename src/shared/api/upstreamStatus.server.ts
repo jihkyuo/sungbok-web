@@ -16,7 +16,8 @@ export const upstreamStatus = (e: unknown): number => {
     return 502; // 키 오류·잘못된 요청 등 그 밖의 4xx
   }
   if (e instanceof YoutubeNetworkError) return 503;
-  return 502; // 우리 코드 버그(TypeError 포함) — 일시 장애로 착각해 재시도하지 않게
+  // 우리 코드 버그(TypeError 포함)·응답 모양 오류(YoutubeShapeError) — 다시 해도 같아 재시도하지 않게
+  return 502;
 };
 
 /**

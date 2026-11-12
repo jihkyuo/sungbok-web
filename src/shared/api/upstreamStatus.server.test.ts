@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { upstreamStatus } from './upstreamStatus.server';
-import { YoutubeApiError, YoutubeNetworkError } from './youtubeApi.server';
+import { YoutubeApiError, YoutubeNetworkError, YoutubeShapeError } from './youtubeApi.server';
 
 describe('upstreamStatus — 유튜브 실패를 우리 API 응답 상태로', () => {
   it('하루 쿼터 소진은 429 — 화면이 다시 시도하지 않게(쿼터를 더 태우지 않음)', () => {
@@ -16,6 +16,12 @@ describe('upstreamStatus — 유튜브 실패를 우리 API 응답 상태로', (
     expect(upstreamStatus(new YoutubeApiError('videos', 429))).toBe(503); // 이유를 못 읽은 HTTP 429
     expect(upstreamStatus(new YoutubeNetworkError('videos', new TypeError('fetch failed')))).toBe(
       503
+    );
+  });
+
+  it('응답 모양 오류(YoutubeShapeError)는 502 — 다시 받아도 같은 모양이라 재시도하지 않는다', () => {
+    expect(upstreamStatus(new YoutubeShapeError('videos', 'items.0.id: expected string'))).toBe(
+      502
     );
   });
 

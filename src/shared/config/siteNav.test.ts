@@ -43,15 +43,15 @@ describe('siteNav 데이터 무결성', () => {
     for (const slug of all) expect(slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
   });
 
-  it('예배 섹션의 첫 하위는 예배 안내다', () => {
-    expect(worship.children?.[0]).toEqual({ label: '예배 안내', slug: 'guide' });
+  it('예배 섹션은 영상 메뉴 4개뿐이고 첫 하위는 주일예배다(예배 안내는 찾아오시는 길로 옮김, 2026-11-12)', () => {
+    expect(worship.children?.map(c => c.slug)).toEqual(['sunday', 'friday', 'special', 'weekday']);
   });
 });
 
 describe('sectionHref / childHref', () => {
   it('하위가 있는 섹션은 첫 하위 경로를 돌려준다', () => {
     expect(sectionHref(about)).toBe('/about/pastor-emeritus');
-    expect(sectionHref(worship)).toBe('/worship/guide');
+    expect(sectionHref(worship)).toBe('/worship/sunday');
   });
 
   it('하위가 없는 섹션은 자기 경로를 돌려준다', () => {
@@ -101,15 +101,16 @@ describe('findChild', () => {
 });
 
 describe('buildRedirects', () => {
-  it('하위 있는 상위 5개 → 첫 하위, 레거시 2개, 모두 permanent=false', () => {
+  it('하위 있는 상위 5개 → 첫 하위, 레거시 3개, 모두 permanent=false', () => {
     expect(buildRedirects()).toEqual([
       { source: '/about', destination: '/about/pastor-emeritus', permanent: false },
-      { source: '/worship', destination: '/worship/guide', permanent: false },
+      { source: '/worship', destination: '/worship/sunday', permanent: false },
       { source: '/next-generation', destination: '/next-generation/infant', permanent: false },
       { source: '/news', destination: '/news/announcements', permanent: false },
       { source: '/resources', destination: '/resources/sunday-sermon', permanent: false },
       { source: '/worship-video', destination: '/worship/sunday', permanent: false },
       { source: '/map', destination: '/location', permanent: false },
+      { source: '/worship/guide', destination: '/location', permanent: false },
     ]);
   });
 

@@ -11,7 +11,8 @@
 │   ├── color-palette.md
 │   └── design-system.md
 ├── domains/                        # 도메인별 상세 (살아있는 문서)
-│   └── home.md
+│   ├── home.md
+│   └── worship-video.md
 ├── workflow/                       # 작업 방식·도구 (살아있는 문서)
 │   ├── prototype-preview.md
 │   └── deploy-and-env.md
@@ -27,7 +28,8 @@
 │   ├── 2026-11-05-design-system-design.md
 │   ├── 2026-11-05-design-system-plan.md
 │   ├── 2026-11-10-github-org-env-sync-design.md
-│   └── 2026-11-10-github-org-env-sync-plan.md
+│   ├── 2026-11-10-github-org-env-sync-plan.md
+│   └── 2026-11-12-worship-sermon-g-plan.md
 └── decisions/                      # 의사결정 기록 (ADR — 불변)
     ├── 0001-sky-palette.md
     ├── 0002-home-ia-and-tone.md
@@ -71,6 +73,7 @@
 ### Domains
 
 - [home.md](domains/home.md) — 홈(`/`) 페이지의 7섹션 IA·섹션별 사양·CTA·모바일 적응·미결 사항
+- [worship-video.md](domains/worship-video.md) — 예배 설교 영상(`/worship/sunday`): 유튜브에 올리는 규칙(재생목록·제목·설명 첫 줄 날짜), 서버 수집·캐시 구조, 화면(G안) 규칙
 
 ### Workflow
 
@@ -92,6 +95,7 @@
 - [2026-10-11-home-video-sections-analysis.md](specs/2026-10-11-home-video-sections-analysis.md) — 홈 영상 섹션 분석: 위=라이브 스테이지(라이브 우선·없으면 담임 최신 설교) / 아래=광고 릴(재생목록 로테이션). 유튜브 채널 실데이터(라이브 패턴·제목 규칙·재생목록)·쿼터·자동재생 제약·광고 비율 분석, 확정/미결 목록. 승격 완료, 프리뷰 정리 완료
 - [2026-11-05-design-system-design.md](specs/2026-11-05-design-system-design.md) — 작업 패키지 1: 디자인 시스템 + 모바일·태블릿 보완. 토큰 2계층(B1 원시 → shadcn 의미), 타이포 스케일·그림자·모션 토큰, 공용 부품 세트, `/design` 견본(dev 전용), 반응형 기준(375/768/1280·터치 44px·한글 최소 13px), `design:lint` 확장 + `design:audit`. 2026-11-05 실측 문제 목록 포함. **구현 완료(2026-11-05)**. 구현 계획: [-plan.md](specs/2026-11-05-design-system-plan.md) (12 태스크 — audit 도구·기준 캡처 → 토큰 → 폰트 → 부품 → `/design` → 글자 이전 → 반응형 보완 → lint 확장 → 문서·ADR 0009)
 - [2026-11-10-github-org-env-sync-design.md](specs/2026-11-10-github-org-env-sync-design.md) — 레포를 GitHub Organization 으로 이전하고 환경변수 정본을 GitHub Secrets 로 둔다. Actions 는 Secrets→Vercel 동기화만(수동), 배포는 Vercel Git 자동 유지. 협업자가 본인 없이 운영 변수 추가·변경 가능. **승인·구현 완료(2026-11-10), 셋업 검증 대기**. 계획: [-plan.md](specs/2026-11-10-github-org-env-sync-plan.md)
+- [2026-11-12-worship-sermon-g-plan.md](specs/2026-11-12-worship-sermon-g-plan.md) — 주일예배 설교 영상 G안 구현 계획: 페이지 안 플레이어·유튜브식 설명란·「설교 목록」(제목의 시리즈로 자동 분류)·검색·무한스크롤. 페이지↔재생목록은 코드 설정, 유튜브에 올리기만 하면 반영
 
 ### Decisions
 

@@ -205,16 +205,10 @@ export const BLOCKS: Block[] = [
     ],
     current: [
       {
-        label: '예배 안내',
-        href: '/worship/guide',
-        status: 'todo',
-        note: '레거시 "예배시간"의 자리',
-      },
-      {
         label: '주일예배',
         href: '/worship/sunday',
         status: 'scaffold',
-        note: '구 사이트 재생목록 탭 그대로. 탭 5개를 서버가 미리 받아 두어 탭 이동이 즉시 되고, 폰에서는 쪽 번호가 한 줄. 설계한 아카이브 미연결',
+        note: '설교 영상 G안 구현(2026-11-12): 페이지 안 플레이어·설명란·설교 목록(제목의 시리즈로 자동 분류)·검색·무한스크롤. 유튜브 «주일 예배 설교» 재생목록에 올리면 반영. 실제 유튜브 데이터로 운영 확인 남음',
       },
       { label: '금요 생수의 강·월삭예배', href: '/worship/friday', status: 'todo' },
       { label: '특별집회·행사', href: '/worship/special', status: 'todo' },
@@ -348,8 +342,8 @@ export const BLOCKS: Block[] = [
       {
         label: '찾아오시는 길',
         href: '/location',
-        status: 'todo',
-        note: '메인에 지도 섹션은 있음. 독립 페이지는 미착수',
+        status: 'scaffold',
+        note: '예배 시간표(예배 메뉴의 «예배 안내»에서 옮김, 2026-11-12). 오시는 길(지도)은 미착수 — 메인에 지도 섹션은 있음',
       },
       {
         label: '새가족 등록',

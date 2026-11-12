@@ -47,7 +47,7 @@ A1이 먼저인 이유: 프리뷰는 "실제 페이지를 그대로 재현하고
 | 상위 (slug) | 하위 label → slug |
 |---|---|
 | 교회소개 `about` | 원로목사 `pastor-emeritus` · 담임목사 `pastor` · 섬기는 이들 `staff` · 양육·훈련 `training` · 연혁 `history` |
-| 예배 `worship` | 예배 안내 `guide` · 주일예배 `sunday` · 금요 생수의 강·월삭예배 `friday` · 특별집회·행사 `special` · 수요·새벽·주일5부 `weekday` |
+| 예배 `worship` | ~~예배 안내 `guide`~~(2026-11-12 삭제 — 예배 시간표는 `/location` 으로, `/worship/guide` → `/location` redirect) · 주일예배 `sunday` · 금요 생수의 강·월삭예배 `friday` · 특별집회·행사 `special` · 수요·새벽·주일5부 `weekday` |
 | 다음세대 `next-generation` | 영아부 `infant` · 유치부 `kindergarten` · 유년부 `lower-elementary` · 초등부 `elementary` · 중등부 `middle` · 고등부 `high` · 청년부 `young-adult` · 영어예배부 `english` |
 | 교회소식 `news` | 주일광고 `announcements` · 주보 `bulletin` · 성복의 뜰 `garden` · 교회앨범 `album` |
 | 자료실 `resources` | 주일 설교 시트지 `sunday-sermon` · 시리즈 설교 시트지 `series-sermon` · 가정·명절·절기 설교 시트지 `seasonal-sermon` |
@@ -77,7 +77,7 @@ export const siteNav: readonly NavSection[];
 **라우트 골격** (`src/app/`)
 ```
 about/            layout.tsx + {pastor-emeritus,pastor,staff,training,history}/page.tsx
-worship/          layout.tsx + {guide,sunday,friday,special,weekday}/page.tsx
+worship/          layout.tsx + {sunday,friday,special,weekday}/page.tsx   (guide 는 2026-11-12 삭제)
 next-generation/  layout.tsx + {infant,…,english}/page.tsx (8)
 news/             layout.tsx + {announcements,bulletin,garden,album}/page.tsx
 resources/        layout.tsx + {sunday-sermon,series-sermon,seasonal-sermon}/page.tsx

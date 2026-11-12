@@ -1,0 +1,21 @@
+// 설교 화면(G안) 부품이 함께 쓰는 클래스 묶음 — 값만 둔다.
+import { FOCUS_RING } from '@/shared/components/ui/focusRing';
+
+/** 키보드 포커스 링 — 브라우저 기본 선은 포커스일 때만 숨긴다(고대비 모드에서 늘 테두리가 그려지지 않게). */
+export const FOCUS = `focus-visible:outline-hidden ${FOCUS_RING}`;
+
+// 터치 영역(DESIGN.md §7: 1024 미만 44×44 이상) — 보이는 크기는 두고 가상 영역으로 위아래를 넓힌다.
+// lg 이상(마우스)은 넓히지 않는다 — 줄바꿈된 칩끼리 누르는 영역이 겹친다.
+const HIT = "relative max-lg:before:absolute max-lg:before:inset-x-0 max-lg:before:content-['']";
+/** 높이 34px 알약용 — 가상 영역은 테두리 안쪽에서 재므로 테두리 1px 을 더해 위아래 6px */
+export const HIT_34 = `${HIT} max-lg:before:-inset-y-[6px]`;
+/** 높이 36px 요소용(위아래 4px) */
+export const HIT_36 = `${HIT} max-lg:before:-inset-y-1`;
+
+/** 알약 버튼(시리즈 칩·이전/다음 편) 공통 모양 */
+export const PILL =
+  'border-b1-border bg-b1-surface text-caption inline-flex h-[34px] shrink-0 items-center gap-1 rounded-full border px-3 whitespace-nowrap transition-colors duration-fast';
+
+// 유튜브 썸네일 주소만 next/image 최적화를 거친다(next.config remotePatterns: i.ytimg.com/vi/).
+// 다른 호스트·경로 한 장 때문에 화면 전체가 오류로 떨어지지 않게, 밖의 주소는 그대로 싣는다.
+export const YT_THUMB = /^https:\/\/i\.ytimg\.com\/vi\//;

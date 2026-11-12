@@ -3,8 +3,7 @@ import { cn } from '@/shared/lib/utils';
 import type { ReactNode } from 'react';
 
 /**
- * 주일예배 영상 영역의 상태 문구(불러오는 중·실패·없음). 목록(PlaylistGrid)과 같은 세로 여백이라
- * 문구가 목록으로 바뀌어도 시작 위치가 움직이지 않는다. 가로 여백은 두지 않는다 — 탭 줄과 같은 왼쪽 선.
+ * 예배 설교 영상 영역의 상태 문구(불러오는 중·실패·없음). 가로 여백은 두지 않는다 — 머리 메뉴 줄과 같은 왼쪽 선.
  */
 export const STATUS_CLASS = 'text-b1-sub py-10';
 
@@ -23,14 +22,10 @@ export const StatusRegion = ({ children }: { children: ReactNode }) => (
 export const LoadingStatus = () => <StatusText>영상 목록을 불러오는 중입니다.</StatusText>;
 
 /**
- * 실패 문구 + «다시 시도». 누른 버튼은 곧 사라지므로 포커스를 보이는 곳으로 옮긴다 — 탭 안이면 그 탭 버튼
- * (탭 내용 상자는 포커스 표시가 없다), 아니면 감싼 상자(data-focus-host, 포커스 링 있음).
+ * 실패 문구 + «다시 시도». 누른 버튼은 곧 사라지므로 포커스를 감싼 상자(data-focus-host, 포커스 링 있음)로 옮긴다 —
+ * 그러지 않으면 포커스가 문서 맨 위로 튄다.
  */
-const focusTargetOf = (el: HTMLElement) => {
-  const panel = el.closest<HTMLElement>('[role="tabpanel"]');
-  const tab = panel && document.getElementById(panel.getAttribute('aria-labelledby') ?? '');
-  return tab ?? el.closest<HTMLElement>('[data-focus-host]');
-};
+const focusTargetOf = (el: HTMLElement) => el.closest<HTMLElement>('[data-focus-host]');
 
 export const RetryStatus = ({ onRetry }: { onRetry: () => void }) => (
   <div className={`${STATUS_CLASS} flex flex-wrap items-center gap-x-3 gap-y-2`}>

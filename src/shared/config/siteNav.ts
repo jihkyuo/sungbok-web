@@ -27,7 +27,6 @@ export const siteNav = [
     label: '예배',
     slug: 'worship',
     children: [
-      { label: '예배 안내', slug: 'guide' },
       { label: '주일예배', slug: 'sunday' },
       { label: '금요 생수의 강·월삭예배', slug: 'friday' },
       { label: '특별집회·행사', slug: 'special' },
@@ -100,6 +99,8 @@ export const findChild = (pathname: string): NavChild | undefined => {
 const LEGACY_REDIRECTS = [
   { source: '/worship-video', destination: '/worship/sunday' },
   { source: '/map', destination: '/location' },
+  // 예배 안내(예배 시간표)는 찾아오시는 길로 옮겼다(2026-11-12) — 예배 메뉴는 영상만
+  { source: '/worship/guide', destination: '/location' },
 ] as const;
 
 export const buildRedirects = () => [

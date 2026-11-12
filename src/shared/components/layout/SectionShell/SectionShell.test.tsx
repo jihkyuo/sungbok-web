@@ -19,8 +19,48 @@ describe('SectionShell (S1)', () => {
     expect(current).toHaveAttribute('aria-current', 'page');
     expect(current).toHaveAttribute('href', '/about/pastor');
     expect(screen.getByRole('link', { name: '연혁' })).toHaveAttribute('href', '/about/history');
-    expect(screen.getAllByRole('link')).toHaveLength(5);
+    // 알약 5 + 휴대폰용 이전·다음 꺾쇠 2
+    expect(screen.getAllByRole('link')).toHaveLength(7);
     expect(screen.getByText('본문')).toBeInTheDocument();
+  });
+
+  // 휴대폰(md 미만)에서 알약 줄 양옆의 꺾쇠 — 누르면 바로 옆 형제 페이지로 간다(줄을 미는 버튼이 아니다).
+  it('이전·다음 꺾쇠는 바로 옆 형제 페이지로 가는 링크다', () => {
+    pathname.current = '/about/pastor';
+    render(
+      <SectionShell section="about">
+        <p>본문</p>
+      </SectionShell>
+    );
+    expect(screen.getByRole('link', { name: '이전 메뉴: 원로목사' })).toHaveAttribute(
+      'href',
+      '/about/pastor-emeritus'
+    );
+    expect(screen.getByRole('link', { name: '다음 메뉴: 섬기는 이들' })).toHaveAttribute(
+      'href',
+      '/about/staff'
+    );
+  });
+
+  it('첫 메뉴에서는 다음 꺾쇠만, 마지막 메뉴에서는 이전 꺾쇠만 둔다', () => {
+    pathname.current = '/about/pastor-emeritus';
+    const { unmount } = render(
+      <SectionShell section="about">
+        <p>본문</p>
+      </SectionShell>
+    );
+    expect(screen.queryByRole('link', { name: /^이전 메뉴/ })).toBeNull();
+    expect(screen.getByRole('link', { name: '다음 메뉴: 담임목사' })).toBeInTheDocument();
+    unmount();
+
+    pathname.current = '/about/history';
+    render(
+      <SectionShell section="about">
+        <p>본문</p>
+      </SectionShell>
+    );
+    expect(screen.getByRole('link', { name: '이전 메뉴: 양육·훈련' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^다음 메뉴/ })).toBeNull();
   });
 
   it('하위가 없는 섹션은 섹션명을 제목으로 쓰고 알약을 그리지 않는다', () => {

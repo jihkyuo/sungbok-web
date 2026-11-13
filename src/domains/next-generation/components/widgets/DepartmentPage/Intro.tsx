@@ -243,7 +243,9 @@ export default function Intro({ dept, door, children }: IntroProps) {
           .en-info--desk { display: none; }
           .en-info--mob { display: flex; }
           .en-sheet {
-            margin-top: calc(-100svh + var(--en-peek)); background: var(--color-b1-bg);
+            /* 시트 윗변 = 무대 시작 + (100svh - peek) = 사진 바로 아래. 무대 높이가 200svh - peek 이므로 화면 한 장만큼만 당긴다.
+               (+peek 를 더하면 시트가 늘 화면 한 장 아래에서 시작해, 낮은 사진 밑이 통째로 비었다) */
+            margin-top: -100svh; background: var(--color-b1-bg);
             border-radius: 28px 28px 0 0; padding-top: 28px;
             box-shadow: 0 -12px 40px color-mix(in srgb, var(--color-b1-text) 10%, transparent);
           }

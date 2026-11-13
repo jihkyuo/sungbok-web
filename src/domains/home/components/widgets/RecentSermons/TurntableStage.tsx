@@ -9,6 +9,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import allLiveLogo from '@/assets/icons/allLive-team-logo.png';
 import { useAudioFocus } from '@/shared/lib/audioFocus';
 import { useNearViewport } from '@/shared/lib/hooks/useNearViewport';
+import { usePageLoaded } from '@/shared/lib/hooks/usePageLoaded';
 import { usePrefersReducedMotion } from '@/shared/lib/hooks/usePrefersReducedMotion';
 
 import { POSTER, YOUTH, YOUTH_CHANNEL_HREF, YOUTH_VIDEO_EMBED } from './data';
@@ -36,6 +37,14 @@ const GROW_END = 0.2;
 const SPIN_START = 0.03;
 const TRIGGER = 0.55;
 const COVER_D = 360;
+// 한 화면 앞에서 멈춘 채 붙이는 임베드 — 재생은 섹션이 화면에 들어왔을 때 playVideo 명령으로 건다(화면 밖 영상 스트림 없음).
+// 준비 신호가 끝내 없으면(gaveUp) 명령이 닿는지 모르므로, 화면에 들어온 뒤 자동재생 주소로 다시 붙인다(예전 동작).
+// 주소 글자 바꾸기가 아니라 파라미터로 고친다 — data.ts 의 주소가 바뀌어도 멈춘 채 붙는 것이 깨지지 않게.
+const CUED_EMBED = (() => {
+  const u = new URL(YOUTH_VIDEO_EMBED);
+  u.searchParams.set('autoplay', '0');
+  return u.toString();
+})();
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const cl = (x: number) => Math.min(1, Math.max(0, x));
 
@@ -81,18 +90,22 @@ export const TurntableStage = ({
   reflect = 'soft',
 }: Props) => {
   const { ref, q } = useTurntable();
-  // 유튜브 임베드(플레이어 약 4MB·요청 수십 개)는 첫 로딩에서 빼고, 섹션이 실제로 화면에 들어오면 붙인다
-  // (스크롤을 내린 채 새로고침해도 화면 밖의 플레이어를 받지 않게). 그 전에는 포스터가 보인다.
-  // 회전 rAF 도 그때부터 돈다 — 화면 밖에서 메인 스레드를 쓰지 않게.
-  const near = useNearViewport(ref, '0px');
+  // 유튜브 임베드(플레이어 코드 약 1MB·요청 수십 개)는 첫 로딩에서 빼고, 섹션 한 화면 앞에서 멈춘 채 붙인다 — 도착하면
+  // 준비된 플레이어에 재생만 건다(화면에 들어올 때 붙이면 플레이어 준비를 사용자가 기다렸다).
+  // 미리 붙이기는 페이지 첫 로딩이 끝난 뒤에만(새로고침 직후 첫 화면과 회선을 다투지 않게). 화면 안이면 바로 붙인다.
+  // 넓은 화면 전용 — 폰은 섹션째 숨겨 붙지 않는다. 그 전에는 포스터가 보인다.
+  // 회전 rAF·파동은 섹션이 실제로 화면에 들어왔을 때부터 돈다 — 화면 밖에서 메인 스레드를 쓰지 않게.
+  const seen = useNearViewport(ref, '0px');
+  const nearAhead = useNearViewport(ref, '100% 0px');
+  const pageLoaded = usePageLoaded();
+  const near = seen || (nearAhead && pageLoaded);
   // 동작 줄이기면 임베드를 붙이지 않고 포스터만 둔다(자동재생 금지 — DESIGN.md §3). 영상은 채널 칩 링크로 본다.
   // (LiveStage·광고 릴은 대신 네이티브 컨트롤로 재생하게 한다 — 실제 청년 예배 영상으로 바꿀 때 같은 방식 검토)
   const reduced = usePrefersReducedMotion();
   const playing = near && !reduced;
   const hasReflect = disc === 'vinyl' || disc === 'cd';
-  // 임베드 로드 직후 잠깐 노출되는 YouTube 재생 컨트롤을 가리는 포스터.
-  // 섹션이 가까워져 임베드가 붙는 시점부터 영상은 자동재생되고, 컨트롤이 사라질 즈음 페이드아웃 →
-  // 사용자가 스크롤로 턴테이블에 도달할 땐 이미 깨끗한 재생 상태.
+  // 멈춘 플레이어 화면과 재생 시작 직후 잠깐 노출되는 YouTube 재생 컨트롤을 가리는 포스터.
+  // 임베드는 한 화면 앞에서 멈춘 채 붙고, 섹션이 화면에 들어오면 playVideo 명령으로 재생 → 컨트롤이 사라질 즈음 페이드아웃.
   const [posterFaded, setPosterFaded] = useState(false);
   // 유튜브 플레이어가 명령(mute/unMute)을 받을 준비가 됐는지 — iframe 이 보내는 onReady 메시지로 안다.
   const [playerReady, setPlayerReady] = useState(false);
@@ -226,7 +239,7 @@ export const TurntableStage = ({
 
   useEffect(() => {
     // 모션 줄이기면 연속 회전을 돌리지 않는다(정지 디스크) — DESIGN.md §3 reduced-motion 가드.
-    if (!near || reduced) return;
+    if (!seen || reduced) return;
     let raf = 0;
     let last = performance.now();
     const loop = (now: number) => {
@@ -252,15 +265,25 @@ export const TurntableStage = ({
     };
     raf = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(raf);
-  }, [near, reduced]);
+  }, [seen, reduced]);
 
-  // 포스터는 플레이어가 준비된 뒤 재생 컨트롤이 사라질 즈음 걷는다 — 느린 망에서 로딩 화면이 드러나지 않게.
-  // 준비 신호를 포기했으면(이미 8초 지남) 바로 걷는다.
+  // 섹션이 화면에 들어왔고 플레이어가 준비됐으면 재생을 건다. 포스터는 재생을 건 뒤 재생 컨트롤이 사라질 즈음 걷는다 —
+  // 멈춘 플레이어의 재생 버튼 화면·느린 망의 로딩 화면이 드러나지 않게. 준비 신호를 포기했으면(이미 8초 지남) 바로 걷는다.
   useEffect(() => {
-    if (!embedUsable) return;
+    if (!embedUsable || !seen) return;
+    // 준비 신호(initialDelivery 등)가 명령을 받을 수 있게 되기 직전에 올 수도 있어 몇 번 더 보낸다 — 재생 중엔 아무 일 없음
+    const play = () =>
+      iframeRef.current?.contentWindow?.postMessage(
+        JSON.stringify({ event: 'command', func: 'playVideo', args: [] }),
+        'https://www.youtube.com'
+      );
+    const retries = playerReady ? [0, 500, 1500].map(ms => setTimeout(play, ms)) : [];
     const t = setTimeout(() => setPosterFaded(true), playerReady ? 2500 : 0);
-    return () => clearTimeout(t);
-  }, [embedUsable, playerReady]);
+    return () => {
+      retries.forEach(clearTimeout);
+      clearTimeout(t);
+    };
+  }, [embedUsable, playerReady, seen]);
 
   // 채널 칩 1회 자동 열림 — 칩 첫 등장 후 3초간 호버가 없으면 열고, 열린 뒤 4초 후 닫음(반복 없음).
   // 3초 내 호버한 적 있으면 자동열림 취소 → 호버/타이머 액션 충돌 방지.
@@ -385,7 +408,7 @@ export const TurntableStage = ({
         )}
 
         {/* 재생 파동 — 영상 모양(원→카드) 추종 */}
-        {!reduced && <WaveRing qRef={qRef} boxRef={boxRef} mode={wave} running={near} />}
+        {!reduced && <WaveRing qRef={qRef} boxRef={boxRef} mode={wave} running={seen} />}
 
         {/* 중앙 영상 — 원형 → 카드 */}
         <div
@@ -401,7 +424,7 @@ export const TurntableStage = ({
           {playing && (
             <iframe
               ref={iframeRef}
-              src={`${YOUTH_VIDEO_EMBED}&enablejsapi=1`}
+              src={`${gaveUp && seen ? YOUTH_VIDEO_EMBED : CUED_EMBED}&enablejsapi=1`}
               title="청년 예배"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border-0"
@@ -410,7 +433,7 @@ export const TurntableStage = ({
               aria-hidden
             />
           )}
-          {/* 로드 직후 컨트롤 노출 구간을 가리는 포스터 — 자동재생 안정화 후 페이드아웃 */}
+          {/* 멈춘 화면·재생 시작 직후 컨트롤 노출 구간을 가리는 포스터 — 재생을 건 뒤 페이드아웃 */}
           {/* next/image 지연 로딩 — 첫 로딩에서 빠지고, 브라우저가 화면 근처에서 폭에 맞는 크기로 먼저 받아 임베드보다 앞선다 */}
           <div
             aria-hidden

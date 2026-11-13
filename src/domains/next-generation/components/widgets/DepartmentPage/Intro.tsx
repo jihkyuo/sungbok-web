@@ -12,7 +12,7 @@ const MAXW = 1200;
 const GUTTER = 32;
 const CARD = 0.46;
 const GAP = 64;
-/** 고정 헤더(DockNav) 높이 — 휴대폰에서 사진을 그 아래에 세운다 */
+/** 고정 헤더(DockNav) 높이 — 휴대폰에서 사진이 스크롤로 붙을 때 그 아래에 멈춘다(.en-pin top) */
 const HEADER_H = 64;
 /** 휴대폰에서 시트가 처음 보이는 최소 높이(화면 비율) */
 const MIN_PEEK = 0.14;
@@ -58,7 +58,9 @@ export default function Intro({ dept, door, children }: IntroProps) {
         : Math.min(vh, door?.src.height ?? vh);
       const x0 = (vw - w0) / 2;
       // 데스크톱: 가운데 두되 독(64px) 아래까지만 — 머리 바로 아래에서 바로 들어선다
-      const y0 = mobile ? HEADER_H : Math.min((vh - h0) / 2, 64);
+      // 휴대폰: 무대 맨 위에 붙인다. 헤더 높이만큼 띄우는 일은 핀(top)이 한다 — 여기서 또 띄우면
+      // 부서 이름·탭이 위에 있는 처음 화면에서 탭과 사진 사이가 그만큼 더 빈다.
+      const y0 = mobile ? 0 : Math.min((vh - h0) / 2, 64);
       const root = stage.closest<HTMLElement>('.en-root');
       // svh 기준으로 둔다 — 휴대폰 주소창이 접히며 innerHeight 가 바뀌어도 시트 위치(무대 높이)가 흔들리지 않게
       if (mobile) root?.style.setProperty('--en-peek', `calc(100svh - ${y0 + h0}px)`);
@@ -79,7 +81,8 @@ export default function Intro({ dept, door, children }: IntroProps) {
     const update = () => {
       raf = 0;
       const run = stage.offsetHeight - pin.offsetHeight;
-      const top = stage.getBoundingClientRect().top;
+      // 핀이 붙기 시작하는 자리(sticky top)부터 센다 — 휴대폰은 헤더 아래
+      const top = stage.getBoundingClientRect().top - (parseFloat(getComputedStyle(pin).top) || 0);
       const p = run > 0 ? clamp01(-top / run) : 1;
       stage.style.setProperty('--en-e', String(seg(p, 0.04, 0.6)));
       stage.style.setProperty('--en-i1', String(seg(p, 0.36, 0.64)));
@@ -239,6 +242,7 @@ export default function Intro({ dept, door, children }: IntroProps) {
         @media (max-width: 899px) {
           .en-root { --en-peek: 14svh; }
           .en-stage { height: calc(200svh - var(--en-peek)); }
+          .en-pin { top: ${HEADER_H}px; }
           .en-photo { border-radius: 0; transform: scale(calc(1 - 0.06 * var(--en-e))); opacity: calc(1 - 0.55 * var(--en-e)); transform-origin: 50% 40%; }
           .en-info--desk { display: none; }
           .en-info--mob { display: flex; }

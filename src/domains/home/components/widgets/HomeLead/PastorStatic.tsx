@@ -67,11 +67,11 @@ export const PastorStatic = () => {
         className={`pointer-events-none absolute inset-0 ${on ? 'ps-glow-on' : ''}`}
       >
         <div
-          className="ps-ring absolute h-[1000px] w-[1600px] will-change-[transform,opacity]"
+          className="ps-ring absolute h-[1000px] w-[1600px]"
           style={{ ...GLOW_BOX, background: RING }}
         />
         <div
-          className="ps-core absolute h-[1000px] w-[1600px] will-change-[transform,opacity]"
+          className="ps-core absolute h-[1000px] w-[1600px]"
           style={{ ...GLOW_BOX, background: CORE }}
         />
       </div>

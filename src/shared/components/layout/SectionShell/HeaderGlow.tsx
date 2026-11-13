@@ -1,7 +1,7 @@
 // 서브페이지 머리 글로우 — 속이 빈 반원 "고리" 파면이 한 번 지나가고 두 번째 고리가 안착한다(총 2.2초, 섹션 진입 시 1회).
 // 형태: 타원 중심이 레이어 위 바깥(-260px), 바깥 반경 가로 879·세로 554px, 마루는 화면 y≈145~175px. 안쪽은 천천히 차오르고 바깥은 빠르게 빠지는 비대칭 프로파일.
 // 고리는 자기 중심에 놓인 큰 상자(1960×1260)에 그리고 그 중심으로 scale 한다 — 상자가 고리보다 커야 호가 잘리지 않는다.
-// 모션은 transform·opacity 만(필터 없음). reduced-motion 에서는 파면은 숨기고 안착 고리만 최종 상태로 둔다.
+// 모션은 transform·opacity 만(필터 없음). will-change 는 두지 않는다 — 2.2초짜리 1회 모션인데 큰 상자 2장이 층으로 계속 남는다. reduced-motion 에서는 파면은 숨기고 안착 고리만 최종 상태로 둔다.
 // 근거: 2026-10-18 section-glow-preview 라운드, 시안 H2(배율 70%) 승격.
 
 const PEAK = 'var(--color-b1-glow)';
@@ -20,7 +20,7 @@ const KEYFRAMES = `
 
 const Ring = ({ className }: { className: string }) => (
   <div
-    className={`${className} absolute h-[1260px] w-[1960px] will-change-[transform,opacity]`}
+    className={`${className} absolute h-[1260px] w-[1960px]`}
     style={{ background: RING, left: 'calc(50% - 980px)', top: '-890px', transformOrigin: '50% 50%' }}
   />
 );

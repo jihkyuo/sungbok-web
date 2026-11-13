@@ -14,6 +14,7 @@
 #   루프/도배 방지:
 #     1) stop_hook_active=true (리뷰 지시로 인한 재진입) → 통과 + 현재 상태 기록
 #     2) 현재 diff 해시 == 마지막 리뷰한 해시 → 통과
+#     3) 리뷰 횟수 상한(선택, review-cap.sh): 마지막 커밋 뒤로 리뷰를 상한만큼 돌렸으면 통과
 #
 # 판정 불가/환경 문제(jq 없음, git 아님 등)는 fail-open — 작업을 막지 않는다.
 
@@ -120,6 +121,18 @@ done <<< "$design_files"
 # --- 발동 판정: UI 변경이 사소하면 침묵 -------------------------------------
 if [ "$design_lines" -lt "$THRESH_LINES" ] && [ "$design_file_count" -lt "$THRESH_FILES" ]; then
   exit 0
+fi
+
+# --- 리뷰 횟수 상한 가드 ----------------------------------------------------
+#   마지막 커밋 뒤로 리뷰(코드 리뷰·codex·디자인 QA 합산)를 상한만큼 돌렸으면 더 요구하지 않는다.
+#   review-cap.sh 를 못 읽으면 상한 없음으로 진행(fail-open).
+#   회귀 잠금: tests/hooks/auto-design-review.test.ts "리뷰 횟수 상한".
+if . "$(dirname "${BASH_SOURCE[0]}")/review-cap.sh" 2>/dev/null; then
+  review_max="$(review_cap "$project_dir")"
+  if [ -n "$review_max" ]; then
+    transcript="$(printf '%s' "$payload" | jq -r '.transcript_path // empty' 2>/dev/null)"
+    review_cap_reached "$review_max" "$(reviews_since_commit "$transcript")" && exit 0
+  fi
 fi
 
 # --- 리뷰 발동: block + reason ---------------------------------------------

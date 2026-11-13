@@ -29,37 +29,51 @@ const KEYFRAMES = `
   @keyframes hh-mesh3 {0%{transform:translate(-4%,6%) scale(1.05)}50%{transform:translate(8%,-8%) scale(1.18)}100%{transform:translate(-4%,6%) scale(1.05)}}
   @keyframes hh-grad {0%{background-position:0% 50%}100%{background-position:200% 50%}}
   .hh-acc{background-image:linear-gradient(90deg,#2563eb,#7fb8ff,#5b7fe0,#2563eb);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:hh-grad 7s linear infinite}
+  .hh-blob{position:absolute;-webkit-mask-image:radial-gradient(closest-side,#000 26%,rgba(0,0,0,.8) 38%,rgba(0,0,0,.5) 56%,rgba(0,0,0,.2) 73%,rgba(0,0,0,.05) 89%,transparent);mask-image:radial-gradient(closest-side,#000 26%,rgba(0,0,0,.8) 38%,rgba(0,0,0,.5) 56%,rgba(0,0,0,.2) 73%,rgba(0,0,0,.05) 89%,transparent)}
   @media (prefers-reduced-motion: reduce){.hh-acc,.hh-mesh{animation:none!important}}
 `;
 
+/* 흐린 색 덩어리 — CSS blur 를 쓰지 않는다. 아이폰(WebKit)은 이 크기의 blur(90px) 3장을 그리느라
+   첫 화면에서 메인 스레드가 3초쯤 멈췄다(주소창 진행 막대가 오래 감 — 사용자 지적 2026-11-14).
+   같은 번짐을 가장자리로 옅어지는 마스크로 낸다: 칸(.hh-mesh)은 위치·크기·움직임만 맡고,
+   색(.hh-blob)은 번짐 폭(예전 blur 반경의 2배)만큼 밖으로 넓혀 그린다. */
 const Mesh = () => (
   <>
     <style>{KEYFRAMES}</style>
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <div
-        className="hh-mesh absolute -top-[15%] -left-[5%] h-[65vh] w-[65vh] rounded-full opacity-70 blur-[90px]"
-        style={{
-          background: '#bcd3f5',
-          animation: 'hh-mesh1 24s ease-in-out infinite',
-          willChange: 'transform',
-        }}
-      />
+        className="hh-mesh absolute -top-[15%] -left-[5%] h-[65vh] w-[65vh] opacity-70"
+        style={{ animation: 'hh-mesh1 24s ease-in-out infinite', willChange: 'transform' }}
+      >
+        <div
+          className="hh-blob -inset-[180px]"
+          style={{
+            background: '#bcd3f5',
+          }}
+        />
+      </div>
       <div
-        className="hh-mesh absolute top-[25%] right-[-8%] h-[70vh] w-[70vh] rounded-full opacity-60 blur-[100px]"
-        style={{
-          background: '#f3d9c0',
-          animation: 'hh-mesh2 30s ease-in-out infinite',
-          willChange: 'transform',
-        }}
-      />
+        className="hh-mesh absolute top-[25%] right-[-8%] h-[70vh] w-[70vh] opacity-60"
+        style={{ animation: 'hh-mesh2 30s ease-in-out infinite', willChange: 'transform' }}
+      >
+        <div
+          className="hh-blob -inset-[200px]"
+          style={{
+            background: '#f3d9c0',
+          }}
+        />
+      </div>
       <div
-        className="hh-mesh absolute bottom-[-12%] left-[28%] h-[55vh] w-[55vh] rounded-full opacity-55 blur-[90px]"
-        style={{
-          background: '#d8c8ec',
-          animation: 'hh-mesh3 34s ease-in-out infinite',
-          willChange: 'transform',
-        }}
-      />
+        className="hh-mesh absolute bottom-[-12%] left-[28%] h-[55vh] w-[55vh] opacity-55"
+        style={{ animation: 'hh-mesh3 34s ease-in-out infinite', willChange: 'transform' }}
+      >
+        <div
+          className="hh-blob -inset-[180px]"
+          style={{
+            background: '#d8c8ec',
+          }}
+        />
+      </div>
     </div>
   </>
 );

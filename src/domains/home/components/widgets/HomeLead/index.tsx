@@ -174,6 +174,8 @@ export const HomeLead = () => {
                   alt=""
                   fill
                   sizes={`${(h * ASPECT * 100).toFixed(1)}svh`}
+                  // 첫 화면에선 히어로에 가려 있다 — 화면 안 그림이라 브라우저가 우선순위를 올리지 않게 낮춰 히어로에 회선을 양보한다
+                  fetchPriority="low"
                   className="object-cover"
                 />
               )

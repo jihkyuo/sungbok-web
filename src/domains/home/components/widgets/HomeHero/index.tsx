@@ -88,6 +88,8 @@ export const HomeHero = ({ copyClassName }: { copyClassName?: string } = {}) => 
         alt="성복교회 전경"
         fill
         preload
+        // 첫 화면의 가장 큰 그림 — 폰트(최우선)·JS·사진 띠보다 먼저 받게 한다
+        fetchPriority="high"
         sizes={HERO_IMAGE_SIZES}
         className="object-cover object-[55%_50%]"
       />

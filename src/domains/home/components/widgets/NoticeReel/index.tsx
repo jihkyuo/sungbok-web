@@ -196,8 +196,6 @@ const Wall = ({ video, entering }: { video: HomeVideo; entering?: boolean }) => 
       sizes="320px"
       // 섹션 전체를 덮는 배경이라 폰에서는 16:9 보다 세로로 길다 — 검은 띠가 든 4:3 크기는 쓰지 않는다
       wide
-      loading="eager"
-      fetchPriority="low"
       className="scale-125 object-cover blur-3xl saturate-150"
     />
   </div>
@@ -494,8 +492,6 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                 alt=""
                 fill
                 sizes={THUMB_SIZES}
-                loading="eager"
-                fetchPriority="low"
                 className="object-cover"
               />
               <YoutubeThumb
@@ -513,8 +509,6 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                   alt=""
                   fill
                   sizes={SCREEN_SIZES}
-                  loading="eager"
-                  fetchPriority="low"
                   className="invisible object-cover"
                 />
               )}
@@ -525,8 +519,6 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                   alt=""
                   fill
                   sizes={SCREEN_SIZES}
-                  loading="eager"
-                  fetchPriority="low"
                   className="invisible object-cover"
                 />
               )}

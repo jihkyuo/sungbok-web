@@ -1,6 +1,6 @@
 # 주일예배 설교 영상(G안) — 구현 계획
 
-> 상태: **구현 완료(2026-11-12)** — 커밋은 사용자 지시 대기
+> 상태: **구현 완료(2026-11-12)** → **화면 배치 변경(2026-11-13)**: 한 페이지를 설교 목록(`/worship/sunday`)과 설교 한 편(`/worship/sunday/영상id`)으로 나눴다 — 옆 「설교 목록」과 아래 찾기 목록이 같은 일을 해서. 고른 영상은 `?v=` 가 아니라 주소 경로에 두고(`useVideoParam` 삭제), 무한스크롤은 「설교 더보기」 버튼, 포스터+재생 버튼은 처음부터 유튜브 플레이어로 바뀌었다. 데이터·운영 규칙은 그대로다. 지금 화면 규칙은 아래 «살아있는 문서» 를 본다(이 문서의 화면 Task 는 기록으로 남긴다).
 > 실행 결과: 「결정 1」대로 페이지↔재생목록은 코드 설정(`config/worshipPages.ts`), 칩은 제목의 시리즈. 그래서 라이브러리는 `Sermon[]` 하나(시리즈는 화면에서 계산 — `sermonList.buildSeries`)이고, 아래 Task 2~4 의 `SermonLibrary`·`playlistId(s)` 표기는 `Sermon[]`·`series` 로 구현됐다. 훅·API 는 `page` 를 받는다(`/api/worship-video/library?page=`, `/description?page=&v=`). 고른 영상은 `useSearchParams` 대신 `useVideoParam`(history) — 정적 페이지의 서버 HTML 을 지키려고. 살아있는 문서: [.md/domains/worship-video.md](../domains/worship-video.md)
 > 시안: `~/Downloads/sungbok-worship-G.html` (G안 최종 — 머리 A+, 디자인 검수 반영, 설교 목록·무한스크롤·업로드 날짜 표기)
 

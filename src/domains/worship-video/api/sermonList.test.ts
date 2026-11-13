@@ -5,6 +5,7 @@ import {
   dateLabel,
   filterSermons,
   highlightParts,
+  listRows,
   neighbors,
   searchKey,
   seriesByYear,
@@ -12,6 +13,7 @@ import {
   sermonTag,
   sortSermons,
   topSeries,
+  weekdayLabel,
 } from './sermonList';
 import { SINGLES } from './sermonParse';
 import type { Sermon } from './worshipVideo.types';
@@ -253,9 +255,45 @@ describe('neighbors', () => {
     expect(neighbors(lib, 'e4').newer).toBeUndefined();
   });
 
-  it('단편 설교·없는 id 는 이웃이 없다', () => {
-    expect(neighbors(LIB, 'one1')).toEqual({});
+  it('단편 설교는 단편끼리 날짜 순으로 이웃한다 — 이전·다음 버튼이 어느 설교에서나 나온다', () => {
+    expect(neighbors(LIB, 'one1')).toEqual({ older: LIB.find(x => x.id === 'one0') });
+    expect(neighbors(LIB, 'one0')).toEqual({ newer: LIB.find(x => x.id === 'one1') });
+  });
+
+  it('없는 id 는 이웃이 없다', () => {
     expect(neighbors(LIB, 'nope')).toEqual({});
+  });
+});
+
+describe('listRows', () => {
+  const all = { q: '', series: '', sort: 'new' } as const;
+
+  it('아무 조건 없는 첫 화면에서는 위에 크게 보인 최신 설교를 목록에서 뺀다 — 같은 설교를 두 번 그리지 않는다', () => {
+    expect(ids(listRows(LIB, all))).toEqual(ids(LIB).slice(1));
+  });
+
+  it('검색·시리즈·오래된 순 중 하나라도 걸면 최신 설교도 목록에 나온다', () => {
+    expect(ids(listRows(LIB, { ...all, sort: 'old' }))).toEqual(ids(LIB).reverse());
+    expect(ids(listRows(LIB, { ...all, series: SINGLES }))).toEqual(['one1', 'one0']);
+    expect(ids(listRows(LIB, { ...all, q: '성찬식' }))).toEqual(['one1']);
+    // 공백만 친 검색어는 조건이 아니다
+    expect(ids(listRows(LIB, { ...all, q: '  ' }))).toEqual(ids(LIB).slice(1));
+  });
+
+  it('빈 목록이면 빈 배열', () => {
+    expect(listRows([], all)).toEqual([]);
+  });
+});
+
+describe('weekdayLabel', () => {
+  it('주일(일요일)은 «주일», 다른 날은 요일 이름 — 성탄·송구영신 예배는 주일이 아닐 수 있다', () => {
+    expect(weekdayLabel('2026-11-08')).toBe('주일');
+    expect(weekdayLabel('2026-12-31')).toBe('목요일');
+    expect(weekdayLabel('2026-12-25')).toBe('금요일');
+  });
+
+  it('날짜 모양이 아니면 빈 문자열', () => {
+    expect(weekdayLabel('nope')).toBe('');
   });
 });
 

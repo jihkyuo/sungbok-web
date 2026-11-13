@@ -12,6 +12,8 @@ export type Sermon = {
   /** 단편의 절기·주제 이름(성찬식·맥추감사주일 등) */
   occasion?: string;
   passage?: string;
+  /** 설교자 칸(«이요셉 목사») — 목록 페이지의 «최신 설교» 가 보인다 */
+  preacher?: string;
   /** 달력 날짜 YYYY-MM-DD(한국 기준) — 설명 첫 줄의 설교일, 없으면 유튜브 업로드 날짜 */
   date: string;
   /** 날짜의 출처. 'upload' 면 화면에 «업로드» 를 붙인다(설교일이 아닐 수 있다) */

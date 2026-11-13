@@ -98,8 +98,7 @@ const collectPlaylist = async (playlistId: string, into: Collected, seen: Set<st
         seoulDate(snippet?.publishedAt);
       if (!date) continue; // 날짜를 알 수 없으면 정렬할 수 없다 — 실제로는 삭제·비공개 영상뿐
 
-      // 설교자(preacher)는 화면에 쓰지 않아 싣지 않는다
-      const { series, no, occasion, title, passage } = parseSermonTitle(rawTitle);
+      const { series, no, occasion, title, passage, preacher } = parseSermonTitle(rawTitle);
       seen.add(id);
       into.descriptions.set(id, description.body);
       into.sermons.push({
@@ -109,6 +108,7 @@ const collectPlaylist = async (playlistId: string, into: Collected, seen: Set<st
         ...(no !== undefined && { no }),
         ...(occasion && { occasion }),
         ...(passage && { passage }),
+        ...(preacher && { preacher }),
         date,
         dateFrom: sermonDate ? 'sermon' : 'upload',
         thumbnail,

@@ -1,5 +1,6 @@
 'use client';
 
+import { requestPlay } from '@/domains/worship-video/api/playIntent';
 import {
   dateLabel,
   seriesByYear,
@@ -7,41 +8,47 @@ import {
   topSeries,
 } from '@/domains/worship-video/api/sermonList';
 import type { Sermon, SermonSeries } from '@/domains/worship-video/api/worshipVideo.types';
-import { FOCUS, HIT_34, PILL } from '@/domains/worship-video/components/features/sermonStyles';
+import {
+  ARROW_BTN,
+  FOCUS,
+  HIT_34,
+  PILL,
+} from '@/domains/worship-video/components/features/sermonStyles';
 import { SermonThumb } from '@/domains/worship-video/components/features/SermonThumb';
+import { sermonPath, type WorshipPage } from '@/domains/worship-video/config/worshipPages';
 import { usePrefersReducedMotion } from '@/shared/lib/hooks/usePrefersReducedMotion';
+import { isPlainClick } from '@/shared/lib/isPlainClick';
 import { cn } from '@/shared/lib/utils';
 import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
+import Link from 'next/link';
 import { Fragment, useEffect, useId, useRef, useState } from 'react';
 
 interface Props {
+  page: WorshipPage;
   sermons: readonly Sermon[];
   series: readonly SermonSeries[];
-  /** 플레이어에 떠 있는 설교 */
+  /** 지금 보고 있는 설교 */
   current: Sermon;
-  /** 그 설교가 재생 중인지(포스터 상태면 false) */
-  playing: boolean;
-  /** 목록에 펼쳐 보이는 시리즈 — 재생 중인 설교의 시리즈와 다를 수 있다(다른 시리즈를 둘러보는 중) */
+  /** 그 설교의 썸네일에 붙일 표시 — 재생 중이면 «재생 중», 아직 재생 전이면 «현재 영상» */
+  mark: string;
+  /** 목록에 펼쳐 보이는 시리즈 — 보고 있는 설교의 시리즈와 다를 수 있다(다른 시리즈를 둘러보는 중) */
   seriesName: string;
   onSeries: (name: string) => void;
-  onPick: (videoId: string) => void;
 }
 
-const ARROW =
-  "border-b1-border bg-b1-surface text-b1-text relative grid size-[30px] place-items-center rounded-full border before:absolute before:-inset-2 before:content-['']";
-
 /**
- * 설교 목록 — 시리즈 칩(최근 4개 + 전체 고르기)과 고른 시리즈의 회차.
+ * 설교 목록(설교 한 편 페이지의 옆·아래) — 시리즈 칩(최근 4개 + 전체 고르기)과 고른 시리즈의 회차.
+ * 칩을 바꿔도 보고 있는 영상은 그대로 재생된다. 회차를 누르면 그 설교 페이지로 넘어가 바로 재생된다.
  * 회차 줄은 휴대폰에서 옆으로 미는 한 줄, 태블릿은 3칸 + 화살표, PC(lg 이상)는 플레이어 옆 세로 목록(스크롤바는 PC 만).
  */
 export const SermonSidebar = ({
+  page,
   sermons,
   series,
   current,
-  playing,
+  mark,
   seriesName,
   onSeries,
-  onPick,
 }: Props) => {
   const [pickerOpen, setPickerOpen] = useState(false);
   const headId = useId();
@@ -80,8 +87,11 @@ export const SermonSidebar = ({
     row?.scrollBy?.({ left: dir * row.clientWidth * 0.9, behavior: reduced ? 'auto' : 'smooth' });
   };
 
+  const pickerToggleRef = useRef<HTMLButtonElement>(null);
   const chooseSeries = (name: string) => {
     onSeries(name);
+    // 고르기 상자에서 골랐으면 누른 카드가 상자째 사라진다 — 키보드 포커스를 상자를 연 버튼으로 돌려놓는다
+    if (pickerOpen) pickerToggleRef.current?.focus({ preventScroll: true });
     setPickerOpen(false);
   };
 
@@ -119,6 +129,7 @@ export const SermonSidebar = ({
           </button>
         ))}
         <button
+          ref={pickerToggleRef}
           type="button"
           aria-expanded={pickerOpen}
           aria-controls={pickerId}
@@ -177,12 +188,12 @@ export const SermonSidebar = ({
       )}
 
       {/* 태블릿(md~lg): 회차 줄을 넘기는 화살표. 휴대폰은 손으로 밀고, PC 는 세로 목록이라 없다 */}
-      <div className="mt-2 hidden justify-end gap-4 md:flex lg:hidden">
+      <div className="mt-3 hidden justify-end gap-4 md:flex lg:hidden">
         <button
           type="button"
           aria-label="이전 영상들"
           onClick={() => scrollRow(-1)}
-          className={cn(ARROW, FOCUS)}
+          className={cn(ARROW_BTN, FOCUS)}
         >
           <ChevronLeft aria-hidden className="size-4" />
         </button>
@@ -190,7 +201,7 @@ export const SermonSidebar = ({
           type="button"
           aria-label="다음 영상들"
           onClick={() => scrollRow(1)}
-          className={cn(ARROW, FOCUS)}
+          className={cn(ARROW_BTN, FOCUS)}
         >
           <ChevronRight aria-hidden className="size-4" />
         </button>
@@ -212,10 +223,14 @@ export const SermonSidebar = ({
           const on = x.id === current.id;
           return (
             <li key={x.id} className="min-w-0 snap-start">
-              <button
-                type="button"
+              <Link
+                href={sermonPath(page, x.id)}
                 aria-current={on ? 'true' : undefined}
-                onClick={() => onPick(x.id)}
+                // 회차마다 설교 페이지를 미리 받지 않는다(설교 페이지에는 목록 전체가 실려 있다)
+                prefetch={false}
+                onClick={e => {
+                  if (isPlainClick(e)) requestPlay(x.id);
+                }}
                 className={cn(
                   'grid w-full content-start gap-2 rounded-xl text-left lg:grid-cols-[148px_minmax(0,1fr)] lg:items-start lg:gap-2.5',
                   FOCUS
@@ -224,7 +239,7 @@ export const SermonSidebar = ({
                 <SermonThumb
                   src={x.thumbnail}
                   current={on}
-                  playing={playing}
+                  mark={on ? mark : undefined}
                   sizes="(min-width: 1024px) 148px, (min-width: 768px) 30vw, 68vw"
                 />
                 <span className="grid min-w-0 gap-0.5">
@@ -236,7 +251,7 @@ export const SermonSidebar = ({
                     {dateLabel(x)}
                   </small>
                 </span>
-              </button>
+              </Link>
             </li>
           );
         })}

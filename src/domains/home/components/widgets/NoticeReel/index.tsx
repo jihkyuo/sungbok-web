@@ -194,8 +194,6 @@ const Wall = ({ video, entering }: { video: HomeVideo; entering?: boolean }) => 
       alt=""
       fill
       sizes="320px"
-      loading="eager"
-      fetchPriority="low"
       className="scale-125 object-cover blur-3xl saturate-150"
     />
   </div>
@@ -486,8 +484,6 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                 alt=""
                 fill
                 sizes={THUMB_SIZES}
-                loading="eager"
-                fetchPriority="low"
                 className="object-cover"
               />
               <Image
@@ -505,8 +501,6 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                   alt=""
                   fill
                   sizes={SCREEN_SIZES}
-                  loading="eager"
-                  fetchPriority="low"
                   className="invisible object-cover"
                 />
               )}
@@ -517,8 +511,6 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                   alt=""
                   fill
                   sizes={SCREEN_SIZES}
-                  loading="eager"
-                  fetchPriority="low"
                   className="invisible object-cover"
                 />
               )}

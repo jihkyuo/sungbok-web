@@ -6,21 +6,27 @@
 'use client';
 
 import { ArrowRight } from 'lucide-react';
+import { useRef } from 'react';
 
 import bg from '@/assets/images/main/first-visit.webp';
+import { useNearViewport } from '@/shared/lib/hooks/useNearViewport';
 
 import { SECTION } from './data';
 import { MorphPanel, usePanelFlow } from './RegisterPanel';
 
 export const FirstVisit = () => {
   const flow = usePanelFlow();
+  // CSS 배경은 화면 밖이어도 페이지를 열자마자 받는다 — 페이지 맨 아래 섹션이라 첫 화면과 회선을 다투지 않게
+  // 두 화면 거리 안에 들어왔을 때 붙인다. 그 전에는 어두운 바탕(bg-b1-text)이 깔려 흰 글씨 대비를 지킨다.
+  const sectionRef = useRef<HTMLElement>(null);
+  const near = useNearViewport(sectionRef);
   return (
     <>
-      <section className="relative flex min-h-[80vh] items-center overflow-hidden">
+      <section ref={sectionRef} className="relative flex min-h-[80vh] items-center overflow-hidden">
         <div
           aria-hidden
-          className="absolute inset-0 bg-cover bg-center pointer-fine:bg-fixed"
-          style={{ backgroundImage: `url(${bg.src})` }}
+          className="bg-b1-text absolute inset-0 bg-cover bg-center pointer-fine:bg-fixed"
+          style={near ? { backgroundImage: `url(${bg.src})` } : undefined}
         />
         <div aria-hidden className="absolute inset-0 bg-slate-950/35" />
         <div className="relative z-10 w-full px-[6vw]">

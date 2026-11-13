@@ -4,7 +4,7 @@ import { Header } from '@/shared/components/layout/Header';
 import type { Metadata } from 'next';
 // 폰트는 외부 CDN 없이 우리 도메인에서 제공한다(ADR 0009). 둘 다 unicode-range 조각이라 쓰인 글자만 받는다.
 import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
-import '@fontsource/nanum-brush-script/400.css'; // 표어용 붓글씨 서예체(.b1-brush)
+import '@fontsource/nanum-brush-script/400.css'; // 붓글씨(.b1-brush) 예비 — 평소엔 globals.css 의 'Sungbok Brush'(쓰는 글자만)로 끝난다
 // 숫자·날짜·머리표(.b1-mono, 29개 파일) — 라틴 글자만 쓰므로 latin 조각만 넣는다
 import '@fontsource/jetbrains-mono/latin-400.css';
 import '@fontsource/jetbrains-mono/latin-500.css';

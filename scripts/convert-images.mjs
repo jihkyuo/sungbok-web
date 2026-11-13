@@ -3,6 +3,7 @@
 //   pnpm images:webp                 # src/assets 아래 모든 .jpg/.jpeg → 같은 자리 .webp (원본 유지)
 //   pnpm images:webp --replace       # 변환 후 원본 삭제(import 경로는 직접 .webp 로 바꾼다)
 //   pnpm images:webp path/a.jpg ...  # 지정 파일만
+// 변환한 뒤 `pnpm images:variants` 로 화면 폭별 크기 파일도 만든다(scripts/photo-variants.mjs).
 // 기준: 긴 변이 아니라 "가로" 최대 1920px(풀블리드 기준), 품질 82. WebP 는 iOS 14·Safari 14(2020) 이후 전부 지원.
 import { readdir, stat, unlink } from 'node:fs/promises';
 import path from 'node:path';

@@ -23,7 +23,3 @@ export const OUTLINE_BTN =
 /** 줄을 넘기는 동그란 화살표 버튼(30px) — 누르는 영역은 가상 영역으로 44px(테두리 안쪽 28 + 8×2) */
 export const ARROW_BTN =
   "border-b1-border bg-b1-surface text-b1-text relative grid size-[30px] place-items-center rounded-full border before:absolute before:-inset-2 before:content-['']";
-
-// 유튜브 썸네일 주소만 next/image 최적화를 거친다(next.config remotePatterns: i.ytimg.com/vi/).
-// 다른 호스트·경로 한 장 때문에 화면 전체가 오류로 떨어지지 않게, 밖의 주소는 그대로 싣는다.
-export const YT_THUMB = /^https:\/\/i\.ytimg\.com\/vi\//;

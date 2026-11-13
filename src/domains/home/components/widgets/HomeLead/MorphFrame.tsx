@@ -8,15 +8,12 @@
  */
 'use client';
 
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 
 import mainExterior from '@/assets/images/main/main01.webp';
 import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
-import {
-  HERO_IMAGE_QUALITY,
-  HERO_IMAGE_SIZES,
-} from '@/domains/home/components/widgets/HomeHero/imageConfig';
+import { HERO_IMAGE_SIZES } from '@/domains/home/components/widgets/HomeHero/imageConfig';
 
 import { exteriorAlign, fullRect, type Rect } from './morphMath';
 
@@ -121,12 +118,11 @@ export const MorphFrame = forwardRef<MorphFrameHandle, { className?: string; rad
               className="absolute inset-y-0 right-0 origin-top-left"
               style={{ left: `${-EXT_G * 100}%`, opacity: 'var(--f1)', willChange: 'transform' }}
             >
-              <Image
+              <Photo
                 src={mainExterior}
                 alt=""
                 fill
                 sizes={HERO_IMAGE_SIZES}
-                quality={HERO_IMAGE_QUALITY}
                 className="object-cover object-[55%_50%]"
               />
             </div>

@@ -1,6 +1,5 @@
-import { YT_THUMB } from '@/domains/worship-video/components/features/sermonStyles';
 import { cn } from '@/shared/lib/utils';
-import Image from 'next/image';
+import { YoutubeThumb } from '@/shared/components/features/YoutubeThumb';
 
 interface Props {
   src: string;
@@ -27,14 +26,7 @@ export const SermonThumb = ({ src, sizes, current, mark, className }: Props) => 
       className
     )}
   >
-    <Image
-      src={src}
-      alt=""
-      fill
-      sizes={sizes}
-      className="object-cover"
-      unoptimized={!YT_THUMB.test(src)}
-    />
+    <YoutubeThumb src={src} alt="" fill sizes={sizes} className="object-cover" />
     {mark && (
       <span className="bg-b1-accent text-caption text-b1-surface absolute top-1.5 left-1.5 rounded-md px-2 py-0.5 font-bold">
         {mark}

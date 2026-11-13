@@ -4,12 +4,12 @@ import { requestPlay } from '@/domains/worship-video/api/playIntent';
 import { dateLabel, weekdayLabel } from '@/domains/worship-video/api/sermonList';
 import { rememberListScroll } from '@/domains/worship-video/api/sermonListState';
 import type { Sermon } from '@/domains/worship-video/api/worshipVideo.types';
-import { FOCUS, YT_THUMB } from '@/domains/worship-video/components/features/sermonStyles';
+import { FOCUS } from '@/domains/worship-video/components/features/sermonStyles';
 import { sermonPath, type WorshipPage } from '@/domains/worship-video/config/worshipPages';
 import { isPlainClick } from '@/shared/lib/isPlainClick';
 import { cn } from '@/shared/lib/utils';
 import { ArrowRight, Play } from 'lucide-react';
-import Image from 'next/image';
+import { YoutubeThumb } from '@/shared/components/features/YoutubeThumb';
 import Link from 'next/link';
 import { useId, type MouseEvent } from 'react';
 
@@ -46,14 +46,13 @@ export const SermonLatest = ({ page, sermon }: Props) => {
         aria-hidden
         className="group bg-b1-placeholder relative block aspect-video overflow-hidden rounded-xl shadow-md md:rounded-2xl"
       >
-        <Image
+        <YoutubeThumb
           src={sermon.poster}
           alt=""
           fill
           preload
           sizes="(min-width: 1024px) 55vw, (min-width: 768px) 48vw, 88vw"
           className="duration-slow ease-standard object-cover transition-transform group-hover:scale-[1.025] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          unoptimized={!YT_THUMB.test(sermon.poster)}
         />
         <span className="bg-b1-surface/95 text-b1-accent group-hover:bg-b1-surface duration-fast absolute top-1/2 left-1/2 grid size-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full shadow-md transition-colors md:size-[68px]">
           <Play className="ml-1 size-5 fill-current md:size-6" />

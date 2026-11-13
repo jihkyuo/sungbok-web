@@ -2,7 +2,7 @@ import AllLiveLogo from '@/assets/icons/allLive-team-logo.png';
 import { BaseCard } from '@/shared/components/features/BgOverlayCard/BaseCard';
 import { EdgeHoleArea } from '@/shared/components/features/EdgeHoleArea';
 import { cn } from '@/shared/lib/utils';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 
 interface Props {
   videoUrl: string;
@@ -24,7 +24,7 @@ export const VideoBgCard = ({ videoUrl, onClick, className }: Props) => {
   return (
     <BaseCard className={cn('relative cursor-pointer', className)} onClick={onClick}>
       <EdgeHoleArea>
-        <Image src={AllLiveLogo} alt="AllLiveLogo" width={70} height={70} />
+        <Photo src={AllLiveLogo} alt="AllLiveLogo" width={70} height={70} />
       </EdgeHoleArea>
 
       <div className="relative h-[200px] w-full sm:h-[300px] md:h-[400px] lg:h-[550px]">

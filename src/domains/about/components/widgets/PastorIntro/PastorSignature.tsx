@@ -3,7 +3,8 @@
 
 import { useScrollFadeIn } from '@/shared/lib/hooks/useScrollFadeIn';
 import { cn } from '@/shared/lib/utils';
-import Image, { type StaticImageData } from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
+import type { StaticImageData } from 'next/image';
 
 // 클립(바깥)은 왼쪽에서 들어오고 서명(안쪽)은 같은 거리만큼 되밀어, 서명은 제자리에서 왼쪽부터 드러난다.
 const WIPE =
@@ -32,7 +33,7 @@ export const PastorSignature = ({
             signed ? 'translate-x-0' : '-translate-x-full'
           )}
         >
-          <Image
+          <Photo
             src={sign}
             alt={name}
             className={cn(

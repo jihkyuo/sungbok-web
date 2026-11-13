@@ -3,7 +3,8 @@
 // 라이브: 무음 자동재생 + 소리 켜기(홈 단일 소리 규칙). 라이브 없음: 담임목사 최신 설교 썸네일 정지 + 카드 버튼 → 유튜브 새 탭 재생.
 import { ArrowUpRight, Volume2, VolumeX } from 'lucide-react';
 import { YoutubeIcon } from '@/shared/components/brand/YoutubeIcon';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
+import { YoutubeThumb } from '@/shared/components/features/YoutubeThumb';
 import { useEffect, useRef } from 'react';
 
 import channelLogo from '@/assets/icons/sungbok-channel-logo.webp';
@@ -91,7 +92,7 @@ export const LiveStage = () => {
         <div ref={stageRef} className="relative">
           <div className="bg-b1-text relative aspect-[21/9] w-full overflow-hidden rounded-3xl">
             {video && !isLive && (
-              <Image
+              <YoutubeThumb
                 src={video.thumbnail}
                 alt=""
                 fill
@@ -142,7 +143,7 @@ export const LiveStage = () => {
             >
               <div className="flex min-w-0 items-center gap-4">
                 <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
-                  <Image
+                  <Photo
                     src={channelLogo}
                     alt={LABELS.channel}
                     fill

@@ -2,7 +2,7 @@
 
 import { ArrowUpRight, Volume2, VolumeX } from 'lucide-react';
 import { YoutubeIcon } from '@/shared/components/brand/YoutubeIcon';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import Link from 'next/link';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
@@ -416,7 +416,7 @@ export const TurntableStage = ({
             className="pointer-events-none absolute inset-0 transition-opacity duration-700"
             style={{ opacity: playing && posterFaded ? 0 : 1 }}
           >
-            <Image src={POSTER} alt="" fill sizes="80vmin" className="object-cover" />
+            <Photo src={POSTER} alt="" fill sizes="80vmin" className="object-cover" />
           </div>
           <div
             className="absolute right-5 bottom-5 left-5 text-white"
@@ -458,7 +458,7 @@ export const TurntableStage = ({
             }}
           >
             <span className="relative flex h-11 w-11 shrink-0 overflow-hidden rounded-full bg-white">
-              <Image
+              <Photo
                 src={allLiveLogo}
                 alt="AllLive 올리브워십"
                 fill

@@ -7,6 +7,8 @@
 ## 첫 화면과 영상 준비 (2026-11-13)
 
 - 사진 원본은 WebP, 폰트는 같은 출처의 정적 파일(Vercel CDN) 방식을 유지한다.
+- 레포 사진은 화면 폭별 크기 파일까지 미리 만들어 둔다(`pnpm images:variants` → `src/assets/sized/` + `src/assets/photoVariants.generated.ts`). 화면에서는 `next/image` 대신 `<Photo>`(`src/shared/components/features/Photo`)를 쓰며, 접속 시점의 크기 변환(`/_next/image`)을 거치지 않는다 — 방문이 뜸해 변환 캐시가 식었을 때 사진이 늦게 뜨던 원인. 사진을 넣거나 바꾸면 `pnpm images:variants` 를 다시 실행한다 — 빠뜨리면 `pnpm build` 가 실패한다(`--check`). 배경은 [ADR 0013](../decisions/0013-photo-size-variants-prebuilt.md). 유튜브 썸네일은 `<YoutubeThumb>` 로 유튜브의 크기별 WebP 주소를 바로 받는다(변환 없음, 실패 시 JPG).
+- 붓글씨체(`.b1-brush`)는 쓰는 글자만 담은 파일 하나(`src/assets/fonts/sungbok-brush.woff2`, ~3KB)로 받는다(`pnpm fonts:brush`). 글자를 바꾸고 다시 만들지 않아도 빠진 글자는 기존 조각 폰트에서 받으므로 화면은 깨지지 않는다.
 - 히어로 문구·버튼에는 시작 지연이나 숨김 상태를 두지 않는다. 사진은 브라우저가 준비하는 대로 표시하고, 기존 스크롤 변형·사진 띠·배경 모션은 유지한다.
 - `HomeLead` 사진 띠의 `sizes`는 행 높이(svh)와 종횡비로 계산한다. 히어로·변형 레이어·착지 사진은 같은 `HERO_IMAGE_SIZES`·화질을 써서 같은 응답을 재사용한다.
 - 홈 영상 피드 조회는 요청 시작과 함께 진행한다. 홈 전체가 조회를 기다리는 대신 영상 두 섹션만 `Suspense`로 나눠 완료되는 대로 표시한다. 조회 실패는 그 영역의 기존 클라이언트 조회로 이어가며 첫 화면을 오류로 바꾸지 않는다.
@@ -60,7 +62,7 @@
 3. **transform/opacity·mask 만 애니메이트** — `filter:blur()` 애니·clip-path 스크럽 금지(잔카). 메시 블롭은 `transform`만(블러는 정적).
 4. **reduced-motion = 정적 최종상태** — `prefers-reduced-motion` 이면 200vh 트랙·rAF 없이 **100vh 정적**(카피 좌측 + 전경 노출)으로 렌더. 스크롤 연동을 끄되 빈 화면/데드 스크롤이 안 생기게 최종상태를 보일 것.
 5. **CTA 앵커 유지** — `이번 주 예배 시간`=`#worship`(WorshipTimes `id`), `오시는 길`=`#location`(LocationMap `id`). Lenis `anchors.offset:-80`(`_provider.tsx`)로 헤더 보정.
-6. **이미지 `sizes`+`quality` 반응형** — `<Image sizes="(max-width:768px) 96vw, 74vw" quality={85} priority />`(좁은 뷰포트 업스케일 흐림 방지).
+6. **이미지 `sizes` 반응형** — `<Photo sizes="(max-width:768px) 96vw, 74vw" preload />`. 화질은 크기 파일을 만들 때 정한다(`scripts/photo-variants.mjs`, ADR 0013)(좁은 뷰포트 업스케일 흐림 방지).
 
 > 전역 스무딩은 Lenis(`_provider.tsx` `ReactLenis root`)가 관리하며 B는 Lenis 를 stop/start 하지 않는다(인트로 하이재킹 없음).
 

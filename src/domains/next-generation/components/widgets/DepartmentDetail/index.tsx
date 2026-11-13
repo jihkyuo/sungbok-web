@@ -8,7 +8,8 @@ import dep08 from '@/assets/images/main/department/dep08.webp';
 import depManager08 from '@/assets/images/main/department/dep_manager08.webp';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { SampleNotice } from '@/shared/components/layout/SampleNotice';
-import Image, { type StaticImageData } from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
+import type { StaticImageData } from 'next/image';
 
 export interface Department {
   target: string;
@@ -45,7 +46,7 @@ export const DepartmentDetail = ({ dept }: { dept: Department }) => (
       <Reveal delay={80} className="md:col-span-4 md:justify-self-end">
         <div className="border-b1-border flex items-center gap-4 rounded-2xl border bg-white px-5 py-4">
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full">
-            <Image src={dept.staff.photo} alt="" fill className="object-cover" sizes="56px" />
+            <Photo src={dept.staff.photo} alt="" fill className="object-cover" sizes="56px" />
           </div>
           <div>
             <div className="text-b1-sub text-body-sm">{dept.staff.role}</div>
@@ -72,7 +73,7 @@ export const DepartmentDetail = ({ dept }: { dept: Department }) => (
 
     <Reveal delay={160}>
       <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-3xl md:aspect-[21/9]">
-        <Image src={dept.photo} alt="" fill className="object-cover" sizes="100vw" />
+        <Photo src={dept.photo} alt="" fill className="object-cover" sizes="100vw" />
       </div>
     </Reveal>
 
@@ -85,7 +86,7 @@ export const DepartmentDetail = ({ dept }: { dept: Department }) => (
         <div className="grid grid-cols-2 gap-3">
           {dept.gallery.map((img, i) => (
             <div key={i} className="relative aspect-square overflow-hidden rounded-2xl">
-              <Image
+              <Photo
                 src={img}
                 alt=""
                 fill

@@ -1,6 +1,6 @@
 import maskSideImg02 from '@/assets/images/bgSide02.png';
 import { cn } from '@/shared/lib/utils';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import type { PropsWithChildren } from 'react';
 
 interface Props extends PropsWithChildren {
@@ -25,7 +25,7 @@ interface MaskImageProps {
 
 const MaskImage = ({ side }: MaskImageProps) => {
   return (
-    <Image
+    <Photo
       src={maskSideImg02}
       alt="maskSideImg"
       className={cn('absolute brightness-[1000] contrast-[1000]', {

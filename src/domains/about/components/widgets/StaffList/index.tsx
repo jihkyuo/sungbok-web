@@ -5,7 +5,8 @@
 import { LEAD_PASTOR } from '@/domains/about/components/widgets/PastorIntro/pastors';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { cn } from '@/shared/lib/utils';
-import Image, { type StaticImageData } from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
+import type { StaticImageData } from 'next/image';
 import { STAFF_GROUPS } from './staff';
 
 const PEOPLE = STAFF_GROUPS.flatMap(g => g.members.map(m => ({ ...m, role: g.title })));
@@ -29,13 +30,12 @@ const Box = ({
       className
     )}
   >
-    <Image
+    <Photo
       src={photo}
       alt={alt}
       fill
       preload={priority}
       sizes={sizes}
-      quality={90}
       className="object-cover object-top"
     />
   </div>

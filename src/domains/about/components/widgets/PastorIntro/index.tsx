@@ -1,7 +1,7 @@
 // 교회소개 › 담임목사·원로목사 본문. 흰 편지지 한 장 — 왼쪽에 사진, 오른쪽에 붓글씨 인사로 여는 인사말, 아래 괘선 밑에 친필 서명.
 // 인물 데이터는 pastors.ts.
 import { Reveal } from '@/shared/components/features/Reveal';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import { PastorSignature } from './PastorSignature';
 import type { PastorProfile } from './pastors';
 
@@ -12,7 +12,7 @@ export const PastorIntro = ({ pastor }: { pastor: PastorProfile }) => (
   >
     <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-x-10 lg:gap-x-16">
       <div className="relative aspect-[4/5] w-[62%] overflow-hidden rounded-[16px] md:w-full">
-        <Image
+        <Photo
           src={pastor.photo}
           alt={`${pastor.role} ${pastor.name}`}
           fill

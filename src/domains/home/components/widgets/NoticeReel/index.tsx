@@ -4,7 +4,7 @@
 // 후보 띠는 액자 밑단(유리 턱)에 걸쳐 벽 위로 내려온다 — 영상 픽셀은 하나도 가리지 않는다.
 // 전환(handoff): 고른 썸네일이 제자리에서 벽 전체로 번지고(scale + crossfade), 액자는 새 포스터로 덮인 뒤 플레이어를 바꾼다.
 import { Volume2, VolumeX } from 'lucide-react';
-import Image from 'next/image';
+import { YoutubeThumb } from '@/shared/components/features/YoutubeThumb';
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 
 import type { HomeVideo } from '@/domains/home/api/homeVideoFeed';
@@ -189,11 +189,13 @@ type Bloom = {
 
 const Wall = ({ video, entering }: { video: HomeVideo; entering?: boolean }) => (
   <div className={cn('absolute inset-0', entering && 'sp-b-wall-in')}>
-    <Image
+    <YoutubeThumb
       src={video.thumbnail}
       alt=""
       fill
       sizes="320px"
+      // 섹션 전체를 덮는 배경이라 폰에서는 16:9 보다 세로로 길다 — 검은 띠가 든 4:3 크기는 쓰지 않는다
+      wide
       loading="eager"
       fetchPriority="low"
       className="scale-125 object-cover blur-3xl saturate-150"
@@ -427,7 +429,13 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                 }
                 onAnimationEnd={e => e.animationName === 'sp-b-bloom-move' && setBloom(null)}
               >
-                <Image src={bloom.src} alt="" fill sizes={THUMB_SIZES} className="object-cover" />
+                <YoutubeThumb
+                  src={bloom.src}
+                  alt=""
+                  fill
+                  sizes={THUMB_SIZES}
+                  className="object-cover"
+                />
               </div>
             )}
             {/* 밝은 스크림 — 벽은 가운데에서만 색을 띠고 위·아래는 페이지 배경으로 돌아간다(이웃과 이음새 없음) */}
@@ -480,7 +488,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
               )}
             >
               {/* 띠에서 이미 받아 둔 작은 판이 먼저 깔리고, 큰 판이 도착하면 그 위에 얹힌다 — 덮는 순간에 빈 화면·이전 그림이 없다 */}
-              <Image
+              <YoutubeThumb
                 key={`lo-${current.id}`}
                 src={current.thumbnail}
                 alt=""
@@ -490,7 +498,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                 fetchPriority="low"
                 className="object-cover"
               />
-              <Image
+              <YoutubeThumb
                 key={`hi-${current.id}`}
                 src={current.thumbnail}
                 alt=""
@@ -499,7 +507,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                 className="object-cover"
               />
               {hasQueue && (
-                <Image
+                <YoutubeThumb
                   key={`next-${upcoming.id}`}
                   src={upcoming.thumbnail}
                   alt=""
@@ -511,7 +519,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                 />
               )}
               {warm && (
-                <Image
+                <YoutubeThumb
                   key={`warm-${warm.id}`}
                   src={warm.thumbnail}
                   alt=""
@@ -557,7 +565,7 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
                             : 'shadow-b1-text/25 shadow-lg hover:-translate-y-1'
                         )}
                       >
-                        <Image
+                        <YoutubeThumb
                           src={v.thumbnail}
                           alt=""
                           fill

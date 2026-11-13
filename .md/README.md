@@ -42,7 +42,8 @@
     ├── 0009-design-system-tokens-responsive.md
     ├── 0010-next16-node26-perf-baseline.md
     ├── 0011-github-org-and-env-source.md
-    └── 0012-date-temporal-and-admin-libraries.md
+    ├── 0012-date-temporal-and-admin-libraries.md
+    └── 0013-photo-size-variants-prebuilt.md
 ```
 
 향후 추가될 카테고리(빈 폴더는 미리 만들지 않음):
@@ -111,6 +112,7 @@
 - [0010-next16-node26-perf-baseline.md](decisions/0010-next16-node26-perf-baseline.md) — 2026-11-09 — Next 16·Node 26 업그레이드 + 성능 기준선: 유튜브는 서버 fetch 하나로(gapi·googleapis·axios 제거), 사진은 WebP 사전 변환(17.8MB→3.1MB), 폰트는 같은 출처, 무거운 임베드는 화면 근처에서, Vercel 서울 리전. (0008·0009 는 develop 쪽 ADR 이 쓰고 있어 건너뜀)
 - [0011-github-org-and-env-source.md](decisions/0011-github-org-and-env-source.md) — 2026-11-10 — 레포를 GitHub Organization 으로 이전, 환경변수 정본 = GitHub Secrets, Actions 는 Secrets→Vercel 덮어쓰기 동기화만(변수 1개씩), 배포는 Vercel Git 자동 유지, 레포 공개 유지. Pro·공용 계정·.env 커밋·Actions 전면 배포 탈락. 상태: 셋업 검증 대기
 - [0012-date-temporal-and-admin-libraries.md](decisions/0012-date-temporal-and-admin-libraries.md) — 2026-11-12 — 날짜는 UTC 로 주고받고 표시할 때만 Asia/Seoul. 서버는 Temporal(Node 26), 홈페이지 화면은 Intl(Safari·iOS 에 Temporal 없음) — ESLint 로 강제, 관리자 영역만 예외. date-fns·dayjs 탈락. zod 채택·유튜브 응답 검증 적용, react-hook-form·TanStack Table 채택(관리자 착수 때 설치), motion·react-youtube 보류, react-intersection-observer 탈락. Radix 통합·lodash 제거
+- [0013-photo-size-variants-prebuilt.md](decisions/0013-photo-size-variants-prebuilt.md) — 2026-11-14 — 접속 시점 `/_next/image` 변환을 쓰지 않는다 — 레포 사진은 화면 폭별 크기 파일까지 미리 만들어 `<Photo>` 로 쓴다(빠뜨리면 빌드 실패). 유튜브 썸네일은 유튜브의 크기별 주소로 직접(WebP 우선). 붓글씨체는 쓰는 글자만 담은 파일 하나. ADR 0010 의 «폭별 변환 유지»·«화질 허용 목록»을 바꿈
 
 ## 컨벤션
 

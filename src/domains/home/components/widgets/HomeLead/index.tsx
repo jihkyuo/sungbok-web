@@ -15,14 +15,11 @@
  */
 'use client';
 
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import { Fragment, useEffect, useRef } from 'react';
 
 import mainExterior from '@/assets/images/main/main01.webp';
-import {
-  HERO_IMAGE_QUALITY,
-  HERO_IMAGE_SIZES,
-} from '@/domains/home/components/widgets/HomeHero/imageConfig';
+import { HERO_IMAGE_SIZES } from '@/domains/home/components/widgets/HomeHero/imageConfig';
 
 import { FLOW_PHOTOS, THIRD_PHOTOS } from './flowPhotos';
 import { EXT_G, MorphFrame, type MorphFrameHandle } from './MorphFrame';
@@ -161,19 +158,18 @@ export const HomeLead = () => {
                 className="hl-land absolute inset-y-0 right-0"
                 style={{ left: `${-EXT_G * 100}%` }}
               >
-                <Image
+                <Photo
                   src={mainExterior}
                   alt="성복교회 전경"
                   fill
                   sizes={HERO_IMAGE_SIZES}
-                  quality={HERO_IMAGE_QUALITY}
                   className="object-cover object-[55%_50%]"
                 />
               </div>
             ) : (
               // 사진 칸의 폭은 화면 폭이 아니라 행 높이(svh)와 종횡비로 결정된다.
               it.src && (
-                <Image
+                <Photo
                   src={it.src}
                   alt=""
                   fill

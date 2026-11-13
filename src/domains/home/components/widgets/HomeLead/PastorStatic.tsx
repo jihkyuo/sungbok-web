@@ -11,7 +11,7 @@
  */
 'use client';
 
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 
 import pastorSign from '@/assets/images/pastor-sign.png';
 import pastorImg from '@/assets/images/main/pastor.webp';
@@ -45,7 +45,7 @@ const Signature = () => {
         <span
           className={`block overflow-hidden ${WIPE} ${on ? 'translate-x-0' : '-translate-x-full'}`}
         >
-          <Image
+          <Photo
             src={pastorSign}
             alt="이요셉"
             className={`h-14 w-auto ${WIPE} ${on ? 'translate-x-0' : 'translate-x-full'}`}
@@ -99,7 +99,7 @@ export const PastorStatic = () => {
               'relative aspect-[7/8] w-full overflow-hidden rounded-[28px] shadow-[0_48px_90px_-30px_rgba(30,40,70,0.4)]' /* design-lint-ignore: 인물 카드 낙하 그림자 1회성 */
             }
           >
-            <Image
+            <Photo
               src={pastorImg}
               alt="이요셉 담임목사"
               fill

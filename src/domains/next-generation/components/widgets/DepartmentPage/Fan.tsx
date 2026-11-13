@@ -8,7 +8,7 @@
 // 에피소드가 없다 — 커서가 더미를 위에서 아래로 한 번 훑고 지나갈 뿐이고, 사진 전부가 같은 식 위에 있다.
 // 스크롤 구동: scroll 이벤트 + rAF, 커서 하나만 계산해 카드마다 transform 을 쓴다(Lenis 보간 한 겹).
 // 900px 이상은 DepartmentPage 가 «놓기»(Landing)로 바꿔 끼우므로 이 파일에는 모바일 값만 있다.
-import Image from 'next/image';
+import { Photo as SizedPhoto } from '@/shared/components/features/Photo';
 import { useLayoutEffect, useRef } from 'react';
 
 import type { Photo } from './types';
@@ -157,11 +157,10 @@ export default function Fan({ photos }: { photos: Photo[] }) {
         <div ref={pinRef} className="fa-pin">
           {deck.map((photo, i) => (
             <div key={photo.id} className="fa-card bg-b1-placeholder">
-              <Image
+              <SizedPhoto
                 src={photo.src}
                 alt={photo.alt}
                 fill
-                quality={90}
                 sizes="calc(100vw - 40px)"
                 className="object-cover"
                 style={{ objectPosition: i % 3 === 1 ? 'center 30%' : 'center 50%' }}

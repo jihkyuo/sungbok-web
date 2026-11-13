@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowUpRight } from 'lucide-react';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import { useRouter } from 'next/navigation';
 import { useMemo, useRef, useState, type KeyboardEvent } from 'react';
 
@@ -319,7 +319,7 @@ export const NextGeneration = () => {
             style={{ opacity: engaged ? 1 : 0, transform: engaged ? 'scale(1)' : 'scale(0.94)' }}
           >
             <div className="relative aspect-[16/10] w-full">
-              <Image src={a.image} alt={a.name} fill sizes="232px" className="object-cover" />
+              <Photo src={a.image} alt={a.name} fill sizes="232px" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" />
             </div>
             <div className="p-4">

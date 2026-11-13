@@ -11,12 +11,12 @@
  */
 
 import { ArrowRight } from 'lucide-react';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import Link from 'next/link';
 
 import mainExterior from '@/assets/images/main/main01.webp';
 import { GapckSymbol } from '@/shared/components/brand/GapckSymbol';
-import { HERO_IMAGE_QUALITY, HERO_IMAGE_SIZES } from './imageConfig';
+import { HERO_IMAGE_SIZES } from './imageConfig';
 
 const PHOTO_MASK =
   'linear-gradient(to left,#000 0%,#000 50%,rgba(0,0,0,0.55) 74%,rgba(0,0,0,0.12) 90%,transparent 100%)';
@@ -83,12 +83,11 @@ export const HomeHero = ({ copyClassName }: { copyClassName?: string } = {}) => 
       className="absolute top-0 right-0 bottom-0 w-[74%]"
       style={{ WebkitMaskImage: PHOTO_MASK, maskImage: PHOTO_MASK }}
     >
-      <Image
+      <Photo
         src={mainExterior}
         alt="성복교회 전경"
         fill
         preload
-        quality={HERO_IMAGE_QUALITY}
         sizes={HERO_IMAGE_SIZES}
         className="object-cover object-[55%_50%]"
       />

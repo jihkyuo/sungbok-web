@@ -12,7 +12,7 @@
 // 40장: 상한 없음. 8장 주기가 반복될 뿐 — 빨리 넘기면 장들이 공중 자세로 지나가고, 멈추면 보이는 장들이 1초 남짓에 전부 놓인다.
 // 899px 이하는 DepartmentPage 가 «부채»(Fan)로 바꿔 끼운다. 아래 모바일 분기는 서버 HTML(하이드레이션 전 첫 그림)용.
 // reduced-motion: 전부 놓인 상태(정적 더미).
-import Image from 'next/image';
+import { Photo as SizedPhoto } from '@/shared/components/features/Photo';
 import { useEffect, useRef } from 'react';
 
 import type { Photo } from './types';
@@ -315,11 +315,10 @@ export default function Landing({ photos }: { photos: Photo[] }) {
               >
                 <span className="ld-air" aria-hidden="true" />
                 <div className="ld-img">
-                  <Image
+                  <SizedPhoto
                     src={p.src}
                     alt={p.alt}
                     fill
-                    quality={90}
                     sizes={`(max-width: 899px) 100vw, ${w}px`}
                     className="object-cover"
                     style={{ objectPosition: c.pos }}

@@ -1,5 +1,5 @@
 import { ArrowRight } from 'lucide-react';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import Link from 'next/link';
 
 import { Section } from '@/domains/home/components/features/Section';
@@ -29,7 +29,7 @@ export const ChurchNews = () => {
           <Link href={headline.href} className="group block h-full no-underline">
             <div className="relative h-full min-h-[320px] overflow-hidden rounded-2xl">
               {headline.image && (
-                <Image
+                <Photo
                   src={headline.image}
                   alt={headline.title}
                   fill
@@ -74,7 +74,7 @@ export const ChurchNews = () => {
                 >
                   {p.image ? (
                     <div className="relative w-[100px] shrink-0 self-stretch overflow-hidden sm:w-[120px]">
-                      <Image
+                      <Photo
                         src={p.image}
                         alt={p.title}
                         fill

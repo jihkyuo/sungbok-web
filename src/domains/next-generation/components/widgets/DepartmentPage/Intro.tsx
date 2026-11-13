@@ -3,7 +3,7 @@
 // 1440: 전폭 사진(100svh 핀)이 스크롤로 왼쪽 카드로 물러나고 오른쪽에 사실줄→소개→담당→안내 한 줄이 떠오른다.
 // 390: 사진이 뒤에 서 있고 흰 시트가 그 위로 올라오며 정보를 싣는다.
 // children(사진 쇼케이스)은 시트 안, 정보 아래에 렌더된다. 스크럽은 scroll + rAF(Lenis 가 움직인 실제 스크롤 값).
-import Image from 'next/image';
+import { Photo as SizedPhoto } from '@/shared/components/features/Photo';
 import { useLayoutEffect, useRef, type ReactNode } from 'react';
 
 import type { Department, Photo } from './types';
@@ -135,12 +135,11 @@ export default function Intro({ dept, door, children }: IntroProps) {
         {dept.staff.map(s => (
           <li key={s.name} className="en-staff-row">
             <span className="en-staff-photo bg-b1-placeholder">
-              <Image
+              <SizedPhoto
                 src={s.photo}
                 alt={`${s.name} ${s.role}`}
                 fill
                 sizes="56px"
-                quality={90}
                 className="object-cover"
               />
             </span>
@@ -277,12 +276,11 @@ export default function Intro({ dept, door, children }: IntroProps) {
           <div className="en-photo bg-b1-placeholder">
             {door ? (
               <div className="en-photo-img">
-                <Image
+                <SizedPhoto
                   src={door.src}
                   alt={door.alt}
                   fill
                   preload
-                  quality={90}
                   // 휴대폰은 사진을 비율대로 폭에 맞춰 세운다(100vw). PC 는 화면 높이로 채우므로(cover) 높이 × 비율만큼 큰 원본이 필요하다.
                   sizes={`(max-width: 899px) 100vw, max(100vw, ${Math.round((door.src.width / door.src.height) * 100)}vh)`}
                   className="object-cover"

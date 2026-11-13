@@ -2,7 +2,7 @@
 
 import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import { YoutubeIcon } from '@/shared/components/brand/YoutubeIcon';
-import Image from 'next/image';
+import { Photo } from '@/shared/components/features/Photo';
 import Link from 'next/link';
 
 import { Section } from '@/domains/home/components/features/Section';
@@ -65,7 +65,7 @@ export const VariantCombo = () => (
             href={ARCHIVE_HREF}
             className="b1-card-hover relative block h-full overflow-hidden rounded-2xl no-underline"
           >
-            <Image src={SERMON_STILLS[1].img} alt="" fill sizes="40vw" className="object-cover" />
+            <Photo src={SERMON_STILLS[1].img} alt="" fill sizes="40vw" className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
             <div className="absolute inset-0 flex flex-col justify-between p-5 text-white">
               <span className="b1-mono text-caption tracking-[0.06em] opacity-80">

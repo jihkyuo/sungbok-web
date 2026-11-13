@@ -24,7 +24,9 @@ import { useNearViewport } from '@/shared/lib/hooks/useNearViewport';
 
 export const LiveStage = () => {
   const stageRef = useRef<HTMLDivElement>(null);
-  const near = useNearViewport(stageRef, '100% 0px');
+  // 라이브 플레이어(약 4MB)는 무대가 실제로 화면에 들어왔을 때 만든다 — 스크롤을 내린 채 새로고침해도
+  // 화면 밖의 플레이어를 받느라 로딩이 길어지지 않게.
+  const near = useNearViewport(stageRef, '0px');
   const feed = useHomeVideoFeed();
   const video = feed.live ?? feed.sermon;
   const isLive = !!feed.live;

@@ -81,9 +81,10 @@ export const TurntableStage = ({
   reflect = 'soft',
 }: Props) => {
   const { ref, q } = useTurntable();
-  // 유튜브 임베드(플레이어 JS 수백 KB·요청 수십 개)는 첫 로딩에서 빼고, 섹션이 1.5화면 앞까지 오면 붙인다.
+  // 유튜브 임베드(플레이어 약 4MB·요청 수십 개)는 첫 로딩에서 빼고, 섹션이 실제로 화면에 들어오면 붙인다
+  // (스크롤을 내린 채 새로고침해도 화면 밖의 플레이어를 받지 않게). 그 전에는 포스터가 보인다.
   // 회전 rAF 도 그때부터 돈다 — 화면 밖에서 메인 스레드를 쓰지 않게.
-  const near = useNearViewport(ref, '150% 0px');
+  const near = useNearViewport(ref, '0px');
   // 동작 줄이기면 임베드를 붙이지 않고 포스터만 둔다(자동재생 금지 — DESIGN.md §3). 영상은 채널 칩 링크로 본다.
   // (LiveStage·광고 릴은 대신 네이티브 컨트롤로 재생하게 한다 — 실제 청년 예배 영상으로 바꿀 때 같은 방식 검토)
   const reduced = usePrefersReducedMotion();

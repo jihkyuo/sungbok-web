@@ -231,8 +231,9 @@ const Billboard = ({ notices }: { notices: HomeVideo[] }) => {
   const barRef = useRef<HTMLSpanElement>(null);
   const playerRef = useRef<YTPlayer | null>(null);
   const swapTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  // 유튜브 플레이어(IFrame API 스크립트 + iframe)는 릴이 한 화면 앞까지 왔을 때 만든다 — 첫 로딩에서 뺀다.
-  const near = useNearViewport(sectionRef, '100% 0px');
+  // 유튜브 플레이어(IFrame API 스크립트 + iframe, 약 4MB)는 릴이 실제로 화면에 들어왔을 때 만든다 — 첫 로딩에서 빼고,
+  // 스크롤을 내린 채 새로고침해도 화면 밖의 플레이어를 받지 않게. 그 전에는 썸네일이 자리를 채운다.
+  const near = useNearViewport(sectionRef, '0px');
   const bloomSeq = useRef(0);
   const live = useRef({ index, mounted, soundOn: false, next: () => {} });
 

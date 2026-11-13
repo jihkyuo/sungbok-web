@@ -23,7 +23,12 @@ export const useHomeVideoFeed = (): HomeVideoFeed => {
     // 방송 시작 무렵 한산할 때 옛 응답 때문에 라이브가 1분 넘게 빠져 보이지 않게
     staleTime: ({ state }) => (state.data && state.data.staleMs > LIVE_MAX_AGE ? 0 : 60_000),
     refetchInterval: 60_000,
-    refetchOnWindowFocus: false,
+    gcTime: 30 * 60_000,
+    // 짧은 앱 전환은 재조회하지 않는다. 오래 비웠으면 받은 화면을 유지하며 확인한다.
+    // 오류 직후 복귀도 반복 요청하지 않게 마지막 성공/실패 확인 시각을 함께 본다.
+    refetchOnWindowFocus: query =>
+      Date.now() - Math.max(query.state.dataUpdatedAt, query.state.errorUpdatedAt) >= 60_000,
+    refetchIntervalInBackground: false,
     // 다시 해서 풀릴 실패(망 끊김·503)만 재시도 — 쿼터 소진(429)에 기본 3회 재시도로 쿼터를 더 태우지 않게
     retry: retryTransient,
   });

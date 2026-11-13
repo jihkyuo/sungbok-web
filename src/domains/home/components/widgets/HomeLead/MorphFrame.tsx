@@ -13,6 +13,10 @@ import { forwardRef, useImperativeHandle, useRef } from 'react';
 
 import mainExterior from '@/assets/images/main/main01.webp';
 import { HomeHero } from '@/domains/home/components/widgets/HomeHero';
+import {
+  HERO_IMAGE_QUALITY,
+  HERO_IMAGE_SIZES,
+} from '@/domains/home/components/widgets/HomeHero/imageConfig';
 
 import { exteriorAlign, fullRect, type Rect } from './morphMath';
 
@@ -121,7 +125,8 @@ export const MorphFrame = forwardRef<MorphFrameHandle, { className?: string; rad
                 src={mainExterior}
                 alt=""
                 fill
-                sizes="100vw"
+                sizes={HERO_IMAGE_SIZES}
+                quality={HERO_IMAGE_QUALITY}
                 className="object-cover object-[55%_50%]"
               />
             </div>

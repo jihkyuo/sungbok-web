@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useSermonDescription, useSermonLibrary } from './useSermonLibrary';
+import { sermonDescriptionQueryKey, sermonLibraryQueryKey } from './worshipVideoQueries';
 
 const sermons = Array.from({ length: 3 }, (_, i) => ({
   id: `v${i + 1}`,
@@ -73,4 +74,52 @@ describe('useSermonDescription', () => {
     renderHook(() => useSermonDescription('sunday', undefined), { wrapper: wrapper() });
     expect(fetchMock).not.toHaveBeenCalled();
   });
+});
+
+it('다른 페이지에서 6분을 보낸 뒤 돌아와도 목록·설명 캐시를 먼저 사용한다', () => {
+  vi.useFakeTimers();
+  const client = new QueryClient();
+  const W = ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  );
+  client.setQueryData(sermonLibraryQueryKey('sunday'), sermons);
+  client.setQueryData(sermonDescriptionQueryKey('sunday', 'v1'), '기존 설명');
+  fetchMock.mockReturnValue(new Promise(() => {}));
+  const useCachedData = () => ({
+    library: useSermonLibrary('sunday'),
+    description: useSermonDescription('sunday', 'v1'),
+  });
+  let unmount: (() => void) | undefined;
+  try {
+    const first = renderHook(useCachedData, { wrapper: W });
+    first.unmount();
+    act(() => vi.advanceTimersByTime(6 * 60_000));
+    const back = renderHook(useCachedData, { wrapper: W });
+    unmount = back.unmount;
+    expect(back.result.current.library.data).toEqual(sermons);
+    expect(back.result.current.description.data).toBe('기존 설명');
+    expect(back.result.current.library.isPending).toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
+  } finally {
+    unmount?.();
+    client.clear();
+    vi.useRealTimers();
+  }
+});
+
+it('오래된 목록을 다시 조회하는 동안에도 받은 내용과 화면 상태를 유지한다', () => {
+  const client = new QueryClient();
+  const W = ({ children }: { children: ReactNode }) => (
+    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  );
+  client.setQueryData(sermonLibraryQueryKey('sunday'), sermons, {
+    updatedAt: Date.now() - 11 * 60_000,
+  });
+  fetchMock.mockReturnValue(new Promise(() => {}));
+  const { result, unmount } = renderHook(() => useSermonLibrary('sunday'), { wrapper: W });
+  expect(result.current.data).toEqual(sermons);
+  expect(result.current.isPending).toBe(false);
+  expect(result.current.isFetching).toBe(true);
+  unmount();
+  client.clear();
 });

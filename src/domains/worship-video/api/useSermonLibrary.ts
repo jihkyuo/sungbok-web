@@ -16,6 +16,9 @@ import {
 
 // 서버 응답은 1시간 Data Cache — 화면은 10분 지나면 다시 열 때 새로 묻는다.
 const STALE = 10 * 60_000;
+// 다른 페이지에서 시간을 보내도 받은 목록·설명을 바로 복원한다.
+// 갱신 주기(staleTime)와 보관 시간은 별개이며, 오래된 자료는 기존 화면 뒤에서 갱신한다.
+const RETAIN = 30 * 60_000;
 
 // 취소 신호(signal)는 넘기지 않는다 — 넘기면 페이지를 떠날 때 react-query 가 진행 중 요청을 취소해
 // 돌아왔을 때 처음부터 다시 받는다. 떠나도 끝까지 받아 캐시에 남긴다.
@@ -24,6 +27,7 @@ export const useSermonLibrary = (page: WorshipPage) =>
     queryKey: sermonLibraryQueryKey(page),
     queryFn: async () => toSermons(await fetchJson(`/api/worship-video/library?page=${page}`)),
     staleTime: STALE,
+    gcTime: RETAIN,
     retry: retryTransient,
   });
 
@@ -39,5 +43,6 @@ export const useSermonDescription = (page: WorshipPage, videoId: string | undefi
       ),
     enabled: !!videoId,
     staleTime: STALE,
+    gcTime: RETAIN,
     retry: retryTransient,
   });

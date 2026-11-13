@@ -3,8 +3,9 @@ import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
+  focusManager,
 } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -178,5 +179,43 @@ describe('useHomeVideoFeed', () => {
     expect(result.current.sermon).toEqual(DATA.sermon);
     // 방금 받은 데이터(60초 이내)라 마운트 때 다시 부르지 않는다
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('짧은 앱 전환은 다시 조회하지 않고, 오래 비운 뒤에는 기존 화면을 유지하며 갱신한다', async () => {
+    vi.useFakeTimers();
+    const client = new QueryClient();
+    client.setQueryData(HOME_VIDEO_QUERY_KEY, DATA);
+    fetchMock.mockReturnValue(new Promise(() => {}));
+    const { result, unmount } = renderHook(() => useHomeVideoFeed(), {
+      wrapper: withClient(client),
+    });
+    try {
+      act(() => {
+        focusManager.setFocused(false);
+      });
+      act(() => vi.advanceTimersByTime(10_000));
+      await act(async () => {
+        focusManager.setFocused(true);
+      });
+      expect(fetchMock).not.toHaveBeenCalled();
+      expect(result.current.status).toBe('ready');
+
+      act(() => {
+        focusManager.setFocused(false);
+      });
+      act(() => vi.advanceTimersByTime(70_000));
+      expect(fetchMock).not.toHaveBeenCalled();
+      await act(async () => {
+        focusManager.setFocused(true);
+      });
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(result.current.status).toBe('ready');
+      expect(result.current.sermon).toEqual(DATA.sermon);
+    } finally {
+      unmount();
+      client.clear();
+      focusManager.setFocused(undefined);
+      vi.useRealTimers();
+    }
   });
 });

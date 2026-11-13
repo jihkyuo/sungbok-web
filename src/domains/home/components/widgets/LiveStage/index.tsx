@@ -19,8 +19,11 @@ import { LABELS } from '@/domains/home/data/homeVideo';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { getAudioOwner, useAudioFocus } from '@/shared/lib/audioFocus';
 import { createPlayer, type YTPlayer } from '@/shared/lib/youtubePlayer';
+import { useNearViewport } from '@/shared/lib/hooks/useNearViewport';
 
 export const LiveStage = () => {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const near = useNearViewport(stageRef, '100% 0px');
   const feed = useHomeVideoFeed();
   const video = feed.live ?? feed.sermon;
   const isLive = !!feed.live;
@@ -33,7 +36,7 @@ export const LiveStage = () => {
   const audio = useAudioFocus('live');
   const muted = !audio.active;
   useEffect(() => {
-    if (!isLive || !video || !playerRef.current) return;
+    if (!near || !isLive || !video || !playerRef.current) return;
     // 모션 줄이기 — 자동재생을 끄고 플레이어의 네이티브 컨트롤로 사용자가 직접 재생한다
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const destroy = createPlayer(playerRef.current, video.id, {
@@ -50,7 +53,7 @@ export const LiveStage = () => {
       ytRef.current = null;
       destroy();
     };
-  }, [isLive, video?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [near, isLive, video?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   // 라이브가 내려가면(끝남·10분 넘게 확인 못 함) 소리 주인도 내려놓는다 — 라이브가 다시 떴을 때
   // 사용자가 누르지 않았는데 onReady 에서 소리가 켜지지 않게. 영상만 바뀌는 라이브→라이브는 그대로 둔다.
   const releaseAudio = audio.release; // 고정 참조(useCallback) — 렌더마다 다시 돌지 않게
@@ -85,7 +88,7 @@ export const LiveStage = () => {
     <Section>
       <h2 className="sr-only">{LABELS.liveSection}</h2>
       <Reveal>
-        <div className="relative">
+        <div ref={stageRef} className="relative">
           <div className="bg-b1-text relative aspect-[21/9] w-full overflow-hidden rounded-3xl">
             {video && !isLive && (
               <Image

@@ -26,7 +26,7 @@ describe('prefetchHomeVideo', () => {
     expect(client.getQueryData(HOME_VIDEO_QUERY_KEY)).toEqual(DATA);
   });
 
-  it('운영 실행 중(ISR 재생성) 실패는 던진다 — Next 가 직전 홈 페이지를 계속 내보내게', async () => {
+  it('운영 실행 중 조회 실패는 호출자에게 전달한다 — 홈 영상 경계에서 복구', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     feed.mockImplementation(async () => {
       throw new Error('videos 403');

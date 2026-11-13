@@ -10,8 +10,8 @@ import { prefetchForIsr } from '@/shared/api/prefetchForIsr.server';
 import { HOME_VIDEO_QUERY_KEY } from './homeVideoFeed';
 import { fetchHomeVideoFeed } from './homeVideoFeed.server';
 
-// 실패 규칙은 prefetchForIsr — 운영 재생성 실패만 던져 직전 홈을 유지하고, 빌드(배포를 막지 않게)·개발 서버
-// (키 없는 로컬에서 홈이 500 이 되지 않게)의 실패는 빈 상태로 넘겨 브라우저가 `/api/home-video` 로 이어서 받는다.
+// 조회 실패는 호출자에게 전달한다. 홈은 영상 영역을 별도 Suspense 경계에 두고 실패를 빈 상태로 바꿔,
+// 첫 화면을 유지하면서 브라우저의 `/api/home-video` 조회로 이어간다. 공용 ISR 실패 규칙 자체는 유지한다.
 export const prefetchHomeVideo = () =>
   prefetchForIsr(client =>
     client.prefetchQuery({ queryKey: HOME_VIDEO_QUERY_KEY, queryFn: fetchHomeVideoFeed })

@@ -19,6 +19,10 @@ import Image from 'next/image';
 import { Fragment, useEffect, useRef } from 'react';
 
 import mainExterior from '@/assets/images/main/main01.webp';
+import {
+  HERO_IMAGE_QUALITY,
+  HERO_IMAGE_SIZES,
+} from '@/domains/home/components/widgets/HomeHero/imageConfig';
 
 import { FLOW_PHOTOS, THIRD_PHOTOS } from './flowPhotos';
 import { EXT_G, MorphFrame, type MorphFrameHandle } from './MorphFrame';
@@ -161,12 +165,22 @@ export const HomeLead = () => {
                   src={mainExterior}
                   alt="성복교회 전경"
                   fill
-                  sizes="60vw"
+                  sizes={HERO_IMAGE_SIZES}
+                  quality={HERO_IMAGE_QUALITY}
                   className="object-cover object-[55%_50%]"
                 />
               </div>
             ) : (
-              it.src && <Image src={it.src} alt="" fill sizes="40vw" className="object-cover" />
+              // 사진 칸의 폭은 화면 폭이 아니라 행 높이(svh)와 종횡비로 결정된다.
+              it.src && (
+                <Image
+                  src={it.src}
+                  alt=""
+                  fill
+                  sizes={`${(h * ASPECT * 100).toFixed(1)}svh`}
+                  className="object-cover"
+                />
+              )
             )}
           </div>
         ))}
@@ -198,7 +212,7 @@ export const HomeLead = () => {
         >
           {/* 표어 — 정적. 히어로가 걷히며 드러난다. 무대 pt-16 = 헤더 높이(낮은 뷰포트에서 세 줄이 헤더 밑으로 밀리지 않게) */}
           <div className="mx-auto w-full max-w-[1320px] px-[6vw] pb-[4vh]">
-            <span className="text-b1-sub inline-flex items-center gap-2 text-label font-semibold">
+            <span className="text-b1-sub text-label inline-flex items-center gap-2 font-semibold">
               <span className="bg-b1-accent block h-1.5 w-1.5 rounded-full" />
               2026년 표어
             </span>
@@ -207,7 +221,7 @@ export const HomeLead = () => {
               <br />
               <span className="text-b1-accent">묵은 땅</span>을 기경하라
             </h2>
-            <p className="b1-mono text-b1-sub mt-4 text-body-sm">에베소서 4:22–24 · 호세아 10:12</p>
+            <p className="b1-mono text-b1-sub text-body-sm mt-4">에베소서 4:22–24 · 호세아 10:12</p>
           </div>
           {TILES.map(row)}
           {/* 히어로 — 전체화면에서 윗줄 빈 칸으로 변형 */}

@@ -1,6 +1,7 @@
 import { AppProvider } from '@/app/_provider';
 import { Footer } from '@/shared/components/layout/Footer';
 import { Header } from '@/shared/components/layout/Header';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 // 폰트는 외부 CDN 없이 우리 도메인에서 제공한다(ADR 0009). 둘 다 unicode-range 조각이라 쓰인 글자만 받는다.
 import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
@@ -38,6 +39,8 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </AppProvider>
+        {/* 실제 방문자 폰의 첫 화면·LCP 측정(Vercel 대시보드 Speed Insights). 배포 환경에서만 수집한다. */}
+        <SpeedInsights />
       </body>
     </html>
   );

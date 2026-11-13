@@ -16,3 +16,7 @@ export type WorshipPage = keyof typeof WORSHIP_PAGES;
 /** 주소에서 온 값이 설정에 있는 페이지 이름인지 — Route Handler 가 임의 값으로 유튜브를 부르지 않게. */
 export const isWorshipPage = (v: unknown): v is WorshipPage =>
   typeof v === 'string' && Object.hasOwn(WORSHIP_PAGES, v);
+
+/** 예배 페이지 주소 — 영상 id 가 없으면 설교 목록(/worship/sunday), 있으면 그 설교(/worship/sunday/영상id). */
+export const sermonPath = (page: WorshipPage, videoId?: string): string =>
+  videoId ? `/worship/${page}/${encodeURIComponent(videoId)}` : `/worship/${page}`;

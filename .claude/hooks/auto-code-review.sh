@@ -15,6 +15,8 @@
 #     2) 현재 diff 해시 == 마지막 리뷰한 해시 → 통과 (같은 변경 재촉 안 함)
 #     3) 마지막 편집 이후 '필요 리뷰 세트'를 이미 다 돌렸음(작은변경:code-review /
 #        큰변경:code-review+codex) → 통과 (중복 리뷰 방지 + 큰변경 codex 누락 방지)
+#     4) 리뷰 횟수 상한(선택, review-cap.sh): 마지막 커밋 뒤로 리뷰를 상한만큼 돌렸으면 통과.
+#        상한이 있으면 큰 변경에도 /code-review 하나만 요구한다(codex 생략)
 #
 # 판정 불가/환경 문제(jq 없음, git 아님 등)는 fail-open — 작업을 막지 않는다.
 
@@ -43,6 +45,12 @@ cd "$project_dir" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 state_file="$project_dir/.claude/.last-review-hash"
+
+# 리뷰 횟수 상한(선택) — review-cap.sh. 못 읽으면 상한 없음으로 진행(fail-open)
+review_max=""
+if . "$(dirname "${BASH_SOURCE[0]}")/review-cap.sh" 2>/dev/null; then
+  review_max="$(review_cap "$project_dir")"
+fi
 
 # 노이즈 제외 패턴 (시안 프리뷰·문서·상태파일·lock)
 exclude_re='(^|/)[^/]+-preview/|(^|/)_variants/|^\.md/|^\.claude/|(^|/)pnpm-lock\.yaml$|(^|/)package-lock\.json$|(^|/)yarn\.lock$'
@@ -199,11 +207,21 @@ if [ -n "${transcript:-}" ] && [ -f "${transcript:-}" ]; then
       codex) have_codex=1 ;;
     esac
   done <<< "$reviewed_types"
-  if [ "$is_big" -eq 1 ]; then
+  # 상한이 있으면 큰 변경도 code-review 하나면 충족이다(codex 는 요구하지 않는다)
+  if [ "$is_big" -eq 1 ] && [ -z "$review_max" ]; then
     [ "$have_cr" -eq 1 ] && [ "$have_codex" -eq 1 ] && exit 0
   else
     [ "$have_cr" -eq 1 ] && exit 0
   fi
+fi
+
+# --- 리뷰 횟수 상한 가드 ----------------------------------------------------
+#   마지막 커밋 뒤로 리뷰(코드 리뷰·codex·디자인 QA 합산)를 상한만큼 돌렸으면 더 요구하지 않는다.
+#   회귀 잠금: tests/hooks/auto-code-review.test.ts "리뷰 횟수 상한".
+reviews_done=0
+if [ -n "$review_max" ]; then
+  reviews_done="$(reviews_since_commit "${transcript:-}")"
+  review_cap_reached "$review_max" "$reviews_done" && exit 0
 fi
 
 # --- 리뷰 발동: block + reason ---------------------------------------------
@@ -216,7 +234,14 @@ else
 fi
 
 # 리뷰 무게를 크기에 비례 — 작으면 단일 /code-review, 크면 +codex 교차검증.
-if [ "$is_big" -eq 1 ]; then
+# 리뷰 횟수 상한이 있으면 큰 변경도 /code-review 하나만(codex 생략 — 디자인 QA 몫을 남긴다).
+if [ "$is_big" -eq 1 ] && [ -n "$review_max" ]; then
+  reason_text="이 작업의 변경이 자동 코드리뷰 기준을 넘었습니다 (${why} · 규모 큼: ${total_lines}줄 / ${file_count}파일). 끝내기 전에 다음 리뷰 하나로 자가검증하라:
+
+/code-review high — 변경분의 정확성 버그 + 재사용/단순화/컨벤션 리뷰
+
+이 컴퓨터는 리뷰 횟수 상한이 ${review_max}번이다(마지막 커밋 뒤 ${reviews_done}번 돌림) — 교차검증(codex)은 생략하고, 고친 뒤 같은 리뷰를 다시 돌리지 않는다. 발견사항을 요약하고 심각한 문제는 고친 다음 마쳐라. 리뷰가 끝나면 이 훅은 같은 변경을 다시 막지 않는다."
+elif [ "$is_big" -eq 1 ]; then
   reason_text="이 작업의 변경이 자동 코드리뷰 기준을 넘었습니다 (${why} · 규모 큼: ${total_lines}줄 / ${file_count}파일). 끝내기 전에 다음 두 리뷰로 자가검증하라:
 
 1) /code-review high — 변경분의 정확성 버그 + 재사용/단순화/컨벤션 리뷰

@@ -64,6 +64,8 @@ describe('fetchSermonLibrary', () => {
         series: '사도행전 강해',
         no: 66,
         passage: '사도행전 13:4-7',
+        // 설교자 칸 — 목록 페이지의 «최신 설교» 가 보인다
+        preacher: '이요셉 목사',
         date: '2026-10-25',
         dateFrom: 'sermon',
         thumbnail: 'h/a',

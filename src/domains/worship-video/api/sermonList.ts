@@ -108,16 +108,39 @@ export const seriesByYear = (series: readonly SermonSeries[]): [string, SermonSe
   return [...groups];
 };
 
-/** 같은 시리즈 안의 이전(오래된)·다음(최신) 편. 단편 설교는 순서가 없어 이웃이 없다. */
+/**
+ * 이전(오래된)·다음(최신) 편 — 설교 목록에 보이는 순서(seriesSermons) 그대로: 시리즈는 회차, 단편 설교는 단편끼리 날짜.
+ * 없는 쪽은 싣지 않는다.
+ */
 export const neighbors = (
   sermons: readonly Sermon[],
   id: string
 ): { older?: Sermon; newer?: Sermon } => {
   const cur = sermons.find(s => s.id === id);
-  if (!cur || cur.series === SINGLES) return {};
+  if (!cur) return {};
   const list = seriesSermons(sermons, cur.series);
   const i = list.indexOf(cur);
-  return { older: list[i + 1], newer: list[i - 1] };
+  const older = list[i + 1];
+  const newer = list[i - 1];
+  return { ...(older && { older }), ...(newer && { newer }) };
+};
+
+/**
+ * 목록 페이지에 그릴 줄 — 조건이 하나도 없는 첫 화면(전체·최신순·검색 없음)에서는 맨 앞(최신 설교)을 뺀다.
+ * 바로 위에 «최신 설교» 로 크게 보이므로 두 번 그리지 않는다. 조건을 걸면 최신 설교도 결과에 나온다.
+ */
+export const listRows = (sermons: readonly Sermon[], query: ListQuery): Sermon[] => {
+  const list = filterSermons(sermons, query);
+  return !query.q.trim() && !query.series && query.sort === 'new' ? list.slice(1) : list;
+};
+
+const WEEKDAYS = ['주일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
+/** 달력 날짜(YYYY-MM-DD)의 요일 — 일요일은 «주일». 날짜 모양이 아니면 빈 문자열. */
+export const weekdayLabel = (date: string): string => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return '';
+  // 달력 날짜라 시간대와 무관하게 UTC 로 센다(ADR 0012)
+  return WEEKDAYS[new Date(`${date}T00:00:00Z`).getUTCDay()] ?? '';
 };
 
 /** 화면 날짜 — 설교일은 «2026.10.25», 업로드 날짜는 «업로드 2026.10.25»(설교일이 아닐 수 있다). */

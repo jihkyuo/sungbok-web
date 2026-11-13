@@ -33,12 +33,17 @@ afterEach(() => {
 function runHook(
   payload: Record<string, unknown>,
   projectDir: string,
+  reviewMax?: string,
 ): { stdout: string; status: number | null } {
+  const env: NodeJS.ProcessEnv = { ...process.env, CLAUDE_PROJECT_DIR: projectDir };
+  // 리뷰 횟수 상한은 테스트가 정한 값만 — 실행하는 컴퓨터의 환경변수에 흔들리지 않게
+  delete env.AUTO_REVIEW_MAX;
+  if (reviewMax !== undefined) env.AUTO_REVIEW_MAX = reviewMax;
   const res = spawnSync('bash', [HOOK], {
     input: JSON.stringify(payload),
     encoding: 'utf-8',
     cwd: projectDir,
-    env: { ...process.env, CLAUDE_PROJECT_DIR: projectDir },
+    env,
   });
   return { stdout: res.stdout ?? '', status: res.status };
 }
@@ -135,5 +140,45 @@ describe('auto-design-review: fail-open', () => {
     writeFileIn(dir, 'src/shared/components/Foo/index.tsx', bigContent(90));
     const res = runHook({ stop_hook_active: false }, dir);
     expect(res.stdout.trim()).toBe('');
+  });
+});
+
+// 리뷰 횟수 상한(review-cap.sh): 마지막 커밋 뒤로 리뷰(코드 리뷰·codex·디자인 QA 합산)를 상한만큼 돌렸으면 통과.
+describe('auto-design-review: 리뷰 횟수 상한', () => {
+  const transcriptOf = (repo: string, events: { tool: string; input: Record<string, unknown> }[]) => {
+    const path = join(repo, 'transcript.jsonl');
+    writeFileSync(
+      path,
+      events
+        .map((e) =>
+          JSON.stringify({
+            type: 'assistant',
+            message: { role: 'assistant', content: [{ type: 'tool_use', name: e.tool, input: e.input }] },
+          }),
+        )
+        .join('\n') + '\n',
+    );
+    return path;
+  };
+  const codeReview = { tool: 'Skill', input: { skill: 'code-review' } };
+  const designQa = { tool: 'Agent', input: { subagent_type: 'design-reviewer' } };
+
+  it('상한 2: 리뷰를 2번 돌린 뒤에는 큰 UI 변경에도 발동하지 않는다', () => {
+    const repo = makeRepo();
+    writeFileIn(repo, 'src/shared/components/Foo/index.tsx', bigContent(90));
+    const transcript_path = transcriptOf(repo, [codeReview, designQa]);
+    expect(runHook({ stop_hook_active: false, transcript_path }, repo).stdout).toContain(
+      '"decision":"block"',
+    );
+    expect(runHook({ stop_hook_active: false, transcript_path }, repo, '2').stdout.trim()).toBe('');
+  });
+
+  it('상한 2: 아직 1번뿐이면 발동한다', () => {
+    const repo = makeRepo();
+    writeFileIn(repo, 'src/shared/components/Foo/index.tsx', bigContent(90));
+    const transcript_path = transcriptOf(repo, [codeReview]);
+    expect(runHook({ stop_hook_active: false, transcript_path }, repo, '2').stdout).toContain(
+      '/design-qa',
+    );
   });
 });

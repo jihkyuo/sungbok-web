@@ -30,9 +30,13 @@ function runHook(
   payload: Record<string, unknown>,
   projectDir: string,
   journal?: string,
+  reviewMax?: string,
 ): { stdout: string; status: number | null } {
   const env: NodeJS.ProcessEnv = { ...process.env, CLAUDE_PROJECT_DIR: projectDir };
   if (journal) env.RETRO_JOURNAL_FILE = journal;
+  // 리뷰 횟수 상한은 테스트가 정한 값만 — 실행하는 컴퓨터의 환경변수에 흔들리지 않게
+  delete env.AUTO_REVIEW_MAX;
+  if (reviewMax !== undefined) env.AUTO_REVIEW_MAX = reviewMax;
   const res = spawnSync('bash', [HOOK], {
     input: JSON.stringify(payload),
     encoding: 'utf-8',
@@ -241,5 +245,124 @@ describe('auto-code-review: 세션-한정(transcript) 스코프', () => {
     // 규모는 내 것(95줄/1파일)만 — ambient 합산(215줄)이 아니어야 한다
     expect(out.reason).toContain('95줄 / 1파일');
     expect(out.reason).not.toContain('215');
+  });
+});
+
+// 리뷰 횟수 상한(review-cap.sh): 마지막 커밋 뒤로 리뷰를 상한만큼 돌렸으면 더 요구하지 않는다.
+//   상한은 환경변수 AUTO_REVIEW_MAX 또는 .claude/review-max.local(컴퓨터마다 다르게)로 둔다.
+describe('auto-code-review: 리뷰 횟수 상한', () => {
+  const big = (repo: string) => writeFileIn(repo, 'src/x/util.ts', bigContent(120)); // 로직·큼
+  const edit = (repo: string) => ({ tool: 'Edit', input: { file_path: join(repo, 'src/x/util.ts') } });
+  const codeReview = { tool: 'Agent', input: { subagent_type: 'code-reviewer' } };
+  const designQa = { tool: 'Skill', input: { skill: 'design-qa' } };
+
+  it('상한 2: 리뷰를 2번 돌린 뒤에는 고쳐서 다시 편집해도 발동하지 않는다', () => {
+    const repo = makeRepo();
+    big(repo);
+    const transcript_path = writeEvents(repo, [edit(repo), codeReview, designQa, edit(repo)]);
+    // 상한이 없으면 발동한다(편집 뒤 리뷰가 없다)
+    expect(runHook({ stop_hook_active: false, transcript_path }, repo).stdout).toContain(
+      '"decision":"block"',
+    );
+    expect(
+      runHook({ stop_hook_active: false, transcript_path }, repo, undefined, '2').stdout.trim(),
+    ).toBe('');
+  });
+
+  it('상한 2: 아직 1번뿐이면 발동하고, 큰 변경에도 /code-review 하나만 요구한다(codex 생략)', () => {
+    const repo = makeRepo();
+    big(repo);
+    const transcript_path = writeEvents(repo, [edit(repo), designQa, edit(repo)]);
+    const out = runHook({ stop_hook_active: false, transcript_path }, repo, undefined, '2').stdout;
+    expect(out).toContain('"decision":"block"');
+    expect(out).toContain('/code-review high');
+    expect(out).not.toContain('/codex');
+    expect(out).toContain('상한이 2번');
+  });
+
+  it('상한이 있으면 큰 변경도 편집 뒤 /code-review 하나면 충족이다', () => {
+    const repo = makeRepo();
+    big(repo);
+    const transcript_path = writeEvents(repo, [edit(repo), codeReview]);
+    expect(
+      runHook({ stop_hook_active: false, transcript_path }, repo, undefined, '3').stdout.trim(),
+    ).toBe('');
+  });
+
+  it('마지막 커밋보다 먼저 돌린 리뷰는 세지 않는다 — 다음 작업은 다시 상한까지 돌 수 있다', () => {
+    const repo = makeRepo();
+    execFileSync(
+      'git',
+      ['-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-q', '--allow-empty', '-m', 'base'],
+      { cwd: repo },
+    );
+    big(repo);
+    // 트랜스크립트 줄의 시각으로 가린다 — 커밋보다 앞선 리뷰 2번, 커밋 뒤의 편집
+    const row = (e: { tool: string; input: Record<string, unknown> }, timestamp: string) =>
+      JSON.stringify({
+        type: 'assistant',
+        timestamp,
+        message: { role: 'assistant', content: [{ type: 'tool_use', name: e.tool, input: e.input }] },
+      });
+    const before = '2000-01-01T00:00:00.000Z';
+    const after = '2999-01-01T00:00:00.000Z';
+    const transcript_path = join(repo, 'transcript.jsonl');
+    writeFileSync(
+      transcript_path,
+      [row(codeReview, before), row(designQa, before), row(edit(repo), after)].join('\n') + '\n',
+    );
+    expect(
+      runHook({ stop_hook_active: false, transcript_path }, repo, undefined, '2').stdout,
+    ).toContain('"decision":"block"');
+
+    // 커밋 뒤에 돌린 리뷰 2번이면 상한에 걸린다
+    writeFileSync(
+      transcript_path,
+      [row(codeReview, after), row(designQa, after), row(edit(repo), after)].join('\n') + '\n',
+    );
+    expect(
+      runHook({ stop_hook_active: false, transcript_path }, repo, undefined, '2').stdout.trim(),
+    ).toBe('');
+  });
+
+  it('명령 글자에 «git commit» 이 들어 있을 뿐인 셸 명령은 리뷰 횟수를 되돌리지 않는다', () => {
+    const repo = makeRepo();
+    big(repo);
+    const transcript_path = writeEvents(repo, [
+      edit(repo),
+      codeReview,
+      designQa,
+      { tool: 'Bash', input: { command: 'cat > t.ts <<EOF\ngit commit -m "x"\nEOF' } },
+      edit(repo),
+    ]);
+    expect(
+      runHook({ stop_hook_active: false, transcript_path }, repo, undefined, '2').stdout.trim(),
+    ).toBe('');
+  });
+
+  it('셸에서 돌린 codex 도 리뷰 한 번으로 센다', () => {
+    const repo = makeRepo();
+    big(repo);
+    const transcript_path = writeEvents(repo, [
+      edit(repo),
+      codeReview,
+      { tool: 'Bash', input: { command: 'cd repo; codex exec --sandbox read-only "review"' } },
+      edit(repo),
+    ]);
+    expect(
+      runHook({ stop_hook_active: false, transcript_path }, repo, undefined, '2').stdout.trim(),
+    ).toBe('');
+  });
+
+  it('상한을 파일(.claude/review-max.local)에 둘 수 있다 — 숫자가 아니면 상한 없음', () => {
+    const repo = makeRepo();
+    big(repo);
+    const transcript_path = writeEvents(repo, [edit(repo), codeReview, designQa, edit(repo)]);
+    writeFileIn(repo, '.claude/review-max.local', '2\n');
+    expect(runHook({ stop_hook_active: false, transcript_path }, repo).stdout.trim()).toBe('');
+    writeFileIn(repo, '.claude/review-max.local', 'many\n');
+    expect(runHook({ stop_hook_active: false, transcript_path }, repo).stdout).toContain(
+      '"decision":"block"',
+    );
   });
 });

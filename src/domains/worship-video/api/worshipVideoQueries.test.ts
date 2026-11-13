@@ -49,6 +49,7 @@ describe('toSermons', () => {
         { ...ok, dateFrom: 'guess' },
         { ...ok, no: '66' },
         { ...ok, passage: 3 },
+        { ...ok, preacher: 3 },
       ])
     ).toEqual([ok]);
   });

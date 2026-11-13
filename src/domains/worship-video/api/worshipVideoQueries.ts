@@ -25,7 +25,8 @@ const isSermon = (v: unknown): v is Sermon => {
     text(s.poster) &&
     optional(s.no, 'number') &&
     optional(s.occasion, 'string') &&
-    optional(s.passage, 'string')
+    optional(s.passage, 'string') &&
+    optional(s.preacher, 'string')
   );
 };
 

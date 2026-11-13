@@ -1,4 +1,4 @@
-// 설교 화면(G안) 부품이 함께 쓰는 클래스 묶음 — 값만 둔다.
+// 설교 화면(목록 페이지·설교 한 편 페이지) 부품이 함께 쓰는 클래스 묶음 — 값만 둔다.
 import { FOCUS_RING } from '@/shared/components/ui/focusRing';
 
 /** 키보드 포커스 링 — 브라우저 기본 선은 포커스일 때만 숨긴다(고대비 모드에서 늘 테두리가 그려지지 않게). */
@@ -15,6 +15,14 @@ export const HIT_36 = `${HIT} max-lg:before:-inset-y-1`;
 /** 알약 버튼(시리즈 칩·이전/다음 편) 공통 모양 */
 export const PILL =
   'border-b1-border bg-b1-surface text-caption inline-flex h-[34px] shrink-0 items-center gap-1 rounded-full border px-3 whitespace-nowrap transition-colors duration-fast';
+
+/** 테두리 버튼(«설교 더보기», 휴대폰의 링크 복사·유튜브에서 보기) — 높이·글씨는 쓰는 곳이 정한다 */
+export const OUTLINE_BTN =
+  'border-b1-border bg-b1-surface text-b1-text inline-flex items-center justify-center gap-2 rounded-md border font-semibold transition-colors duration-fast hover:border-b1-accent-soft hover:bg-b1-accent-soft';
+
+/** 줄을 넘기는 동그란 화살표 버튼(30px) — 누르는 영역은 가상 영역으로 44px(테두리 안쪽 28 + 8×2) */
+export const ARROW_BTN =
+  "border-b1-border bg-b1-surface text-b1-text relative grid size-[30px] place-items-center rounded-full border before:absolute before:-inset-2 before:content-['']";
 
 // 유튜브 썸네일 주소만 next/image 최적화를 거친다(next.config remotePatterns: i.ytimg.com/vi/).
 // 다른 호스트·경로 한 장 때문에 화면 전체가 오류로 떨어지지 않게, 밖의 주소는 그대로 싣는다.

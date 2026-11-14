@@ -140,7 +140,7 @@
   html {
     /* 스무스 스크롤은 Lenis(_provider.tsx)가 관리. CSS scroll-behavior:smooth 는 Lenis 와
        충돌하므로 두지 않는다(Lenis 가 .lenis-smooth 로 scroll-behavior:auto 강제). */
-    /* offset for sticky header when jumping to anchors (네이티브 폴백용 — Lenis anchors offset 와 짝) */
+    /* 고정 헤더 보정의 단일 기준 — 네이티브 앵커 이동과 Lenis anchors(_provider.tsx) 가 모두 이 값을 읽는다 */
     scroll-padding-top: 80px;
   }
 

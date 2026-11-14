@@ -20,8 +20,9 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
   );
   // 데스크톱 휠을 매 프레임 lerp 로 보간해 관성 스크롤(스무딩)을 준다. 휠 한 틱마다
   // ~100px 점프하는 "뚝뚝" 끊김을 없앤다. 모바일 터치는 OS 네이티브 관성을 그대로 두어
-  // 지연감을 막는다(syncTouch:false). 인페이지 해시 앵커(#worship/#location)는 80px 고정
-  // 헤더만큼 보정해 스무스 이동(기존 scroll-padding-top 의존 대체).
+  // 지연감을 막는다(syncTouch:false). 인페이지 해시 앵커(#worship/#location)는 스무스 이동 —
+  // 고정 헤더 보정은 전역 scroll-padding-top(globals.css) 한 곳만 쓴다. Lenis 가 scroll-padding-top 과
+  // 대상의 scroll-margin-top 을 직접 읽으므로 여기서 offset 을 또 주면 두 번 빠진다(아이폰에서 80px 더 아래에 멈춤).
   // 스크롤 위치 복원은 Lenis 가 마운트 시 현재(복원된) 위치에서 시작하므로 즉시 유지된다.
   // prefers-reduced-motion 이면 스무딩을 끄고 네이티브 스크롤로 동작(트리는 유지해 리마운트 방지).
   const [reduced] = useState(
@@ -52,7 +53,7 @@ export const AppProvider = ({ children }: PropsWithChildren) => {
         lerp: 0.1,
         smoothWheel: !reduced,
         syncTouch: false,
-        anchors: reduced ? false : { offset: -80 },
+        anchors: !reduced,
       }}
     >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

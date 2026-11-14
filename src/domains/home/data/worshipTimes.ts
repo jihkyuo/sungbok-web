@@ -62,7 +62,9 @@ export const toMinutes = (t: string) => {
 // ── 요일별 파생 ──────────────────────────────────────────────
 const ADULT = WORSHIP_GROUPS[0].services;
 const GEN = WORSHIP_GROUPS[1].services;
-const on = (list: WorshipServiceSummary[], day: WorshipDay) => list.filter(s => s.day === day);
+/** 그 요일의 예배를 시간 순으로 — 같은 시각은 적힌 순서(나이 순) 유지 */
+const on = (list: WorshipServiceSummary[], day: WorshipDay) =>
+  list.filter(s => s.day === day).sort((a, b) => toMinutes(a.time) - toMinutes(b.time));
 
 /** 다음세대 예배 여부 (참조 동일성 기반) — 주일 부서와 수요 청년예배 */
 export const isGenService = (s: WorshipServiceSummary) => GEN.includes(s);

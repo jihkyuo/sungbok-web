@@ -7,7 +7,6 @@ import {
   WEEKDAY_SECTIONS,
   type WorshipServiceSummary,
 } from '@/domains/home/data/worshipTimes';
-import { GenTag } from '@/domains/home/components/widgets/WorshipTimes/mobile';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { cn } from '@/shared/lib/utils';
 
@@ -24,7 +23,7 @@ const SundayHeader = () => (
 const TimePill = ({ time, genOnly }: { time: string; genOnly: boolean }) => (
   <span
     className={cn(
-      'text-b1-accent b1-mono flex items-baseline gap-1.5 rounded-full border-2 px-4 py-1.5 text-title font-bold',
+      'text-b1-accent b1-mono text-title flex items-baseline gap-1.5 rounded-full border-2 px-4 py-1.5 font-bold',
       genOnly ? 'bg-b1-accent-soft border-transparent' : 'bg-b1-surface border-b1-accent'
     )}
   >
@@ -76,9 +75,8 @@ const WeekdayStrip = () => (
                 <div className="text-b1-text text-body-sm font-semibold">
                   {s.name}
                   {s.note && (
-                    <span className="text-b1-muted ml-1 text-caption font-normal">{s.note}</span>
+                    <span className="text-b1-muted text-caption ml-1 font-normal">{s.note}</span>
                   )}
-                  {isGenService(s) && <GenTag />}
                 </div>
                 <div className="text-b1-sub text-caption">{s.place}</div>
               </div>

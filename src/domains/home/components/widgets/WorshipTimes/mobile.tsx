@@ -1,19 +1,8 @@
-import {
-  DAY_SECTIONS,
-  isGenService,
-  type WorshipServiceSummary,
-} from '@/domains/home/data/worshipTimes';
+import { DAY_SECTIONS, type WorshipServiceSummary } from '@/domains/home/data/worshipTimes';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { cn } from '@/shared/lib/utils';
 
-/** 다음세대 예배 표시 — 장년 예배와 같은 요일 칸에 섞일 때(수요 청년예배)만 붙인다 */
-export const GenTag = () => (
-  <span className="bg-b1-accent-soft text-b1-accent text-caption ml-1.5 rounded-full px-2 py-0.5 font-semibold whitespace-nowrap">
-    다음세대
-  </span>
-);
-
-const ServiceRow = ({ service, tagGen }: { service: WorshipServiceSummary; tagGen: boolean }) => (
+const ServiceRow = ({ service }: { service: WorshipServiceSummary }) => (
   <li className="border-b1-border grid grid-cols-[78px_1fr_auto] items-center gap-3 border-t px-5 py-3">
     <span className="b1-mono text-b1-accent text-caption font-bold tracking-[-0.01em]">
       {service.time}
@@ -23,7 +12,6 @@ const ServiceRow = ({ service, tagGen }: { service: WorshipServiceSummary; tagGe
       {service.note && (
         <span className="text-b1-muted text-caption ml-1.5 font-normal">{service.note}</span>
       )}
-      {tagGen && isGenService(service) && <GenTag />}
     </span>
     <span className="b1-mono text-b1-muted text-caption text-right tracking-[0.02em]">
       {service.place}
@@ -47,10 +35,7 @@ export const WorshipTimesMobile = () => (
               className={cn('h-5 w-[4px] rounded-full', sunday ? 'bg-b1-sunday' : 'bg-b1-accent')}
             />
             <h3
-              className={cn(
-                'text-title m-0 font-bold',
-                sunday ? 'text-b1-sunday' : 'text-b1-text'
-              )}
+              className={cn('text-title m-0 font-bold', sunday ? 'text-b1-sunday' : 'text-b1-text')}
             >
               {section.day}
             </h3>
@@ -65,7 +50,7 @@ export const WorshipTimesMobile = () => (
               )}
               <ul className="m-0 list-none p-0">
                 {lane.services.map(service => (
-                  <ServiceRow key={service.name} service={service} tagGen={!lane.label} />
+                  <ServiceRow key={service.name} service={service} />
                 ))}
               </ul>
             </div>

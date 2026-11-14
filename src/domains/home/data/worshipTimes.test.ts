@@ -73,4 +73,21 @@ describe('요일·세대 구분', () => {
     expect(all).toHaveLength(17);
     expect(new Set(all).size).toBe(17);
   });
+
+  it('한 묶음 안의 예배는 시간 순서다 — 다음세대도 장년처럼 이른 시각부터(같은 시각은 나이 순 유지)', () => {
+    for (const lane of DAY_SECTIONS.flatMap(s => s.lanes)) {
+      const minutes = lane.services.map(s => toMinutes(s.time));
+      expect(minutes).toEqual([...minutes].sort((a, b) => a - b));
+    }
+    expect(names(DAY_SECTIONS[0].lanes[1].services)).toEqual([
+      '고등부',
+      '영아부',
+      '유치부',
+      '유년부',
+      '초등부',
+      '중등부',
+      '청년부',
+      '영어예배',
+    ]);
+  });
 });

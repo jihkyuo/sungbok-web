@@ -1,47 +1,77 @@
-import { WORSHIP_GROUPS } from '@/domains/home/data/worshipTimes';
+import {
+  DAY_SECTIONS,
+  isGenService,
+  type WorshipServiceSummary,
+} from '@/domains/home/data/worshipTimes';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { cn } from '@/shared/lib/utils';
 
-// 모바일 전용: 2그룹(장년·다음세대) 세로 리스트. 데스크톱은 desktop.tsx(T3) 사용.
-export const WorshipTimesMobile = () => (
-  <div className="bg-b1-surface border-b1-border overflow-hidden rounded-2xl border">
-    {WORSHIP_GROUPS.map((group, gi) => (
-      <div key={group.label} className={cn(gi !== 0 && 'border-b1-border border-t')}>
-        <Reveal className="bg-b1-bg border-b1-border border-b px-5 py-2.5">
-          <h3 className="b1-mono text-b1-sub m-0 text-caption font-semibold tracking-[0.08em]">
-            {group.label}
-          </h3>
-        </Reveal>
+/** 다음세대 예배 표시 — 장년 예배와 같은 요일 칸에 섞일 때(수요 청년예배)만 붙인다 */
+export const GenTag = () => (
+  <span className="bg-b1-accent-soft text-b1-accent text-caption ml-1.5 rounded-full px-2 py-0.5 font-semibold whitespace-nowrap">
+    다음세대
+  </span>
+);
 
-        <ul className="m-0 list-none p-0">
-          {group.services.map((service, i) => (
-            <Reveal
-              as="li"
-              key={service.name}
-              delay={i * 35}
+const ServiceRow = ({ service, tagGen }: { service: WorshipServiceSummary; tagGen: boolean }) => (
+  <li className="border-b1-border grid grid-cols-[78px_1fr_auto] items-center gap-3 border-t px-5 py-3">
+    <span className="b1-mono text-b1-accent text-caption font-bold tracking-[-0.01em]">
+      {service.time}
+    </span>
+    <span className="text-b1-text text-label font-medium">
+      {service.name}
+      {service.note && (
+        <span className="text-b1-muted text-caption ml-1.5 font-normal">{service.note}</span>
+      )}
+      {tagGen && isGenService(service) && <GenTag />}
+    </span>
+    <span className="b1-mono text-b1-muted text-caption text-right tracking-[0.02em]">
+      {service.place}
+    </span>
+  </li>
+);
+
+// 모바일 전용: 요일별(주일 · 새벽 · 수요일 · 금요일) 세로 리스트. 주일만 장년·다음세대 두 묶음. 데스크톱은 desktop.tsx(T3) 사용.
+export const WorshipTimesMobile = () => (
+  <div className="flex flex-col gap-4">
+    {DAY_SECTIONS.map((section, si) => {
+      const sunday = si === 0;
+      return (
+        <Reveal
+          key={section.day}
+          delay={si * 60}
+          className="bg-b1-surface border-b1-border overflow-hidden rounded-2xl border"
+        >
+          <div className="flex items-center gap-2.5 px-5 py-3.5">
+            <span
+              className={cn('h-5 w-[4px] rounded-full', sunday ? 'bg-b1-sunday' : 'bg-b1-accent')}
+            />
+            <h3
               className={cn(
-                'grid grid-cols-[78px_1fr_auto] items-center gap-3 px-5 py-3',
-                i !== group.services.length - 1 && 'border-b1-border border-b'
+                'text-title m-0 font-bold',
+                sunday ? 'text-b1-sunday' : 'text-b1-text'
               )}
             >
-              <span className="b1-mono text-b1-accent text-caption font-bold tracking-[-0.01em]">
-                {service.time}
-              </span>
-              <span className="text-b1-text text-label font-medium">
-                {service.name}
-                {service.note && (
-                  <span className="text-b1-muted ml-1.5 text-caption font-normal">
-                    {service.note}
-                  </span>
-                )}
-              </span>
-              <span className="b1-mono text-b1-muted text-right text-caption tracking-[0.02em]">
-                {service.place}
-              </span>
-            </Reveal>
+              {section.day}
+            </h3>
+          </div>
+
+          {section.lanes.map(lane => (
+            <div key={lane.label ?? section.day}>
+              {lane.label && (
+                <h4 className="b1-mono bg-b1-bg border-b1-border text-b1-sub text-caption m-0 border-t px-5 py-2 font-semibold tracking-[0.08em]">
+                  {lane.label}
+                </h4>
+              )}
+              <ul className="m-0 list-none p-0">
+                {lane.services.map(service => (
+                  <ServiceRow key={service.name} service={service} tagGen={!lane.label} />
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
-      </div>
-    ))}
+        </Reveal>
+      );
+    })}
   </div>
 );

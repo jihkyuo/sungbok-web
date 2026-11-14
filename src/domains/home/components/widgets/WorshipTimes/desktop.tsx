@@ -7,6 +7,7 @@ import {
   WEEKDAY_SECTIONS,
   type WorshipServiceSummary,
 } from '@/domains/home/data/worshipTimes';
+import { GenTag } from '@/domains/home/components/widgets/WorshipTimes/mobile';
 import { Reveal } from '@/shared/components/features/Reveal';
 import { cn } from '@/shared/lib/utils';
 
@@ -77,6 +78,7 @@ const WeekdayStrip = () => (
                   {s.note && (
                     <span className="text-b1-muted ml-1 text-caption font-normal">{s.note}</span>
                   )}
+                  {isGenService(s) && <GenTag />}
                 </div>
                 <div className="text-b1-sub text-caption">{s.place}</div>
               </div>

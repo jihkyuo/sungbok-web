@@ -134,7 +134,7 @@ export const LiveStage = () => {
             )}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/45 via-transparent to-transparent" />
             {video && (
-              <div className="text-caption absolute top-6 left-6 flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 font-medium text-white backdrop-blur">
+              <div className="text-caption absolute top-3 left-3 flex items-center sm:top-6 sm:left-6 gap-2 rounded-full bg-white/15 px-3.5 py-1.5 font-medium text-white backdrop-blur">
                 {isLive && <span className="bg-b1-sunday h-2 w-2 rounded-full" aria-hidden />}
                 {isLive ? meta : LABELS.latestSermon}
               </div>
@@ -143,7 +143,7 @@ export const LiveStage = () => {
               <button
                 type="button"
                 onClick={toggleMute}
-                className="text-caption absolute top-6 right-6 flex h-11 items-center gap-2 rounded-full border border-white/25 bg-black/35 px-4 font-medium text-white backdrop-blur-md transition-colors hover:bg-black/55 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+                className="text-caption absolute top-3 right-3 flex h-11 sm:top-6 sm:right-6 items-center gap-2 rounded-full border border-white/25 bg-black/35 px-4 font-medium text-white backdrop-blur-md transition-colors hover:bg-black/55 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
               >
                 {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                 {muted ? LABELS.unmute : LABELS.mute}
@@ -157,7 +157,7 @@ export const LiveStage = () => {
               href={watchHref(video.id)}
               target="_blank"
               rel="noopener noreferrer"
-              className="b1-card-hover border-b1-border bg-b1-surface relative z-10 mx-auto -mt-10 flex max-w-[640px] items-center justify-between gap-5 rounded-2xl border p-5 no-underline shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)] md:mr-10 md:ml-auto" /* design-lint-ignore: 카드 부유 그림자 */
+              className="b1-card-hover border-b1-border bg-b1-surface relative z-10 mx-auto -mt-6 flex max-w-[640px] flex-col gap-4 rounded-2xl border p-4 no-underline sm:-mt-10 sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:p-5 shadow-[0_24px_60px_-20px_rgba(15,23,42,0.35)] md:mr-10 md:ml-auto" /* design-lint-ignore: 카드 부유 그림자 */
             >
               <div className="flex min-w-0 items-center gap-4">
                 <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full">
@@ -171,13 +171,13 @@ export const LiveStage = () => {
                 </span>
                 <div className="min-w-0">
                   <div className="text-b1-sub text-caption">{isLive ? LABELS.channel : meta}</div>
-                  <div className="text-b1-text text-body truncate font-bold tracking-[-0.01em]">
+                  <div className="text-b1-text text-body line-clamp-2 font-bold tracking-[-0.01em] sm:line-clamp-1">
                     {title}
                   </div>
                   {sub && <div className="text-b1-sub text-caption truncate">{sub}</div>}
                 </div>
               </div>
-              <span className="bg-b1-text text-caption inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 font-semibold text-white">
+              <span className="bg-b1-text text-caption inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-full px-4 font-semibold text-white">
                 <YoutubeIcon size={16} />
                 {LABELS.watchOnYoutube}
                 <ArrowUpRight size={15} />

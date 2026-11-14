@@ -1,4 +1,12 @@
-import { WEEKDAY_SECTIONS, toMinutes } from '@/domains/home/data/worshipTimes';
+import {
+  DAY_SECTIONS,
+  isGenService,
+  SUNDAY_TIMES,
+  sundayAt,
+  WEEKDAY_SECTIONS,
+  WORSHIP_GROUPS,
+  toMinutes,
+} from '@/domains/home/data/worshipTimes';
 import { describe, expect, it } from 'vitest';
 
 // 시드(순수 함수): 12시간 한글 표기 → 정렬용 분(minute) 변환.
@@ -40,5 +48,29 @@ describe('WEEKDAY_SECTIONS', () => {
       '수요 청년예배',
       '금요생수의강',
     ]);
+  });
+});
+
+// 수요 청년예배는 장년이 아니라 다음세대 예배다 — 요일은 수요일, 구분은 다음세대.
+describe('요일·세대 구분', () => {
+  const names = (list: { name: string }[]) => list.map(s => s.name);
+
+  it('수요 청년예배는 다음세대 예배로 구분된다', () => {
+    const wed = WEEKDAY_SECTIONS.find(s => s.day === '수요일')!.services;
+    expect(wed.map(isGenService)).toEqual([false, true]);
+    expect(names(WORSHIP_GROUPS[0].services)).not.toContain('수요 청년예배');
+  });
+
+  it('주일 시간표에는 주일 예배만 들어간다', () => {
+    expect(names(SUNDAY_TIMES.flatMap(sundayAt))).not.toContain('수요 청년예배');
+    expect(SUNDAY_TIMES.flatMap(sundayAt)).toHaveLength(13);
+  });
+
+  it('요일별 묶음은 주일(장년·다음세대) → 새벽 → 수요일 → 금요일 순서로 모든 예배를 한 번씩 담는다', () => {
+    expect(DAY_SECTIONS.map(s => s.day)).toEqual(['주일', '매일 새벽', '수요일', '금요일']);
+    expect(DAY_SECTIONS[0].lanes.map(l => l.label)).toEqual(['장년', '다음세대']);
+    const all = DAY_SECTIONS.flatMap(s => s.lanes.flatMap(l => l.services));
+    expect(all).toHaveLength(17);
+    expect(new Set(all).size).toBe(17);
   });
 });
